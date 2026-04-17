@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id          Int      @id @default(autoincrement())
+  externalId  Int?     @unique
+  name        String
+  code        String?
+  tla         String?  @map("three_letter_abbreviation")
+  logo        String?
+  country     String?
+  founded     Int?
+  venue       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  players     Player[]
+  homeMatches Match[]  @relation("HomeTeam")
+  awayMatches Match[]  @relation("AwayTeam")
+
+  @@map("teams")
+}
+
+model Player {
+  id          Int      @id @default(autoincrement())
+  externalId  Int?     @unique
+  name        String
+  position    String?
+  nationality String?
+  dateOfBirth DateTime?
+  photo       String?
+  teamId      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  team        Team?    @relation(fields: [teamId], references: [id])
+
+  @@map("players")
+}
+
+model Match {
+  id            Int      @id @default(autoincrement())
+  externalId    Int?     @unique
+  utcDate       DateTime
+  status        String
+  matchday      Int?
+  stage         String?
+  group         String?
+  homeTeamId    Int?
+  awayTeamId    Int?
+  homeScore     Int?     @default(0)
+  awayScore     Int?     @default(0)
+  venue         String?
+  competitionId Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  homeTeam      Team?    @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam      Team?    @relation("AwayTeam", fields: [awayTeamId], references: [id])
+
+  @@map("matches")
+}
+
+model Competition {
+  id          Int      @id @default(autoincrement())
+  externalId  Int?     @unique
+  name        String
+  code        String?
+  areaName    String?
+  emblem      String?
+  type        String?
+  season      String?
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("competitions")
+}
+
+model GroupStanding {
+  id              Int      @id @default(autoincrement())
+  competitionId   Int
+  groupName       String
+  position        Int
+  teamId          Int
+  playedGames     Int      @default(0)
+  won             Int      @default(0)
+  draw            Int      @default(0)
+  lost            Int      @default(0)
+  goalsFor        Int      @default(0)
+  goalsAgainst    Int      @default(0)
+  points          Int      @default(0)
+  updatedAt       DateTime @updatedAt
+
+  @@unique([competitionId, groupName, teamId])
+  @@map("group_standings")
+}
