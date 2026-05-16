@@ -97,12 +97,53 @@ async function main() {
     console.log(`   ✅ ${team.name} (${team.tla}) — ${playerCount} jogadores`);
   }
 
+  // 3. Matches
+  console.log("\n📅 Buscando 104 jogos...");
+  const matchesData = await apiFetch("/competitions/WC/matches");
+  const matches = matchesData.matches as Array<Record<string, unknown>>;
+
+  // Build externalId → internal id map for teams
+  const teamMap = new Map<number, number>();
+  const dbTeams = await prisma.team.findMany({ select: { id: true, externalId: true } });
+  for (const t of dbTeams) if (t.externalId) teamMap.set(t.externalId, t.id);
+
+  for (const m of matches) {
+    const home = m.homeTeam as Record<string, unknown>;
+    const away = m.awayTeam as Record<string, unknown>;
+    const score = m.score as Record<string, unknown>;
+    const fullTime = score?.fullTime as Record<string, unknown> | null;
+
+    await prisma.match.upsert({
+      where: { externalId: Number(m.id) },
+      update: {
+        status: String(m.status),
+        homeScore: fullTime?.home != null ? Number(fullTime.home) : null,
+        awayScore: fullTime?.away != null ? Number(fullTime.away) : null,
+      },
+      create: {
+        externalId: Number(m.id),
+        utcDate: new Date(String(m.utcDate)),
+        status: String(m.status),
+        matchday: m.matchday != null ? Number(m.matchday) : null,
+        stage: m.stage ? String(m.stage) : null,
+        group: m.group ? String(m.group) : null,
+        homeTeamId: home?.id ? (teamMap.get(Number(home.id)) ?? null) : null,
+        awayTeamId: away?.id ? (teamMap.get(Number(away.id)) ?? null) : null,
+        homeScore: fullTime?.home != null ? Number(fullTime.home) : null,
+        awayScore: fullTime?.away != null ? Number(fullTime.away) : null,
+        venue: m.venue ? String(m.venue) : null,
+        competitionId: competition.id,
+      },
+    });
+  }
+
   const totalTeams = await prisma.team.count();
   const totalPlayers = await prisma.player.count();
+  const totalMatches = await prisma.match.count();
 
+  console.log(`   ✅ ${totalMatches} jogos inseridos`);
   console.log(`\n🏆 Seed concluído!`);
-  console.log(`   ${totalTeams} seleções no banco`);
-  console.log(`   ${totalPlayers} jogadores no banco`);
+  console.log(`   ${totalTeams} seleções · ${totalPlayers} jogadores · ${totalMatches} jogos`);
 }
 
 main()
