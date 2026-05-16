@@ -1,27 +1,52 @@
 import type { Metadata } from "next";
+import { Sora } from "next/font/google";
 import "./globals.css";
+import Splash from "@/components/Splash";
+
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700", "800"],
+  variable: "--font-sora",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "PrepCopa - Copa do Mundo 2026",
-  description: "Acompanhe tudo sobre a Copa do Mundo 2026: Seleções, Jogadores, Jogos ao Vivo e Estatísticas",
+  title: "Copa360 — Copa do Mundo 2026",
+  description:
+    "A Copa do Mundo como você nunca viu. Explore jogadores, seleções, estatísticas e histórias da Copa de 2026.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR">
-      <body className="min-h-screen bg-[#0a0a0a] text-white">
-        <header className="border-b border-gray-800">
-          <div className="container mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold text-primary-500">PrepCopa 2026</h1>
+    <html lang="pt-BR" className={sora.variable}>
+      <body className="bg-[#111315] text-[#F3F4F6] font-sans min-h-screen">
+        <Splash />
+
+        <header className="sticky top-0 z-20 border-b border-white/[0.06] bg-[#111315]/88 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-[1440px] items-center justify-between px-12 py-5">
+            <span className="text-[18px] font-extrabold tracking-[-0.03em]">
+              COPA<span className="text-[#C8A96B]">360</span>
+            </span>
+            <nav>
+              <ul className="flex gap-9 list-none">
+                {["Seleções", "Jogadores", "Jogos", "Estatísticas"].map((item) => (
+                  <li key={item}>
+                    <a
+                      href="#"
+                      className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#6B7280] hover:text-[#C8A96B] transition-colors duration-150 no-underline"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </header>
-        <main className="container mx-auto px-4 py-8">
-          {children}
-        </main>
+
+        <main className="mx-auto max-w-[1440px]">{children}</main>
       </body>
     </html>
   );
