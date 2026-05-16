@@ -11,11 +11,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.sportmonks.com",
+        hostname: "crests.football-data.org",
       },
       {
         protocol: "https",
-        hostname: "flags-api.cloud",
+        hostname: "cdn.sportmonks.com",
       },
       {
         protocol: "https",
