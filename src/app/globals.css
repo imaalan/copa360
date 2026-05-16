@@ -3,31 +3,36 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --font-geist-sans: "Inter", system-ui, sans-serif;
-  --font-geist-mono: "JetBrains Mono", monospace;
+  --bg:         #111315;
+  --bg-alt:     #0B1020;
+  --surface:    rgba(255, 255, 255, 0.03);
+  --border:     rgba(255, 255, 255, 0.07);
+  --gold:       #C8A96B;
+  --gold-dim:   rgba(200, 169, 107, 0.18);
+  --blue:       #5068A9;
+  --text:       #F3F4F6;
+  --text-muted: #6B7280;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-geist-sans);
+html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
 }
 
 a {
