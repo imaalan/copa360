@@ -34,7 +34,7 @@ export default function RootLayout({
               <ul className="flex gap-9 list-none">
                 {[
                   { label: "Seleções",     href: "/teams" },
-                  { label: "Jogadores",    href: "#" },
+                  { label: "Jogadores",    href: "/players" },
                   { label: "Jogos",        href: "#" },
                   { label: "Estatísticas", href: "#" },
                 ].map(({ label, href }) => (
