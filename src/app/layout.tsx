@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Sora } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import Splash from "@/components/Splash";
 
@@ -26,19 +27,24 @@ export default function RootLayout({
 
         <header className="sticky top-0 z-20 border-b border-white/[0.06] bg-[#111315]/88 backdrop-blur-xl">
           <div className="mx-auto flex max-w-[1440px] items-center justify-between px-12 py-5">
-            <span className="text-[18px] font-extrabold tracking-[-0.03em]">
+            <Link href="/" className="text-[18px] font-extrabold tracking-[-0.03em] no-underline text-[#F3F4F6]">
               COPA<span className="text-[#C8A96B]">360</span>
-            </span>
+            </Link>
             <nav>
               <ul className="flex gap-9 list-none">
-                {["Seleções", "Jogadores", "Jogos", "Estatísticas"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
+                {[
+                  { label: "Seleções",     href: "/teams" },
+                  { label: "Jogadores",    href: "#" },
+                  { label: "Jogos",        href: "#" },
+                  { label: "Estatísticas", href: "#" },
+                ].map(({ label, href }) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
                       className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#6B7280] hover:text-[#C8A96B] transition-colors duration-150 no-underline"
                     >
-                      {item}
-                    </a>
+                      {label}
+                    </Link>
                   </li>
                 ))}
               </ul>
