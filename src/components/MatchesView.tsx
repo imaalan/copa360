@@ -1,0 +1,302 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import Image from "next/image";
+
+type MatchTeam = { name: string; tla: string | null; logo: string | null } | null;
+
+type Match = {
+  id: number;
+  utcDate: Date;
+  status: string;
+  matchday: number | null;
+  stage: string | null;
+  group: string | null;
+  homeScore: number | null;
+  awayScore: number | null;
+  homeTeam: MatchTeam;
+  awayTeam: MatchTeam;
+};
+
+const STAGE_LABEL: Record<string, string> = {
+  GROUP_STAGE:   "Fase de Grupos",
+  LAST_32:       "Rodada de 32",
+  LAST_16:       "Oitavas de Final",
+  QUARTER_FINALS:"Quartas de Final",
+  SEMI_FINALS:   "Semifinais",
+  THIRD_PLACE:   "3º Lugar",
+  FINAL:         "Final",
+};
+
+const STAGE_ORDER = [
+  "GROUP_STAGE", "LAST_32", "LAST_16",
+  "QUARTER_FINALS", "SEMI_FINALS", "THIRD_PLACE", "FINAL",
+];
+
+const GROUP_LABEL: Record<string, string> = {
+  GROUP_A: "Grupo A", GROUP_B: "Grupo B", GROUP_C: "Grupo C",
+  GROUP_D: "Grupo D", GROUP_E: "Grupo E", GROUP_F: "Grupo F",
+  GROUP_G: "Grupo G", GROUP_H: "Grupo H", GROUP_I: "Grupo I",
+  GROUP_J: "Grupo J", GROUP_K: "Grupo K", GROUP_L: "Grupo L",
+};
+
+const STAGE_TABS = [
+  { key: "all",          label: "Todos" },
+  { key: "GROUP_STAGE",  label: "Grupos" },
+  { key: "knockout",     label: "Mata-Mata" },
+];
+
+function formatDate(utcDate: Date) {
+  const d = new Date(utcDate);
+  // Show in Brazil time (UTC-3)
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit", month: "short", year: "numeric",
+    hour: "2-digit", minute: "2-digit",
+    timeZone: "America/Sao_Paulo",
+  }).format(d);
+}
+
+function formatDay(utcDate: Date) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit", month: "long", year: "numeric",
+    timeZone: "America/Sao_Paulo",
+  }).format(new Date(utcDate));
+}
+
+function formatTime(utcDate: Date) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    hour: "2-digit", minute: "2-digit",
+    timeZone: "America/Sao_Paulo",
+  }).format(new Date(utcDate));
+}
+
+const KNOCKOUT_STAGES = ["LAST_32", "LAST_16", "QUARTER_FINALS", "SEMI_FINALS", "THIRD_PLACE", "FINAL"];
+
+export default function MatchesView({ matches }: { matches: Match[] }) {
+  const [stageTab, setStageTab] = useState("all");
+  const [groupFilter, setGroupFilter] = useState("all");
+
+  const groups = useMemo(() => {
+    const g = new Set(matches.map((m) => m.group).filter(Boolean) as string[]);
+    return Array.from(g).sort();
+  }, [matches]);
+
+  const filtered = useMemo(() => {
+    return matches.filter((m) => {
+      if (stageTab === "GROUP_STAGE" && m.stage !== "GROUP_STAGE") return false;
+      if (stageTab === "knockout" && !KNOCKOUT_STAGES.includes(m.stage ?? "")) return false;
+      if (groupFilter !== "all" && m.group !== groupFilter) return false;
+      return true;
+    });
+  }, [matches, stageTab, groupFilter]);
+
+  // Group by stage then by day
+  const sections = useMemo(() => {
+    const byStage: Record<string, Match[]> = {};
+    for (const m of filtered) {
+      const s = m.stage ?? "?";
+      byStage[s] ??= [];
+      byStage[s].push(m);
+    }
+    return STAGE_ORDER.filter((s) => byStage[s]?.length).map((s) => ({
+      stage: s,
+      label: STAGE_LABEL[s] ?? s,
+      matches: byStage[s],
+    }));
+  }, [filtered]);
+
+  return (
+    <>
+      {/* Tab + Group filter bar */}
+      <div className="mb-8 flex flex-wrap gap-3 items-center">
+        <div className="flex gap-1.5">
+          {STAGE_TABS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => { setStageTab(t.key); setGroupFilter("all"); }}
+              className={`h-[44px] px-4 rounded-[14px] text-[11px] font-semibold tracking-[0.06em] uppercase transition-colors ${
+                stageTab === t.key
+                  ? "bg-[#C8A96B] text-[#111315]"
+                  : "bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6]"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {(stageTab === "all" || stageTab === "GROUP_STAGE") && (
+          <select
+            value={groupFilter}
+            onChange={(e) => setGroupFilter(e.target.value)}
+            className="h-[44px] px-4 rounded-[14px] bg-white/[0.04] border border-white/[0.08] text-[13px] text-[#6B7280] outline-none focus:border-[#C8A96B]/30 transition-colors cursor-pointer"
+          >
+            <option value="all">Todos os grupos</option>
+            {groups.map((g) => (
+              <option key={g} value={g}>{GROUP_LABEL[g] ?? g}</option>
+            ))}
+          </select>
+        )}
+
+        <span className="ml-auto text-[11px] text-[#6B7280]">
+          {filtered.length} partida{filtered.length !== 1 ? "s" : ""}
+        </span>
+      </div>
+
+      {/* Sections by stage */}
+      <div className="flex flex-col gap-12">
+        {sections.map(({ stage, label, matches: sMatches }) => (
+          <div key={stage}>
+            {/* Stage header */}
+            <div className="mb-4 flex items-center gap-4">
+              <h2 className="text-[11px] font-bold tracking-[0.28em] uppercase text-white/70">
+                {label}
+              </h2>
+              <div className="flex-1 h-px bg-white/[0.06]" />
+              <span className="text-[10px] text-[#6B7280]">{sMatches.length} jogos</span>
+            </div>
+
+            {/* Group sub-headers for group stage */}
+            {stage === "GROUP_STAGE"
+              ? <GroupStageSection matches={sMatches} />
+              : <MatchList matches={sMatches} showGroup={false} />
+            }
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function GroupStageSection({ matches }: { matches: Match[] }) {
+  const byGroup: Record<string, Match[]> = {};
+  for (const m of matches) {
+    const g = m.group ?? "?";
+    byGroup[g] ??= [];
+    byGroup[g].push(m);
+  }
+  const sortedGroups = Object.keys(byGroup).sort();
+
+  return (
+    <div className="flex flex-col gap-8">
+      {sortedGroups.map((g) => (
+        <div key={g}>
+          <p className="mb-3 text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/60">
+            {GROUP_LABEL[g] ?? g}
+          </p>
+          <MatchList matches={byGroup[g]} showGroup={false} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MatchList({ matches }: { matches: Match[]; showGroup: boolean }) {
+  // Group by day
+  const byDay: Record<string, Match[]> = {};
+  for (const m of matches) {
+    const day = formatDay(m.utcDate);
+    byDay[day] ??= [];
+    byDay[day].push(m);
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {Object.entries(byDay).map(([day, dayMatches]) => (
+        <div key={day}>
+          <p className="mb-2 text-[10px] font-semibold text-[#6B7280] tracking-[0.06em]">{day}</p>
+          <div className="flex flex-col gap-2">
+            {dayMatches.map((m) => <MatchCard key={m.id} match={m} />)}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MatchCard({ match: m }: { match: Match }) {
+  const isFinished = m.status === "FINISHED";
+  const isLive     = m.status === "IN_PLAY" || m.status === "PAUSED";
+  const hasScore   = m.homeScore != null && m.awayScore != null;
+
+  return (
+    <div className="group relative flex items-center gap-4 bg-white/[0.03] border border-white/[0.07] rounded-[16px] px-5 py-4 hover:border-[#C8A96B]/20 transition-colors">
+      {/* Live pulse */}
+      {isLive && (
+        <span className="absolute top-3 right-3 flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+        </span>
+      )}
+
+      {/* Time */}
+      <div className="w-12 flex-shrink-0 text-center">
+        <div className="text-[11px] font-semibold text-[#6B7280]">{formatTime(m.utcDate)}</div>
+        <div className="text-[9px] text-white/20 mt-0.5">BRT</div>
+      </div>
+
+      {/* Home team */}
+      <TeamBlock team={m.homeTeam} align="right" />
+
+      {/* Score / VS */}
+      <div className="flex-shrink-0 w-20 flex items-center justify-center gap-2">
+        {isFinished || isLive ? (
+          <div className="flex items-center gap-2">
+            <span className={`text-[22px] font-extrabold tabular-nums tracking-[-0.04em] ${isLive ? "text-red-400" : "text-[#F3F4F6]"}`}>
+              {m.homeScore}
+            </span>
+            <span className="text-[#6B7280] text-[14px]">·</span>
+            <span className={`text-[22px] font-extrabold tabular-nums tracking-[-0.04em] ${isLive ? "text-red-400" : "text-[#F3F4F6]"}`}>
+              {m.awayScore}
+            </span>
+          </div>
+        ) : (
+          <span className="text-[11px] font-bold text-[#6B7280] tracking-[0.12em]">VS</span>
+        )}
+      </div>
+
+      {/* Away team */}
+      <TeamBlock team={m.awayTeam} align="left" />
+
+      {/* Status badge */}
+      <div className="ml-auto flex-shrink-0">
+        <StatusBadge status={m.status} />
+      </div>
+    </div>
+  );
+}
+
+function TeamBlock({ team, align }: { team: MatchTeam; align: "left" | "right" }) {
+  const isRight = align === "right";
+  return (
+    <div className={`flex items-center gap-2.5 flex-1 ${isRight ? "flex-row-reverse" : ""}`}>
+      <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+        {team?.logo ? (
+          <Image src={team.logo} alt={team?.name ?? ""} width={32} height={32} className="object-contain" unoptimized />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-white/[0.06]" />
+        )}
+      </div>
+      <div className={`min-w-0 ${isRight ? "text-right" : ""}`}>
+        <div className="text-[13px] font-semibold text-[#F3F4F6] truncate">{team?.name ?? "—"}</div>
+        <div className="text-[9px] font-bold text-[#C8A96B] tracking-[0.06em]">{team?.tla ?? "—"}</div>
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; cls: string }> = {
+    TIMED:    { label: "Agendado", cls: "text-[#6B7280] bg-white/[0.05]" },
+    FINISHED: { label: "Encerrado", cls: "text-white/40 bg-white/[0.04]" },
+    IN_PLAY:  { label: "Ao Vivo",  cls: "text-red-400 bg-red-500/10" },
+    PAUSED:   { label: "Intervalo",cls: "text-yellow-400 bg-yellow-500/10" },
+    POSTPONED:{ label: "Adiado",   cls: "text-orange-400 bg-orange-500/10" },
+  };
+  const { label, cls } = map[status] ?? { label: status, cls: "text-[#6B7280] bg-white/[0.04]" };
+  return (
+    <span className={`text-[9px] font-bold tracking-[0.1em] uppercase px-2.5 py-1 rounded-full ${cls}`}>
+      {label}
+    </span>
+  );
+}

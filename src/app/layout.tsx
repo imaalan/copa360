@@ -35,7 +35,7 @@ export default function RootLayout({
                 {[
                   { label: "Seleções",     href: "/teams" },
                   { label: "Jogadores",    href: "/players" },
-                  { label: "Jogos",        href: "#" },
+                  { label: "Jogos",        href: "/matches" },
                   { label: "Estatísticas", href: "#" },
                 ].map(({ label, href }) => (
                   <li key={label}>
