@@ -100,6 +100,7 @@ type PlayerPopupProps = {
 export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose }: PlayerPopupProps) {
   const [data, setData] = useState<PopupData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [photoError, setPhotoError] = useState(false);
 
   const close = useCallback(() => {
     setData(null);
@@ -110,6 +111,7 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
     if (!playerId) return;
     setLoading(true);
     setData(null);
+    setPhotoError(false);
     fetch(`/api/players/${playerId}/popup`)
       .then((r) => r.json())
       .then((d) => { setData(d); setLoading(false); })
@@ -129,7 +131,7 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
   const d = data;
   const { abbr, label } = getPos(d?.position ?? null);
   const age = calcAge(d?.dateOfBirth ?? null);
-  const photo = d?.photo ?? playerPhoto;
+  const photo = photoError ? null : (d?.photo ?? playerPhoto);
 
   return (
     <div
@@ -180,6 +182,7 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
                   height={120}
                   className="object-cover w-full h-full"
                   unoptimized
+                  onError={() => setPhotoError(true)}
                 />
               ) : (
                 <span className="text-[40px] font-extrabold text-white/20 tracking-[-0.04em]">

@@ -111,12 +111,13 @@ async function findAFPlayerId(name: string, clubName: string): Promise<number | 
   return null;
 }
 
-async function fetchAFStats(playerId: number): Promise<AFStats | null> {
+async function fetchAFStats(playerId: number): Promise<{ stats: AFStats | null; photo: string | null }> {
   const data = await afFetch(`/players?id=${playerId}&season=2024`);
-  const player = (data?.response as Array<{ statistics: AFStats[] }>)?.[0];
-  const stats = player?.statistics?.[0];
-  if (!stats) return null;
-  return stats;
+  const entry = (data?.response as Array<{ player: { photo?: string }; statistics: AFStats[] }>)?.[0];
+  return {
+    stats: entry?.statistics?.[0] ?? null,
+    photo: entry?.player?.photo ?? null,
+  };
 }
 
 type Trophy = { league: string; country: string; season: string; place: string };
@@ -219,7 +220,7 @@ export async function GET(
     }
   }
 
-  // 3. API-Football: player ID, stats, trophies
+  // 3. API-Football: player ID, stats, trophies, CDN photo
   let apiFootballId = player.apiFootballId;
   let trophies = player.trophies as Trophy[] | null;
   let afStats: AFStats | null = null;
@@ -230,7 +231,11 @@ export async function GET(
   }
 
   if (apiFootballId) {
-    afStats = await fetchAFStats(apiFootballId);
+    const afResult = await fetchAFStats(apiFootballId);
+    afStats = afResult.stats;
+
+    // AF returns the CDN photo URL in the stats response — use as fallback if no photo yet
+    if (!photo && afResult.photo) { photo = afResult.photo; updates.photo = photo; }
 
     // Fetch trophies only if not cached
     if (!trophies) {
