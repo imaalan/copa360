@@ -135,22 +135,26 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4"
       onClick={close}
     >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
-      {/* Modal */}
+      {/* Modal — bottom sheet on mobile, centered on desktop */}
       <div
-        className="relative w-full max-w-[680px] rounded-[28px] bg-[#13161C] border border-white/[0.08] shadow-2xl overflow-hidden"
-        style={{ animation: "popupIn 220ms cubic-bezier(0.16,1,0.3,1) both" }}
+        className="popup-modal relative w-full md:max-w-[680px] rounded-t-[28px] md:rounded-[28px] bg-[#13161C] border border-white/[0.08] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close */}
+        {/* Drag handle (mobile only) */}
+        <div className="md:hidden flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-white/20" />
+        </div>
+
+        {/* Close (desktop only) */}
         <button
           onClick={close}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/[0.10] transition-colors"
+          className="hidden md:flex absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/[0.06] items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/[0.10] transition-colors"
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -389,9 +393,17 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
       </div>
 
       <style>{`
+        .popup-modal { animation: popupIn 260ms cubic-bezier(0.16,1,0.3,1) both; }
         @keyframes popupIn {
           from { opacity: 0; transform: scale(0.96) translateY(8px); }
           to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @media (max-width: 767px) {
+          .popup-modal { animation: slideUp 300ms cubic-bezier(0.16,1,0.3,1) both; }
+          @keyframes slideUp {
+            from { opacity: 0; transform: translateY(100%); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
         }
       `}</style>
     </div>

@@ -149,7 +149,7 @@ export default function PlayersGrid({ players, teams }: { players: Player[]; tea
       {/* Grid */}
       {paginated.length > 0 ? (
         <>
-          <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
+          <div className="grid grid-cols-2 md:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-2">
             {paginated.map((player) => (
               <PlayerCard key={player.id} player={player} onOpen={() => openPopup(player)} />
             ))}
