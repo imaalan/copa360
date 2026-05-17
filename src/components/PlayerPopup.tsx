@@ -4,6 +4,16 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+type AFStats = {
+  goals: { total: number | null; assists: number | null };
+  games: { appearences: number | null; lineups: number | null; minutes: number | null; rating: string | null };
+  cards: { yellow: number | null; red: number | null };
+  passes: { total: number | null; key: number | null; accuracy: number | null };
+  dribbles: { attempts: number | null; success: number | null };
+};
+
+type Trophy = { league: string; country: string; season: string; place: string };
+
 type PopupData = {
   id: number;
   name: string;
@@ -13,7 +23,9 @@ type PopupData = {
   shirtNumber: number | null;
   photo: string | null;
   team: { id: number; tla: string | null; name: string; logo: string | null } | null;
-  currentClub: { name: string; crest: string | null; competitions: string[] } | null;
+  currentClub: { name: string; logo: string | null } | null;
+  stats: AFStats | null;
+  trophies: Trophy[];
   matches: Array<{
     id: number;
     utcDate: string;
@@ -153,7 +165,7 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
           </div>
         )}
 
-        <div className="relative p-7">
+        <div className="relative p-7 max-h-[85vh] overflow-y-auto">
           {/* Header */}
           <div className="flex gap-6 mb-6">
             {/* Photo */}
@@ -210,9 +222,9 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
           {/* Current Club */}
           {!loading && d?.currentClub && (
             <div className="mb-4 rounded-[16px] bg-white/[0.03] border border-white/[0.06] px-4 py-3 flex items-center gap-3">
-              {d.currentClub.crest && (
+              {d.currentClub.logo && (
                 <Image
-                  src={d.currentClub.crest}
+                  src={d.currentClub.logo}
                   alt={d.currentClub.name}
                   width={36}
                   height={36}
@@ -225,11 +237,6 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
                   Clube Atual
                 </div>
                 <div className="text-[14px] font-semibold text-[#F3F4F6]">{d.currentClub.name}</div>
-                {d.currentClub.competitions.length > 0 && (
-                  <div className="text-[10px] text-[#6B7280] truncate">
-                    {d.currentClub.competitions.join(" · ")}
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -306,15 +313,64 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
             </div>
           )}
 
-          {/* Stats placeholder */}
-          <div className="rounded-[14px] border border-dashed border-white/[0.07] px-5 py-4 text-center">
-            <p className="text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/35 mb-1">
-              Estatísticas da Copa
-            </p>
-            <p className="text-[11px] text-[#6B7280]">
-              Disponível após 19 de junho de 2026
-            </p>
-          </div>
+          {/* Season Stats */}
+          {!loading && d?.stats && (
+            <div className="mb-4">
+              <p className="mb-2 text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/50">
+                Temporada 2024/25
+              </p>
+              <div className="grid grid-cols-4 gap-2">
+                <StatBox label="Gols" value={d.stats.goals.total} />
+                <StatBox label="Assist." value={d.stats.goals.assists} />
+                <StatBox label="Jogos" value={d.stats.games.appearences} />
+                <StatBox
+                  label="Rating"
+                  value={d.stats.games.rating ? parseFloat(d.stats.games.rating).toFixed(1) : null}
+                />
+              </div>
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                <StatBox label="Titulares" value={d.stats.games.lineups} />
+                <StatBox label="Passes" value={d.stats.passes.total} />
+                <StatBox label="Amarelos" value={d.stats.cards.yellow} />
+                <StatBox label="Vermelhos" value={d.stats.cards.red} />
+              </div>
+            </div>
+          )}
+
+          {/* Trophies */}
+          {!loading && d?.trophies && d.trophies.length > 0 && (
+            <div className="mb-4">
+              <p className="mb-2 text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/50">
+                Conquistas
+              </p>
+              <div className="flex flex-col gap-1.5 max-h-[140px] overflow-y-auto">
+                {d.trophies.map((t, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-3 rounded-[10px] bg-white/[0.02] border border-white/[0.05] px-3 py-2"
+                  >
+                    <span className="text-[14px] flex-shrink-0">🏆</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[12px] font-semibold text-[#F3F4F6] truncate">{t.league}</div>
+                      <div className="text-[10px] text-[#6B7280]">{t.country} · {t.season}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Stats placeholder — shown only when no stats loaded yet and not loading */}
+          {!loading && !d?.stats && (
+            <div className="rounded-[14px] border border-dashed border-white/[0.07] px-5 py-4 text-center mb-4">
+              <p className="text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/35 mb-1">
+                Estatísticas de Clube
+              </p>
+              <p className="text-[11px] text-[#6B7280]">
+                Dados indisponíveis para este jogador
+              </p>
+            </div>
+          )}
 
           {/* Link to full page */}
           <div className="mt-4 flex justify-end">
@@ -351,6 +407,17 @@ function InfoPill({ label, value, badge }: { label: string; value: string; badge
         )}
         <span className="text-[13px] font-semibold text-[#F3F4F6]">{value}</span>
       </div>
+    </div>
+  );
+}
+
+function StatBox({ label, value }: { label: string; value: number | string | null | undefined }) {
+  return (
+    <div className="rounded-[12px] bg-white/[0.03] border border-white/[0.06] px-3 py-2.5 text-center">
+      <div className="text-[17px] font-extrabold text-[#F3F4F6] leading-none mb-0.5">
+        {value != null ? value : "—"}
+      </div>
+      <div className="text-[8px] font-semibold tracking-[0.15em] uppercase text-[#6B7280]">{label}</div>
     </div>
   );
 }
