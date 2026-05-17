@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import PlayerPopup from "@/components/PlayerPopup";
@@ -195,6 +195,8 @@ function PlayerCard({ player, onOpen }: { player: Player; onOpen: () => void }) 
   const { abbr } = getMeta(player.position);
   const age      = calcAge(player.dateOfBirth);
   const slug     = player.team?.tla?.toLowerCase();
+  const [imgError, setImgError] = useState(false);
+  const handleImgError = useCallback(() => setImgError(true), []);
 
   return (
     <button
@@ -218,7 +220,7 @@ function PlayerCard({ player, onOpen }: { player: Player; onOpen: () => void }) 
 
       {/* Photo */}
       <div className="aspect-square rounded-[12px] bg-white/[0.05] overflow-hidden flex items-center justify-center mb-3">
-        {player.photo ? (
+        {player.photo && !imgError ? (
           <Image
             src={player.photo}
             alt={player.name}
@@ -226,6 +228,7 @@ function PlayerCard({ player, onOpen }: { player: Player; onOpen: () => void }) 
             height={200}
             className="object-cover w-full h-full"
             unoptimized
+            onError={handleImgError}
           />
         ) : (
           <span className="text-[24px] font-extrabold text-white/20 tracking-[-0.04em]">
