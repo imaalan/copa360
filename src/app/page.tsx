@@ -87,7 +87,7 @@ export default async function Home() {
   return (
     <>
       {/* ── HERO + COUNTDOWN ── */}
-      <section className="px-12 pt-24 pb-16">
+      <section className="px-4 md:px-12 pt-14 md:pt-24 pb-16">
         <p className="mb-5 text-[9px] font-semibold tracking-[0.42em] uppercase text-[#C8A96B]/55">
           Contagem regressiva · FIFA World Cup 2026
         </p>
@@ -113,10 +113,10 @@ export default async function Home() {
       </section>
 
       {/* ── DIVIDER ── */}
-      <div className="mx-12 mb-[52px] h-px bg-white/[0.06]" />
+      <div className="mx-4 md:mx-12 mb-[52px] h-px bg-white/[0.06]" />
 
       {/* ── FEATURED PLAYERS ── */}
-      <section className="px-12 pb-16">
+      <section className="px-4 md:px-12 pb-16">
         <div className="mb-6 flex items-baseline justify-between">
           <h2 className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/70">
             Jogadores em Destaque
@@ -129,7 +129,7 @@ export default async function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-4 gap-2.5 max-w-[860px]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 max-w-[860px]">
           {featuredPlayers.map((player) => {
             if (!player) return null;
             const tla = player.team?.tla ?? "";
@@ -187,10 +187,10 @@ export default async function Home() {
       </section>
 
       {/* ── DIVIDER ── */}
-      <div className="mx-12 mb-[52px] h-px bg-white/[0.06]" />
+      <div className="mx-4 md:mx-12 mb-[52px] h-px bg-white/[0.06]" />
 
       {/* ── TEAM MOSAIC ── */}
-      <section className="px-12 pb-20">
+      <section className="px-4 md:px-12 pb-20">
         <div className="mb-6 flex items-baseline justify-between">
           <h2 className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/70">
             Seleções
@@ -207,7 +207,7 @@ export default async function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="mx-12 border-t border-white/[0.06] py-7 flex items-center justify-between">
+      <footer className="mx-4 md:mx-12 border-t border-white/[0.06] py-7 flex items-center justify-between">
         <span className="text-[14px] font-extrabold tracking-[-0.02em] text-white/18">
           COPA<span className="text-[#C8A96B]/25">360</span>
         </span>

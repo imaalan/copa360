@@ -91,7 +91,7 @@ export default async function StatsPage() {
   const maxSquad = squadsBySize[0]._count.players;
 
   return (
-    <section className="px-12 pt-16 pb-24 max-w-[1440px]">
+    <section className="px-4 md:px-12 pt-10 md:pt-16 pb-24 max-w-[1440px]">
       {/* Header */}
       <div className="mb-10">
         <p className="mb-3 text-[9px] font-semibold tracking-[0.42em] uppercase text-[#C8A96B]/55">
@@ -107,7 +107,7 @@ export default async function StatsPage() {
       </div>
 
       {/* Hero numbers */}
-      <div className="grid grid-cols-4 gap-2.5 mb-14">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-14">
         {[
           { value: "48",   label: "Seleções",  sub: "de 5 confederações" },
           { value: "1213", label: "Jogadores", sub: "convocados" },
@@ -129,7 +129,7 @@ export default async function StatsPage() {
       </div>
 
       {/* Two-column layout */}
-      <div className="grid grid-cols-2 gap-8 mb-14">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
 
         {/* Position distribution */}
         <div className="bg-white/[0.03] border border-white/[0.07] rounded-[20px] p-7">

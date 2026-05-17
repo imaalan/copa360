@@ -26,6 +26,17 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function TeamMosaic({ teams }: { teams: Team[] }) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const slots = isMobile ? 4 : SLOTS;
+
   const poolRef = useRef<Team[]>(shuffle(teams));
   const usedRef = useRef<Set<number>>(new Set());
 
@@ -36,11 +47,11 @@ export default function TeamMosaic({ teams }: { teams: Team[] }) {
   const [fading, setFading] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    if (teams.length <= SLOTS) return;
+    if (teams.length <= slots) return;
 
     const timer = setInterval(() => {
       // Pick SWAP_COUNT indices to swap
-      const indices = shuffle([...Array(SLOTS).keys()]).slice(0, SWAP_COUNT);
+      const indices = shuffle([...Array(slots).keys()]).slice(0, SWAP_COUNT);
 
       // Find next unseen teams
       const remaining = poolRef.current.filter((t) => !usedRef.current.has(t.id));
@@ -73,8 +84,8 @@ export default function TeamMosaic({ teams }: { teams: Team[] }) {
   }, [teams, visible]);
 
   return (
-    <div className="grid grid-cols-3 gap-2.5 max-w-[860px]">
-      {visible.map((t, i) => (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 max-w-[860px]">
+      {visible.slice(0, slots).map((t, i) => (
         <Link
           key={`${t.id}-${i}`}
           href={`/teams/${(t.tla ?? "").toLowerCase()}`}

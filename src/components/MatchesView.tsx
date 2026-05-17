@@ -269,17 +269,20 @@ function MatchCard({ match: m }: { match: Match }) {
 function TeamBlock({ team, align }: { team: MatchTeam; align: "left" | "right" }) {
   const isRight = align === "right";
   return (
-    <div className={`flex items-center gap-2.5 flex-1 ${isRight ? "flex-row-reverse" : ""}`}>
-      <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+    <div className={`flex items-center gap-2 md:gap-2.5 flex-1 ${isRight ? "flex-row-reverse" : ""}`}>
+      <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 flex items-center justify-center">
         {team?.logo ? (
           <Image src={team.logo} alt={team?.name ?? ""} width={32} height={32} className="object-contain" unoptimized />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-white/[0.06]" />
+          <div className="w-7 h-7 rounded-full bg-white/[0.06]" />
         )}
       </div>
       <div className={`min-w-0 ${isRight ? "text-right" : ""}`}>
-        <div className="text-[13px] font-semibold text-[#F3F4F6] truncate">{team?.name ?? "—"}</div>
-        <div className="text-[9px] font-bold text-[#C8A96B] tracking-[0.06em]">{team?.tla ?? "—"}</div>
+        <div className="text-[15px] md:text-[13px] font-extrabold text-[#F3F4F6] tracking-[-0.02em]">
+          {team?.tla ?? "—"}
+        </div>
+        <div className="hidden md:block text-[10px] text-[#6B7280] truncate">{team?.name ?? "—"}</div>
+        <div className="md:hidden text-[9px] text-[#6B7280] truncate">{team?.name ?? "—"}</div>
       </div>
     </div>
   );
