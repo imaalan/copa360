@@ -4,14 +4,53 @@ import { prisma } from "@/lib/prisma";
 const FD_BASE = process.env.FOOTBALL_DATA_API_URL ?? "https://api.football-data.org/v4";
 const FD_KEY  = process.env.FOOTBALL_DATA_API_KEY ?? "";
 
-async function fetchPhotoFromSportsDB(name: string): Promise<string | null> {
+function normStr(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "") // strip accents
+    .toLowerCase()
+    .trim();
+}
+
+// "Brazilian" → "brazil", "Brazil" → "brazil", "French" → "french"
+function normNat(s: string): string {
+  return normStr(s).replace(/ian$|ese$|ish$|an$/, "");
+}
+
+function nationalityMatch(dbNat: string | null, sdbNat: string | null): boolean {
+  if (!dbNat || !sdbNat) return false;
+  const a = normNat(dbNat);
+  const b = normNat(sdbNat);
+  return a === b || a.startsWith(b.slice(0, 4)) || b.startsWith(a.slice(0, 4));
+}
+
+function nameMatch(dbName: string, sdbName: string | undefined): boolean {
+  if (!sdbName) return false;
+  const a = normStr(dbName);
+  const b = normStr(sdbName);
+  return a === b || b.includes(a) || a.includes(b);
+}
+
+async function fetchPhotoFromSportsDB(
+  name: string,
+  nationality: string | null
+): Promise<string | null> {
   try {
     const url = `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(name)}`;
     const res = await fetch(url, { next: { revalidate: 86400 } });
     if (!res.ok) return null;
     const data = await res.json();
-    const player = data.player?.[0];
-    const thumb = player?.strThumb ?? player?.strCutout ?? null;
+    const players: Array<Record<string, string>> = data.player ?? [];
+    if (players.length === 0) return null;
+
+    // Require both name AND nationality to match — prevents wrong-player photos
+    const match = players.find(
+      (p) => nameMatch(name, p.strPlayer) && nationalityMatch(nationality, p.strNationality)
+    );
+
+    if (!match) return null;
+
+    const thumb = match.strThumb ?? match.strCutout ?? null;
     return thumb && !thumb.includes("placeholder") ? thumb : null;
   } catch {
     return null;
@@ -88,10 +127,10 @@ export async function GET(
 
   if (!player) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Fetch photo from TheSportsDB if not cached
+  // Fetch photo from TheSportsDB if not cached — validate nationality to avoid wrong player
   let photo = player.photo;
   if (!photo) {
-    photo = await fetchPhotoFromSportsDB(player.name);
+    photo = await fetchPhotoFromSportsDB(player.name, player.nationality);
     if (photo) {
       await prisma.player.update({ where: { id: playerId }, data: { photo } });
     }
