@@ -12,7 +12,11 @@ export default async function PlayersPage() {
   const [players, teams] = await Promise.all([
     prisma.player.findMany({
       orderBy: { name: "asc" },
-      include: { team: { select: { id: true, name: true, tla: true, logo: true } } },
+      select: {
+        id: true, name: true, position: true, nationality: true,
+        dateOfBirth: true, photo: true,
+        team: { select: { id: true, name: true, tla: true, logo: true } },
+      },
     }),
     prisma.team.findMany({
       orderBy: { name: "asc" },
