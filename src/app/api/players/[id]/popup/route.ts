@@ -1,35 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { normStr, nameMatch, nationalityMatch } from "@/lib/utils";
 
 const FD_KEY = process.env.FOOTBALL_DATA_API_KEY ?? "";
 const AF_KEY = process.env.API_FOOTBALL_KEY ?? "";
 const AF_BASE = process.env.API_FOOTBALL_URL ?? "https://v3.football.api-sports.io";
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-function normStr(s: string): string {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
-}
-
-function normNat(s: string): string {
-  return normStr(s).replace(/ian$|ese$|ish$|an$/, "");
-}
-
-function nationalityMatch(a: string | null, b: string | null): boolean {
-  if (!a || !b) return false;
-  const na = normNat(a), nb = normNat(b);
-  return na === nb || na.startsWith(nb.slice(0, 4)) || nb.startsWith(na.slice(0, 4));
-}
-
-function nameMatch(a: string, b: string | undefined): boolean {
-  if (!b) return false;
-  const na = normStr(a), nb = normStr(b);
-  if (na === nb || nb.includes(na) || na.includes(nb)) return true;
-  // Handle abbreviated first name: "J. Bellingham" vs "Jude Bellingham"
-  const aLast = na.split(" ").slice(-1)[0];
-  const bLast = nb.split(" ").slice(-1)[0];
-  return aLast.length > 3 && aLast === bLast;
-}
 
 // ── TheSportsDB ───────────────────────────────────────────────────────────────
 
@@ -158,6 +133,9 @@ export async function GET(
 ) {
   const { id } = await params;
   const playerId = Number(id);
+  if (!Number.isFinite(playerId) || playerId <= 0) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
   const player = await prisma.player.findUnique({
     where: { id: playerId },
