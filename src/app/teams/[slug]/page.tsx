@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import SquadWithPopup from "@/components/SquadWithPopup";
 
 export const revalidate = 3600;
 
@@ -21,7 +22,10 @@ async function getTeam(slug: string) {
   return prisma.team.findFirst({
     where: { tla: slug.toUpperCase() },
     include: {
-      players: { orderBy: { name: "asc" } },
+      players: {
+        orderBy: { name: "asc" },
+        select: { id: true, name: true, position: true, dateOfBirth: true, photo: true },
+      },
       _count: { select: { players: true } },
     },
   });
@@ -78,7 +82,7 @@ export default async function TeamPage({ params }: Props) {
   );
 
   return (
-    <div className="px-12 pt-12 pb-24 max-w-[1440px] mx-auto">
+    <div className="px-4 md:px-12 pt-8 md:pt-12 pb-24 max-w-[1440px] mx-auto">
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center gap-2 text-[11px] text-[#6B7280]">
         <Link href="/" className="hover:text-[#C8A96B] transition-colors">Início</Link>
@@ -155,44 +159,9 @@ export default async function TeamPage({ params }: Props) {
           Elenco
         </h2>
 
-        <div className="flex flex-col gap-8">
-          {sortedGroups.map(([group, players]) => (
-            <div key={group}>
-              <p className="mb-3 text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/60">
-                {group}
-              </p>
-              <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
-                {players.map((player) => {
-                  const { abbr } = getPos(player.position);
-                  const age = calcAge(player.dateOfBirth);
-                  return (
-                    <div
-                      key={player.id}
-                      className="group flex items-center gap-3 bg-white/[0.03] border border-white/[0.07] rounded-[14px] px-4 py-3 hover:border-[#C8A96B]/25 transition-colors cursor-default"
-                    >
-                      {/* Position badge */}
-                      <div className="flex-shrink-0 w-9 h-9 rounded-[8px] bg-white/[0.06] flex items-center justify-center">
-                        <span className="text-[9px] font-extrabold tracking-[0.04em] text-[#C8A96B]">
-                          {abbr}
-                        </span>
-                      </div>
-
-                      {/* Name + age */}
-                      <div className="min-w-0">
-                        <div className="text-[13px] font-semibold text-[#F3F4F6] truncate leading-tight">
-                          {player.name}
-                        </div>
-                        {age !== null && (
-                          <div className="text-[10px] text-[#6B7280]">{age} anos</div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+        <SquadWithPopup
+          groups={sortedGroups.map(([group, players]) => ({ group, players }))}
+        />
       </div>
     </div>
   );

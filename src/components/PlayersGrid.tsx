@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import PlayerPopup from "@/components/PlayerPopup";
 
 type Player = {
   id: number;
@@ -10,6 +11,7 @@ type Player = {
   position: string | null;
   nationality: string | null;
   dateOfBirth: Date | null;
+  photo: string | null;
   team: { id: number; name: string; tla: string | null; logo: string | null } | null;
 };
 
@@ -55,6 +57,15 @@ export default function PlayersGrid({ players, teams }: { players: Player[]; tea
   const [posFilter, setPosFilter] = useState("Todos");
   const [teamFilter, setTeamFilter] = useState("all");
   const [page, setPage]         = useState(1);
+  const [popupId, setPopupId]   = useState<number | null>(null);
+  const [popupName, setPopupName] = useState("");
+  const [popupPhoto, setPopupPhoto] = useState<string | null>(null);
+
+  function openPopup(p: Player) {
+    setPopupId(p.id);
+    setPopupName(p.name);
+    setPopupPhoto(p.photo);
+  }
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -73,6 +84,15 @@ export default function PlayersGrid({ players, teams }: { players: Player[]; tea
 
   return (
     <>
+      {popupId !== null && (
+        <PlayerPopup
+          playerId={popupId}
+          playerName={popupName}
+          playerPhoto={popupPhoto}
+          onClose={() => setPopupId(null)}
+        />
+      )}
+
       {/* Filters */}
       <div className="mb-8 flex flex-wrap gap-3 items-center">
         {/* Search */}
@@ -129,9 +149,9 @@ export default function PlayersGrid({ players, teams }: { players: Player[]; tea
       {/* Grid */}
       {paginated.length > 0 ? (
         <>
-          <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
+          <div className="grid grid-cols-2 md:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-2">
             {paginated.map((player) => (
-              <PlayerCard key={player.id} player={player} />
+              <PlayerCard key={player.id} player={player} onOpen={() => openPopup(player)} />
             ))}
           </div>
 
@@ -167,13 +187,22 @@ export default function PlayersGrid({ players, teams }: { players: Player[]; tea
   );
 }
 
-function PlayerCard({ player }: { player: Player }) {
+function getInitials(name: string) {
+  return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
+}
+
+function PlayerCard({ player, onOpen }: { player: Player; onOpen: () => void }) {
   const { abbr } = getMeta(player.position);
   const age      = calcAge(player.dateOfBirth);
   const slug     = player.team?.tla?.toLowerCase();
+  const [imgError, setImgError] = useState(false);
+  const handleImgError = useCallback(() => setImgError(true), []);
 
   return (
-    <div className="group relative bg-white/[0.03] border border-white/[0.07] rounded-[20px] p-4 hover:border-[#C8A96B]/25 transition-all duration-200">
+    <button
+      onClick={onOpen}
+      className="group relative bg-white/[0.03] border border-white/[0.07] rounded-[20px] p-4 hover:border-[#C8A96B]/25 transition-all duration-200 text-left w-full"
+    >
       {/* Gold top accent */}
       <div className="absolute top-0 left-[20%] right-[20%] h-px bg-[#C8A96B] opacity-0 group-hover:opacity-60 transition-opacity rounded-full" />
 
@@ -189,9 +218,23 @@ function PlayerCard({ player }: { player: Player }) {
         )}
       </div>
 
-      {/* Photo placeholder */}
-      <div className="aspect-square rounded-[12px] bg-white/[0.05] flex items-center justify-center text-[9px] font-semibold tracking-widest uppercase text-white/20 mb-3">
-        Foto
+      {/* Photo */}
+      <div className="aspect-square rounded-[12px] bg-white/[0.05] overflow-hidden flex items-center justify-center mb-3">
+        {player.photo && !imgError ? (
+          <Image
+            src={player.photo}
+            alt={player.name}
+            width={200}
+            height={200}
+            className="object-cover w-full h-full"
+            unoptimized
+            onError={handleImgError}
+          />
+        ) : (
+          <span className="text-[24px] font-extrabold text-white/20 tracking-[-0.04em]">
+            {getInitials(player.name)}
+          </span>
+        )}
       </div>
 
       {/* Name */}
@@ -208,6 +251,6 @@ function PlayerCard({ player }: { player: Player }) {
           <span className="text-[10px] text-[#6B7280]">{age} anos</span>
         )}
       </div>
-    </div>
+    </button>
   );
 }

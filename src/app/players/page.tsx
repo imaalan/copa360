@@ -12,7 +12,11 @@ export default async function PlayersPage() {
   const [players, teams] = await Promise.all([
     prisma.player.findMany({
       orderBy: { name: "asc" },
-      include: { team: { select: { id: true, name: true, tla: true, logo: true } } },
+      select: {
+        id: true, name: true, position: true, nationality: true,
+        dateOfBirth: true, photo: true,
+        team: { select: { id: true, name: true, tla: true, logo: true } },
+      },
     }),
     prisma.team.findMany({
       orderBy: { name: "asc" },
@@ -21,7 +25,7 @@ export default async function PlayersPage() {
   ]);
 
   return (
-    <section className="px-12 pt-16 pb-24">
+    <section className="px-4 md:px-12 pt-10 md:pt-16 pb-24">
       <div className="mb-10">
         <p className="mb-3 text-[9px] font-semibold tracking-[0.42em] uppercase text-[#C8A96B]/55">
           FIFA World Cup 2026
