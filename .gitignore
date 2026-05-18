@@ -26,6 +26,14 @@ skills-lock.json
 .DS_Store
 tsconfig.tsbuildinfo
 *.log
+test-results/
+playwright-report/
+
+# temp research files
+FINAL_API_RESEARCH_REPORT.txt
+detailed_api_report.ts
+screenshot.mjs
+test_*.ts
 
 # local-only scripts (not tracked)
 scripts/_*.ts

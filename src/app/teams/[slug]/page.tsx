@@ -54,14 +54,6 @@ function getPos(position: string | null) {
   return POSITION_MAP[position] ?? { abbr: position.slice(0, 3).toUpperCase(), group: "Outros", order: 4 };
 }
 
-function calcAge(dob: Date | null): number | null {
-  if (!dob) return null;
-  const today = new Date();
-  let age = today.getFullYear() - dob.getFullYear();
-  const m = today.getMonth() - dob.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-  return age;
-}
 
 export default async function TeamPage({ params }: Props) {
   const { slug } = await params;

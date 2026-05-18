@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import PlayerPopup from "@/components/PlayerPopup";
+import { calcAge } from "@/lib/utils";
 
 type Player = {
   id: number;
@@ -34,14 +35,6 @@ function getPos(position: string | null) {
   return POSITION_MAP[position] ?? { abbr: position.slice(0, 3).toUpperCase(), label: position };
 }
 
-function calcAge(dob: Date | null): number | null {
-  if (!dob) return null;
-  const today = new Date();
-  let age = today.getFullYear() - new Date(dob).getFullYear();
-  const m = today.getMonth() - new Date(dob).getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < new Date(dob).getDate())) age--;
-  return age;
-}
 
 function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
