@@ -15,6 +15,7 @@
     "enrich:photos": "tsx scripts/enrich-photos.ts",
     "enrich:stats": "tsx scripts/enrich-stats.ts",
     "enrich:names": "tsx scripts/enrich-names.ts",
+    "enrich:all": "npm run enrich:names -- --all && npm run enrich:photos && npm run enrich:stats -- --force",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
