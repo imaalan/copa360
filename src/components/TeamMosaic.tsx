@@ -37,13 +37,19 @@ export default function TeamMosaic({ teams }: { teams: Team[] }) {
 
   const slots = isMobile ? 4 : SLOTS;
 
-  const poolRef = useRef<Team[]>(shuffle(teams));
-  const usedRef = useRef<Set<number>>(new Set());
+  // Stable initial state (no Math.random) avoids SSR/client hydration mismatch
+  const poolRef = useRef<Team[]>(teams.slice());
+  const usedRef = useRef<Set<number>>(new Set(teams.slice(0, SLOTS).map((t) => t.id)));
+  const [visible, setVisible] = useState<Team[]>(teams.slice(0, SLOTS));
 
-  const initialSlots = poolRef.current.slice(0, SLOTS);
-  initialSlots.forEach((t) => usedRef.current.add(t.id));
-
-  const [visible, setVisible] = useState<Team[]>(initialSlots);
+  // Shuffle only after hydration (client-only)
+  useEffect(() => {
+    const shuffled = shuffle(teams);
+    poolRef.current = shuffled;
+    const initial = shuffled.slice(0, SLOTS);
+    usedRef.current = new Set(initial.map((t) => t.id));
+    setVisible(initial);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [fading, setFading] = useState<Set<number>>(new Set());
 
   useEffect(() => {

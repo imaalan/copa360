@@ -45,6 +45,7 @@ export default function TeamsGrid({ teams }: { teams: Team[] }) {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onInput={(e) => setQuery((e.target as HTMLInputElement).value)}
           placeholder="Buscar seleção..."
           className="w-full h-[48px] pl-10 pr-4 rounded-[16px] bg-white/[0.04] border border-white/[0.08] text-[13px] text-[#F3F4F6] placeholder:text-[#6B7280] outline-none focus:border-[#C8A96B]/30 transition-colors"
         />
