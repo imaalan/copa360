@@ -80,6 +80,8 @@ async function main() {
           position: p.position ? String(p.position) : null,
           nationality: p.nationality ? String(p.nationality) : null,
           dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
+          photo: p.photo ? String(p.photo) : null,
+          shirtNumber: p.shirtNumber != null ? Number(p.shirtNumber) : null,
           teamId: team.id,
         },
         create: {
@@ -88,6 +90,8 @@ async function main() {
           position: p.position ? String(p.position) : null,
           nationality: p.nationality ? String(p.nationality) : null,
           dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
+          photo: p.photo ? String(p.photo) : null,
+          shirtNumber: p.shirtNumber != null ? Number(p.shirtNumber) : null,
           teamId: team.id,
         },
       });

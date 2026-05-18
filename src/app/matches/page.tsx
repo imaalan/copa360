@@ -18,7 +18,7 @@ export default async function MatchesPage() {
   });
 
   return (
-    <section className="px-12 pt-16 pb-24">
+    <section className="px-4 md:px-12 pt-10 md:pt-16 pb-24">
       <div className="mb-10">
         <p className="mb-3 text-[9px] font-semibold tracking-[0.42em] uppercase text-[#C8A96B]/55">
           FIFA World Cup 2026

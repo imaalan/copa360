@@ -1,26 +1,93 @@
+import Link from "next/link";
+import Image from "next/image";
 import CountdownTimer from "@/components/CountdownTimer";
+import TeamMosaic from "@/components/TeamMosaic";
+import { prisma } from "@/lib/prisma";
 
-const TEAMS = [
-  { tla: "BRA", name: "Brasil",      bg: "#005f2e" },
-  { tla: "ARG", name: "Argentina",   bg: "#2e78b5" },
-  { tla: "FRA", name: "França",      bg: "#002395" },
-  { tla: "POR", name: "Portugal",    bg: "#8b0000" },
-  { tla: "ENG", name: "Inglaterra",  bg: "#ba0c2f" },
-  { tla: "ESP", name: "Espanha",     bg: "#aa151b" },
+export const revalidate = 3600;
+
+const FEATURED_STARS: Record<string, string[]> = {
+  BRA: ["Vinicius Junior", "Rodrygo", "Endrick"],
+  FRA: ["Kylian Mbappé", "Antoine Griezmann", "Ousmane Dembélé"],
+  ARG: ["Lionel Messi", "Julián Álvarez", "Lautaro Martínez"],
+  ENG: ["Jude Bellingham", "Harry Kane", "Phil Foden"],
+};
+
+const ATTACK_POSITIONS = [
+  "Left Winger",
+  "Right Winger",
+  "Centre-Forward",
+  "Attacking Midfield",
+  "Secondary Striker",
+  "Offence",
 ];
 
-const PLAYERS = [
-  { name: "Vinicius Jr.", pos: "ATA · BRA", stats: { VEL: 95, FIN: 88, DRI: 92, PAS: 78 } },
-  { name: "Mbappé",       pos: "ATA · FRA", stats: { VEL: 97, FIN: 91, DRI: 89, PAS: 80 } },
-  { name: "Bellingham",   pos: "MEI · ENG", stats: { VEL: 82, FIN: 84, DRI: 86, PAS: 88 } },
-  { name: "Pedri",        pos: "MEI · ESP", stats: { VEL: 78, FIN: 76, DRI: 90, PAS: 93 } },
-];
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
-export default function Home() {
+async function getFeaturedPlayers() {
+  const tlas = ["BRA", "FRA", "ARG", "ENG"];
+  const players = await prisma.player.findMany({
+    where: { team: { tla: { in: tlas } } },
+    include: { team: { select: { id: true, tla: true, name: true, logo: true } } },
+    orderBy: { name: "asc" },
+  });
+
+  return tlas.map((tla) => {
+    const squad = players.filter((p) => p.team?.tla === tla);
+    const stars = FEATURED_STARS[tla] ?? [];
+
+    const star = stars
+      .map((name) => squad.find((p) => p.name === name))
+      .find(Boolean);
+
+    return (
+      star ??
+      squad.find((p) => ATTACK_POSITIONS.includes(p.position ?? "")) ??
+      squad[0]
+    );
+  }).filter(Boolean);
+}
+
+function posLabel(pos: string | null): string {
+  const map: Record<string, string> = {
+    "Left Winger": "ATA",
+    "Right Winger": "ATA",
+    "Centre-Forward": "ATA",
+    "Attacking Midfield": "MEI",
+    "Secondary Striker": "ATA",
+    Offence: "ATA",
+    Midfield: "MEI",
+    "Central Midfield": "MEI",
+    "Defensive Midfield": "VOL",
+    Defence: "DEF",
+    "Centre-Back": "ZAG",
+    "Left-Back": "LE",
+    "Right-Back": "LD",
+    Goalkeeper: "GR",
+  };
+  return map[pos ?? ""] ?? "JOG";
+}
+
+export default async function Home() {
+  const [featuredPlayers, allTeams] = await Promise.all([
+    getFeaturedPlayers(),
+    prisma.team.findMany({
+      select: { id: true, tla: true, name: true, logo: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
+
   return (
     <>
       {/* ── HERO + COUNTDOWN ── */}
-      <section className="px-12 pt-24 pb-16">
+      <section className="px-4 md:px-12 pt-14 md:pt-24 pb-16">
         <p className="mb-5 text-[9px] font-semibold tracking-[0.42em] uppercase text-[#C8A96B]/55">
           Contagem regressiva · FIFA World Cup 2026
         </p>
@@ -46,116 +113,101 @@ export default function Home() {
       </section>
 
       {/* ── DIVIDER ── */}
-      <div className="mx-12 mb-[52px] h-px bg-white/[0.06]" />
+      <div className="mx-4 md:mx-12 mb-[52px] h-px bg-white/[0.06]" />
 
       {/* ── FEATURED PLAYERS ── */}
-      <section className="px-12 pb-16">
+      <section className="px-4 md:px-12 pb-16">
         <div className="mb-6 flex items-baseline justify-between">
           <h2 className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/70">
             Jogadores em Destaque
           </h2>
-          <a href="#" className="text-[11px] font-semibold text-[#C8A96B]/70 hover:text-[#C8A96B] transition-colors no-underline">
+          <Link
+            href="/players"
+            className="text-[11px] font-semibold text-[#C8A96B]/70 hover:text-[#C8A96B] transition-colors no-underline"
+          >
             Ver todos →
-          </a>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-4 gap-2.5 max-w-[860px]">
-          {PLAYERS.map((p, i) => (
-            <div
-              key={i}
-              className="bg-white/[0.03] border border-white/[0.07] rounded-[28px] p-5 cursor-pointer hover:border-[#C8A96B]/30 transition-colors"
-            >
-              <div className="aspect-square rounded-[14px] bg-white/[0.05] flex items-center justify-center text-[9px] font-semibold tracking-widest uppercase text-white/20 mb-3.5">
-                Foto
-              </div>
-              <div className="text-[14px] font-bold tracking-[-0.01em] text-[#F3F4F6]">
-                {p.name}
-              </div>
-              <div className="text-[10px] text-[#6B7280] mb-3.5">{p.pos}</div>
-              <div className="flex flex-col gap-1.5">
-                {Object.entries(p.stats).map(([k, v]) => (
-                  <div key={k} className="grid items-center gap-2" style={{ gridTemplateColumns: "28px 1fr 24px" }}>
-                    <span className="text-[8px] font-bold uppercase text-[#6B7280]">{k}</span>
-                    <div className="h-[3px] bg-white/[0.07] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#C8A96B] rounded-full"
-                        style={{ width: `${v}%`, opacity: 0.85 }}
-                      />
-                    </div>
-                    <span className="text-[9px] font-bold text-right text-[#C8A96B] tabular-nums">
-                      {v}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 max-w-[860px]">
+          {featuredPlayers.map((player) => {
+            if (!player) return null;
+            const tla = player.team?.tla ?? "";
+            const posAbbr = posLabel(player.position);
+            return (
+              <Link
+                key={player.id}
+                href={`/players/${player.id}`}
+                className="group bg-white/[0.03] border border-white/[0.07] rounded-[28px] p-5 hover:border-[#C8A96B]/30 transition-colors no-underline"
+              >
+                {/* Photo or initials */}
+                <div className="aspect-square rounded-[14px] bg-white/[0.05] overflow-hidden mb-3.5 relative flex items-center justify-center">
+                  {player.photo ? (
+                    <Image
+                      src={player.photo}
+                      alt={player.name}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <span className="text-[28px] font-extrabold text-white/20 tracking-[-0.04em]">
+                      {getInitials(player.name)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-[14px] font-bold tracking-[-0.01em] text-[#F3F4F6] leading-tight mb-0.5">
+                  {player.name}
+                </div>
+                <div className="text-[10px] text-[#6B7280] mb-3.5">
+                  {posAbbr} · {tla}
+                </div>
+
+                {/* Team logo */}
+                {player.team?.logo && (
+                  <div className="flex items-center gap-1.5">
+                    <Image
+                      src={player.team.logo}
+                      alt={player.team.name ?? ""}
+                      width={16}
+                      height={16}
+                      className="object-contain opacity-60"
+                      unoptimized
+                    />
+                    <span className="text-[9px] text-white/30 font-semibold tracking-wide uppercase">
+                      {player.team.name}
                     </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
+                )}
+              </Link>
+            );
+          })}
         </div>
       </section>
 
       {/* ── DIVIDER ── */}
-      <div className="mx-12 mb-[52px] h-px bg-white/[0.06]" />
+      <div className="mx-4 md:mx-12 mb-[52px] h-px bg-white/[0.06]" />
 
       {/* ── TEAM MOSAIC ── */}
-      <section className="px-12 pb-20">
+      <section className="px-4 md:px-12 pb-20">
         <div className="mb-6 flex items-baseline justify-between">
           <h2 className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/70">
             Seleções
           </h2>
-          <a href="#" className="text-[11px] font-semibold text-[#C8A96B]/70 hover:text-[#C8A96B] transition-colors no-underline">
+          <Link
+            href="/teams"
+            className="text-[11px] font-semibold text-[#C8A96B]/70 hover:text-[#C8A96B] transition-colors no-underline"
+          >
             48 equipes →
-          </a>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-3 gap-2.5 max-w-[860px]">
-          {TEAMS.map((t, i) => (
-            <div
-              key={i}
-              className="group relative overflow-hidden rounded-[16px] cursor-pointer hover:scale-[1.025] transition-transform"
-              style={{ aspectRatio: "4/3" }}
-            >
-              {/* BG */}
-              <div className="absolute inset-0" style={{ background: t.bg }} />
-
-              {/* Circular photo placeholder */}
-              <div
-                className="absolute rounded-full overflow-hidden bg-white/[0.08]"
-                style={{ width: "72%", aspectRatio: "1", top: "-16%", left: "50%", transform: "translateX(-50%)" }}
-              />
-
-              {/* Gradient */}
-              <div
-                className="absolute inset-0"
-                style={{ background: `linear-gradient(180deg, transparent 35%, ${t.bg} 68%)` }}
-              />
-
-              {/* Gold hover accent */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C8A96B] opacity-0 group-hover:opacity-60 transition-opacity" />
-
-              {/* Country name */}
-              <span className="absolute bottom-3.5 left-3.5 text-[9px] font-semibold tracking-[0.14em] uppercase text-white/48">
-                {t.name}
-              </span>
-
-              {/* TLA */}
-              <span
-                className="absolute font-extrabold text-white tracking-[-0.05em] leading-none"
-                style={{
-                  bottom: -4,
-                  right: 10,
-                  fontSize: "clamp(46px, 8vw, 74px)",
-                  textShadow: "0 2px 24px rgba(0,0,0,0.45)",
-                }}
-              >
-                {t.tla}
-              </span>
-            </div>
-          ))}
-        </div>
+        <TeamMosaic teams={allTeams} />
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="mx-12 border-t border-white/[0.06] py-7 flex items-center justify-between">
+      <footer className="mx-4 md:mx-12 border-t border-white/[0.06] py-7 flex items-center justify-between">
         <span className="text-[14px] font-extrabold tracking-[-0.02em] text-white/18">
           COPA<span className="text-[#C8A96B]/25">360</span>
         </span>
