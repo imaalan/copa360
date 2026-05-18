@@ -6,68 +6,30 @@ Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2
 
 ---
 
-## Objetivo
-
-Transformar a experiência de explorar a Copa do Mundo em algo **moderno, inteligente e cinematográfico**.
-
-A Copa de 2026 é histórica: 48 seleções, 3 países-sede (EUA, Canadá e México), o maior torneio da história. Copa360 existe para cobrir essa Copa com a visão de 360° que ela merece — não como um placar genérico, mas como uma plataforma de descoberta.
-
----
-
-## O que estamos construindo
-
-### Páginas
+## Páginas
 
 | Página | Status | Descrição |
 |---|---|---|
-| `/` — Home | 🔧 Em evolução | Hero com countdown, featured players e mosaico dinâmico de seleções |
-| `/teams` | ✅ Concluído | Lista das 48 seleções com dados reais, busca e cards com logo |
-| `/teams/[slug]` | ✅ Concluído | Perfil da seleção: elenco completo agrupado por posição |
+| `/` — Home | ✅ Concluído | Splash screen, countdown ao vivo, featured players, mosaico dinâmico de seleções |
+| `/teams` | ✅ Concluído | 48 seleções com busca por nome/TLA e cards com logo |
+| `/teams/[slug]` | ✅ Concluído | Perfil da seleção: elenco agrupado por posição + popup de jogador |
 | `/players` | ✅ Concluído | Explorador com busca, filtro por posição/time e paginação |
-| `/players/[id]` | 🔜 Próximo | Perfil do jogador: foto, stats, time, próximos jogos |
-| `/matches` | ✅ Concluído | 104 jogos com filtros por fase/grupo e status ao vivo |
-| `/stats` | ✅ Concluído | Análises de elenco: idade, posição, distribuição por seleção |
-
-### Funcionalidades-chave
-
-- **Splash screen** imersiva com animação orbital — aparece uma vez por sessão
-- **Countdown ao vivo** para 19 de junho de 2026 (abertura do torneio)
-- **Featured players** dinâmicos — camisa 10 de BRA, FRA, ARG, ENG com link para perfil
-- **Mosaico de seleções** com rotação automática — 6 aleatórias do pool de 48, troca a cada 8s com fade
-- **Banco de dados** com 48 seleções, elencos completos, 104 jogos via football-data.org API
-- **Design responsivo** com animações suaves e estética cinematográfica
+| `/players/[id]` | ✅ Concluído | Perfil do jogador: foto real, troféus, clube atual, stats |
+| `/matches` | ✅ Concluído | 104 jogos com filtros por fase/grupo e badge de status |
+| `/stats` | ✅ Concluído | Análises: distribuição por posição, idade média, tamanho dos elencos |
 
 ---
 
-## Decisões de produto (maio 2026)
+## Funcionalidades
 
-### Home — Featured Players
-- 4 cards: BRA, FRA, ARG, ENG
-- Critério: jogador de camisa **10** do squad; fallback para primeiro atacante
-- Clique navega para `/players/[id]`
-- Dados reais do DB (foto, posição, time)
-
-### Home — Mosaico de Seleções
-- Pool: todas as 48 seleções do banco com logos oficiais
-- **Shuffle no page load** (server-side) → 6 seleções aleatórias
-- **Rotação client-side**: a cada 8s, 2 cards trocam com fade de 300ms
-- Clique navega para `/teams/[tla]`
-- Link "48 equipes" aponta para `/teams`
-
-### `/players/[id]` — Perfil do Jogador
-- Foto oficial + nome + número da camisa
-- Posição · Nacionalidade · Idade
-- Card da seleção com logo
-- Próximos jogos do time (dados do banco)
-- Slot "Stats da Copa" — placeholder elegante até o torneio começar
-
-### Schema — Novos campos em `Player`
-- `shirtNumber Int?` — número da camisa (via football-data.org API)
-- `photo String?` — já existia no schema; seed atualizado para popular
-
-### Atualização de dados
-- Desenvolvimento: **re-seed manual** (`npm run seed`) a cada anúncio de convocação
-- Produção: **Vercel Cron** rodando o seed diariamente até o início do torneio
+- **Splash screen** imersiva com animação orbital — aparece uma vez por sessão
+- **Countdown ao vivo** para 19 de junho de 2026 (abertura do torneio)
+- **Featured players** — camisa 10 de BRA, FRA, ARG e ENG com link para perfil
+- **Mosaico de seleções** com rotação automática — 6 aleatórias do pool de 48, troca a cada 8s com fade
+- **PlayerPopup** com foto real, troféus, clube atual e stats, via TheSportsDB + football-data.org
+- **Mobile responsivo**: hamburger menu com overlay full-screen, bottom sheet animado (slide-up)
+- **Banco completo**: 48 seleções, 1213+ jogadores, 104 jogos, fotos enriquecidas via TheSportsDB
+- **48 testes E2E** (Playwright) cobrindo todas as páginas e fluxos principais
 
 ---
 
@@ -81,8 +43,134 @@ A Copa de 2026 é histórica: 48 seleções, 3 países-sede (EUA, Canadá e Méx
 | Font | Sora (Google Fonts) |
 | ORM | Prisma |
 | Banco | PostgreSQL (Neon) |
-| API de dados | football-data.org v4 |
-| Deploy | Vercel (pendente aprovação final) |
+| APIs de dados | football-data.org v4 · TheSportsDB (free) |
+| Testes E2E | Playwright |
+| Deploy | Vercel (pendente) |
+
+---
+
+## Segurança
+
+Copa360 segue política **Zero Trust** para credenciais:
+
+- `DATABASE_URL` e `FOOTBALL_DATA_API_KEY` armazenadas **exclusivamente** em `.env.local`
+- `.env.local` e variantes cobertas pelo `.gitignore` — **nunca commitadas**
+- Nenhuma chave hardcoded em código-fonte ou configurações
+- Variáveis passadas ao servidor de testes via `process.env` (sem valores padrão reais)
+
+---
+
+## Estrutura do projeto
+
+```
+copa360/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx              # Layout global: NavHeader, Splash, font Sora
+│   │   ├── page.tsx                # Home: hero, countdown, featured players, mosaico
+│   │   ├── api/players/[id]/popup/ # Route Handler: dados enriquecidos do jogador
+│   │   ├── teams/
+│   │   │   ├── page.tsx            # Lista das 48 seleções
+│   │   │   └── [slug]/page.tsx     # Perfil da seleção + elenco
+│   │   ├── players/
+│   │   │   ├── page.tsx            # Explorador de jogadores
+│   │   │   └── [id]/page.tsx       # Perfil do jogador
+│   │   ├── matches/page.tsx        # 104 jogos com filtros
+│   │   └── stats/page.tsx          # Análises e rankings
+│   ├── components/
+│   │   ├── NavHeader.tsx           # Navbar responsiva + hamburger mobile
+│   │   ├── Splash.tsx              # Overlay de entrada (sessionStorage-gated)
+│   │   ├── CountdownTimer.tsx      # Countdown ao vivo
+│   │   ├── TeamMosaic.tsx          # Mosaico com rotação automática
+│   │   ├── TeamsGrid.tsx           # Grid de seleções com busca
+│   │   ├── PlayersGrid.tsx         # Grid de jogadores com filtros e paginação
+│   │   ├── MatchesView.tsx         # Lista de jogos com filtros por fase/grupo
+│   │   ├── PlayerPopup.tsx         # Modal/bottom-sheet com dados enriquecidos
+│   │   └── SquadWithPopup.tsx      # Elenco da seleção + integração popup
+│   └── lib/
+│       ├── prisma.ts               # Client Prisma singleton
+│       └── football-api.ts         # Client football-data.org API
+├── prisma/
+│   ├── schema.prisma               # Schema: Team, Player, Match, Competition
+│   └── seed.ts                     # Seed: 48 seleções + elencos + 104 jogos
+├── scripts/
+│   ├── enrich-photos.ts            # Enriquecimento em lote via TheSportsDB
+│   └── check-enrichment.ts         # Relatório de cobertura de fotos/clubes
+├── e2e/                            # Testes Playwright (48 testes, todas as páginas)
+├── playwright.config.ts
+└── design.md                       # Sistema de design canônico
+```
+
+---
+
+## Rodando localmente
+
+### Pré-requisitos
+
+- Node.js 20+
+- PostgreSQL (ou conta no [Neon](https://neon.tech))
+- Chave da API [football-data.org](https://www.football-data.org) (free tier)
+
+### Setup
+
+```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Configurar variáveis de ambiente
+cp .env.example .env.local
+# Preencher DATABASE_URL e FOOTBALL_DATA_API_KEY no .env.local
+
+# 3. Criar tabelas no banco
+npm run db:push
+
+# 4. Popular com dados reais (48 seleções, elencos, 104 jogos)
+npm run db:seed
+
+# 5. (Opcional) Enriquecer fotos dos jogadores via TheSportsDB
+npm run enrich:photos
+
+# 6. Rodar o servidor
+npm run dev
+```
+
+Acesse em [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Scripts disponíveis
+
+| Script | Descrição |
+|---|---|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Build de produção |
+| `npm run db:seed` | Popula banco com 48 seleções, elencos e 104 jogos |
+| `npm run db:studio` | Prisma Studio — UI de banco de dados |
+| `npm run enrich:photos` | Busca fotos em lote via TheSportsDB (~85 req/min) |
+| `npm run test:e2e` | Roda os 48 testes Playwright |
+| `npm run test:e2e:ui` | Playwright com UI interativa |
+| `npm run typecheck` | Verificação de tipos TypeScript |
+
+### Enriquecimento de fotos
+
+```bash
+npx tsx scripts/enrich-photos.ts              # todos sem foto
+npx tsx scripts/enrich-photos.ts --limit=50   # primeiros 50
+npx tsx scripts/enrich-photos.ts --dry-run    # preview, sem escrita
+npx tsx scripts/enrich-photos.ts --from=500   # a partir do ID 500
+```
+
+---
+
+## Testes E2E
+
+```bash
+npm run test:e2e          # 48 testes, todos em Chromium
+npm run test:e2e:ui       # com UI visual do Playwright
+npm run test:e2e:report   # relatório HTML do último run
+```
+
+Cobertura: home (splash, countdown, featured players, mosaico), navegação, `/teams`, `/teams/[slug]`, `/players`, `/matches`, `/stats`.
 
 ---
 
@@ -102,87 +190,9 @@ Copa360 segue um sistema de design próprio documentado em [`design.md`](./desig
 
 ### Direção visual
 
-A estética é uma fusão entre:
-
-- **PES 2013** — energia dos cards de jogador, barras de atributo, TLA em destaque
-- **Editorial premium** — Apple Sports, The Athletic, F1, Netflix Sports Docs
-- **Broadcast esportivo** — cores nacionais, tipografia bold, composição cinematográfica
+Fusão entre **PES 2013** (energia dos cards de jogador, TLA em destaque), **editorial premium** (Apple Sports, The Athletic, F1) e **broadcast esportivo** (cores nacionais, tipografia bold, composição cinematográfica).
 
 O que **não** fazemos: estética gamer, neon, scanlines, #FFD700, escudos, bolas de futebol tradicionais.
-
----
-
-## Estrutura do projeto
-
-```
-copa360/
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx              # Layout global: nav, Splash, font Sora
-│   │   ├── page.tsx                # Home: hero, featured players, mosaico dinâmico
-│   │   ├── teams/
-│   │   │   ├── page.tsx            # Lista das 48 seleções
-│   │   │   └── [slug]/page.tsx     # Perfil da seleção + elenco
-│   │   ├── players/
-│   │   │   ├── page.tsx            # Explorador de jogadores
-│   │   │   └── [id]/page.tsx       # Perfil do jogador (em construção)
-│   │   ├── matches/page.tsx        # 104 jogos com filtros
-│   │   ├── stats/page.tsx          # Análises e rankings
-│   │   └── globals.css             # CSS tokens e reset
-│   ├── components/
-│   │   ├── Splash.tsx              # Overlay de entrada (sessionStorage-gated)
-│   │   ├── CountdownTimer.tsx      # Countdown ao vivo para a abertura
-│   │   ├── TeamsGrid.tsx           # Grid de seleções com busca
-│   │   └── PlayersGrid.tsx         # Grid de jogadores com filtros
-│   └── lib/
-│       ├── prisma.ts               # Client Prisma singleton
-│       └── football-api.ts         # Client football-data.org API
-├── prisma/
-│   ├── schema.prisma               # Schema: Team, Player, Match, Competition
-│   └── seed.ts                     # Seed: 48 seleções + elencos + 104 jogos
-├── design.md                       # Sistema de design canônico
-└── copa360-prototype.html          # Protótipo HTML aprovado (referência visual)
-```
-
----
-
-## Rodando localmente
-
-### Pré-requisitos
-
-- Node.js 20+
-- PostgreSQL (ou conta no [Neon](https://neon.tech))
-- Chave da API [football-data.org](https://www.football-data.org)
-
-### Setup
-
-```bash
-# 1. Instalar dependências
-npm install
-
-# 2. Configurar variáveis de ambiente
-cp .env.example .env.local
-# Preencher DATABASE_URL e FOOTBALL_DATA_API_KEY no .env.local
-
-# 3. Criar tabelas no banco
-npm run db:push
-
-# 4. Seed com dados reais (em desenvolvimento)
-# npm run db:seed
-
-# 5. Rodar o servidor
-npm run dev
-```
-
-Acesse em [http://localhost:3000](http://localhost:3000).
-
----
-
-## Dados
-
-Copa360 usa a [football-data.org API v4](https://www.football-data.org) para dados de seleções, jogadores e partidas. Os dados são persistidos em PostgreSQL via Prisma para evitar rate limiting e garantir performance.
-
-O seed script (em desenvolvimento) vai popular as 48 seleções da Copa 2026 e seus elencos completos.
 
 ---
 
@@ -190,17 +200,19 @@ O seed script (em desenvolvimento) vai popular as 48 seleções da Copa 2026 e s
 
 - [x] Design system e tokens
 - [x] Splash screen com animação orbital
-- [x] Countdown dinâmico
+- [x] Countdown dinâmico ao vivo
 - [x] Seed script: 48 seleções + elencos + 104 jogos
-- [x] Página `/teams` com dados reais
+- [x] Página `/teams` com dados reais e busca
 - [x] Página `/teams/[slug]` — perfil + elenco completo
-- [x] Página `/players` — explorador com filtros
-- [x] Página `/matches` — calendário com filtros
-- [x] Página `/stats` — análises de elenco
-- [ ] Home: featured players com dados reais (camisa 10 de BRA/FRA/ARG/ENG)
-- [ ] Home: mosaico dinâmico com rotação automática
-- [ ] Schema: adicionar `shirtNumber` e popular `photo` no seed
-- [ ] Página `/players/[id]` — perfil completo do jogador
+- [x] Página `/players` — explorador com filtros e paginação
+- [x] Página `/matches` — calendário com filtros por fase/grupo
+- [x] Página `/stats` — análises de elenco por posição e idade
+- [x] Home interativa: featured players, mosaico dinâmico, countdown
+- [x] Página `/players/[id]` — perfil com foto real, troféus e clube
+- [x] PlayerPopup: modal enriquecido via multi-API
+- [x] Mobile responsivo: hamburger nav, bottom sheet, layouts adaptados
+- [x] Script de enriquecimento de fotos em lote (TheSportsDB)
+- [x] 48 testes E2E com Playwright
 - [ ] Vercel Cron para atualização diária do banco
 - [ ] Deploy em produção (Vercel)
 
