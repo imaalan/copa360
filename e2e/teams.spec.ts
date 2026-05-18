@@ -66,8 +66,8 @@ test.describe("/teams/[slug]", () => {
     }
   });
 
-  test("each goalkeeper card shows GR badge", async ({ page }) => {
-    await expect(page.locator("text=GR").first()).toBeVisible();
+  test("each goalkeeper card shows Goleiro label", async ({ page }) => {
+    await expect(page.locator("text=Goleiro").first()).toBeVisible();
   });
 
   test("breadcrumb Seleções link returns to /teams", async ({ page }) => {
