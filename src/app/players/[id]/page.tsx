@@ -42,26 +42,6 @@ function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
 }
 
-function formatStage(stage: string | null): string {
-  const map: Record<string, string> = {
-    GROUP_STAGE: "Fase de Grupos",
-    LAST_16: "Oitavas de Final",
-    QUARTER_FINALS: "Quartas de Final",
-    SEMI_FINALS: "Semifinal",
-    THIRD_PLACE: "3º Lugar",
-    FINAL: "Final",
-  };
-  return stage ? (map[stage] ?? stage) : "";
-}
-
-function formatDate(d: Date): string {
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(d);
-}
-
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const player = await prisma.player.findUnique({
@@ -88,34 +68,6 @@ export default async function PlayerPage({ params }: Props) {
           name: true,
           logo: true,
           country: true,
-          homeMatches: {
-            orderBy: { utcDate: "asc" },
-            take: 6,
-            select: {
-              id: true,
-              utcDate: true,
-              stage: true,
-              group: true,
-              status: true,
-              homeScore: true,
-              awayScore: true,
-              awayTeam: { select: { tla: true, name: true, logo: true } },
-            },
-          },
-          awayMatches: {
-            orderBy: { utcDate: "asc" },
-            take: 6,
-            select: {
-              id: true,
-              utcDate: true,
-              stage: true,
-              group: true,
-              status: true,
-              homeScore: true,
-              awayScore: true,
-              homeTeam: { select: { tla: true, name: true, logo: true } },
-            },
-          },
         },
       },
     },
@@ -126,34 +78,6 @@ export default async function PlayerPage({ params }: Props) {
   const { abbr, label } = getPos(player.position);
   const age = calcAge(player.dateOfBirth);
   const team = player.team;
-
-  // Merge and sort upcoming matches
-  type MatchEntry = {
-    id: number;
-    utcDate: Date;
-    stage: string | null;
-    group: string | null;
-    status: string;
-    homeScore: number | null;
-    awayScore: number | null;
-    opponent: { tla: string | null; name: string; logo: string | null };
-    isHome: boolean;
-  };
-
-  const matches: MatchEntry[] = [
-    ...(team?.homeMatches ?? []).map((m) => ({
-      ...m,
-      opponent: m.awayTeam ?? { tla: "?", name: "TBD", logo: null },
-      isHome: true,
-    })),
-    ...(team?.awayMatches ?? []).map((m) => ({
-      ...m,
-      opponent: m.homeTeam ?? { tla: "?", name: "TBD", logo: null },
-      isHome: false,
-    })),
-  ]
-    .sort((a, b) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime())
-    .slice(0, 6);
 
   return (
     <div className="px-4 md:px-12 pt-8 md:pt-12 pb-24 max-w-[1440px] mx-auto">
@@ -267,76 +191,6 @@ export default async function PlayerPage({ params }: Props) {
           </div>
         </Link>
       )}
-
-      {/* ── MATCHES ── */}
-      <div className="mb-6">
-        <h2 className="mb-4 text-[11px] font-bold tracking-[0.3em] uppercase text-white/70">
-          Jogos da {team?.name ?? "Seleção"}
-        </h2>
-
-        {matches.length > 0 ? (
-          <div className="flex flex-col gap-2">
-            {matches.map((m) => {
-              const isLive = m.status === "IN_PLAY" || m.status === "PAUSED";
-              const isDone = m.status === "FINISHED";
-              return (
-                <div
-                  key={m.id}
-                  className="flex items-center gap-4 rounded-[14px] bg-white/[0.03] border border-white/[0.07] px-5 py-3.5"
-                >
-                  {/* Date / Status */}
-                  <div className="w-[90px] flex-shrink-0">
-                    {isLive ? (
-                      <span className="text-[9px] font-bold tracking-[0.14em] uppercase text-red-400">
-                        Ao vivo
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-[#6B7280]">
-                        {formatDate(m.utcDate)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Stage */}
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[9px] font-semibold tracking-[0.12em] uppercase text-[#C8A96B]/50 mb-0.5">
-                      {formatStage(m.stage)}{m.group ? ` · ${m.group}` : ""}
-                    </div>
-                    <div className="flex items-center gap-2 text-[13px] font-semibold text-[#F3F4F6]">
-                      <span>{m.isHome ? team?.tla : m.opponent.tla}</span>
-                      <span className="text-white/20">vs</span>
-                      <span>{m.isHome ? m.opponent.tla : team?.tla}</span>
-                      {isDone && (
-                        <span className="ml-2 text-[12px] font-bold text-[#C8A96B]">
-                          {m.isHome
-                            ? `${m.homeScore ?? 0}–${m.awayScore ?? 0}`
-                            : `${m.awayScore ?? 0}–${m.homeScore ?? 0}`}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Opponent logo */}
-                  {m.opponent.logo && (
-                    <Image
-                      src={m.opponent.logo}
-                      alt={m.opponent.name}
-                      width={28}
-                      height={28}
-                      className="object-contain opacity-60 flex-shrink-0"
-                      unoptimized
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="rounded-[14px] bg-white/[0.02] border border-white/[0.05] px-5 py-4 text-[12px] text-[#6B7280]">
-            Jogos ainda não definidos.
-          </div>
-        )}
-      </div>
 
       {/* ── STATS PLACEHOLDER ── */}
       <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center">
