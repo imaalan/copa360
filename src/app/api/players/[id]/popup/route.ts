@@ -220,10 +220,9 @@ export async function GET(
     }
   }
 
-  // 3. API-Football: player ID, stats, trophies, CDN photo
+  // 3. API-Football: player ID, trophies, CDN photo (stats now come from Understat cache in DB)
   let apiFootballId = player.apiFootballId;
   let trophies = player.trophies as Trophy[] | null;
-  let afStats: AFStats | null = null;
 
   if (!apiFootballId && currentClub) {
     apiFootballId = await findAFPlayerId(player.name, currentClub);
@@ -232,7 +231,6 @@ export async function GET(
 
   if (apiFootballId) {
     const afResult = await fetchAFStats(apiFootballId);
-    afStats = afResult.stats;
 
     // AF returns the CDN photo URL in the stats response — use as fallback if no photo yet
     if (!photo && afResult.photo) { photo = afResult.photo; updates.photo = photo; }
@@ -243,6 +241,20 @@ export async function GET(
       if (trophies.length) updates.trophies = trophies;
     }
   }
+
+  // Build stats from Understat cache (preferred) or API-Football fallback
+  const afStats: AFStats | null = (() => {
+    if (player.statsGoals != null) {
+      return {
+        goals: { total: player.statsGoals, assists: player.statsAssists ?? null },
+        games: { appearences: player.statsGames ?? null, lineups: null, minutes: null, rating: null },
+        cards: { yellow: player.statsYellowCards ?? null, red: player.statsRedCards ?? null },
+        passes: { total: null, key: null, accuracy: null },
+        dribbles: { attempts: null, success: null },
+      };
+    }
+    return null;
+  })();
 
   // Persist enrichment cache
   if (Object.keys(updates).length) {

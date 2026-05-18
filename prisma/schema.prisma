@@ -40,6 +40,14 @@ model Player {
   currentClub     String?
   currentClubLogo String?
   trophies        Json?
+  statsGoals      Int?
+  statsAssists    Int?
+  statsGames      Int?
+  statsYellowCards Int?
+  statsRedCards   Int?
+  statsXg         Float?
+  statsSource     String?
+  statsUpdatedAt  DateTime?
   teamId          Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -147,6 +147,7 @@ Acesse em [http://localhost:3000](http://localhost:3000).
 | `npm run db:seed` | Popula banco com 48 seleções, elencos e 104 jogos |
 | `npm run db:studio` | Prisma Studio — UI de banco de dados |
 | `npm run enrich:photos` | Busca fotos em lote via TheSportsDB (~85 req/min) |
+| `npm run enrich:stats` | Busca stats (gols/assist/jogos/xG) via Understat (top 5 ligas) |
 | `npm run test:e2e` | Roda os 48 testes Playwright |
 | `npm run test:e2e:ui` | Playwright com UI interativa |
 | `npm run typecheck` | Verificação de tipos TypeScript |
@@ -158,6 +159,17 @@ npx tsx scripts/enrich-photos.ts              # todos sem foto
 npx tsx scripts/enrich-photos.ts --limit=50   # primeiros 50
 npx tsx scripts/enrich-photos.ts --dry-run    # preview, sem escrita
 npx tsx scripts/enrich-photos.ts --from=500   # a partir do ID 500
+```
+
+### Enriquecimento de stats
+
+Busca gols, assistências, jogos e xG via [Understat](https://understat.com) (gratuito, sem chave). Cobre La Liga, Premier League, Bundesliga, Ligue 1 e Serie A — ~432 dos 1213 jogadores (jogadores fora das top 5 ligas não são cobertos).
+
+```bash
+npx tsx scripts/enrich-stats.ts              # todos sem stats
+npx tsx scripts/enrich-stats.ts --dry-run    # preview, sem escrita
+npx tsx scripts/enrich-stats.ts --force      # sobrescreve mesmo quem já tem stats
+npx tsx scripts/enrich-stats.ts --season=2023  # temporada alternativa (padrão: 2024)
 ```
 
 ---
@@ -213,7 +225,8 @@ O que **não** fazemos: estética gamer, neon, scanlines, #FFD700, escudos, bola
 - [x] Mobile responsivo: hamburger nav, bottom sheet, layouts adaptados
 - [x] Script de enriquecimento de fotos em lote (TheSportsDB)
 - [x] 48 testes E2E com Playwright
-- [ ] Vercel Cron para atualização diária do banco
+- [x] Script de enriquecimento de stats (Understat): 432/1213 jogadores com gols/assists/xG
+- [x] Vercel Cron para atualização diária do banco
 - [ ] Deploy em produção (Vercel)
 
 ---
