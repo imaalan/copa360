@@ -14,6 +14,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "enrich:photos": "tsx scripts/enrich-photos.ts",
     "enrich:stats": "tsx scripts/enrich-stats.ts",
+    "enrich:names": "tsx scripts/enrich-names.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
