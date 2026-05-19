@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import PlayerPopup from "@/components/PlayerPopup";
 import { calcAge } from "@/lib/utils";
+import { getPosition } from "@/lib/positions";
 
 type Player = {
   id: number;
@@ -12,28 +13,6 @@ type Player = {
   dateOfBirth: Date | null;
   photo: string | null;
 };
-
-const POSITION_MAP: Record<string, { abbr: string; label: string }> = {
-  Goalkeeper:           { abbr: "GR",  label: "Goleiro" },
-  Defence:              { abbr: "DEF", label: "Defensor" },
-  "Centre-Back":        { abbr: "ZAG", label: "Zagueiro" },
-  "Left-Back":          { abbr: "LE",  label: "Lateral Esquerdo" },
-  "Right-Back":         { abbr: "LD",  label: "Lateral Direito" },
-  Midfield:             { abbr: "MEI", label: "Meia" },
-  "Defensive Midfield": { abbr: "VOL", label: "Volante" },
-  "Central Midfield":   { abbr: "MEI", label: "Meia Central" },
-  "Attacking Midfield": { abbr: "MAI", label: "Meia Atacante" },
-  Offence:              { abbr: "ATA", label: "Atacante" },
-  "Left Winger":        { abbr: "PE",  label: "Ponta Esquerda" },
-  "Right Winger":       { abbr: "PD",  label: "Ponta Direita" },
-  "Centre-Forward":     { abbr: "CA",  label: "Centroavante" },
-  "Secondary Striker":  { abbr: "SA",  label: "Segundo Atacante" },
-};
-
-function getPos(position: string | null) {
-  if (!position) return { abbr: "—", label: "—" };
-  return POSITION_MAP[position] ?? { abbr: position.slice(0, 3).toUpperCase(), label: position };
-}
 
 
 function getInitials(name: string) {
@@ -74,7 +53,7 @@ export default function SquadWithPopup({ groups }: Props) {
             </p>
             <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
               {players.map((player) => {
-                const { abbr, label } = getPos(player.position);
+                const { abbr, pt: label } = getPosition(player.position);
                 const age = calcAge(player.dateOfBirth);
                 return (
                   <button
