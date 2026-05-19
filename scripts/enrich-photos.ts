@@ -30,6 +30,10 @@ const FROM_ID = (() => {
   const a = argv.find((x) => x.startsWith("--from="));
   return a ? parseInt(a.split("=")[1], 10) : 0;
 })();
+const TLAS = (() => {
+  const a = argv.find((x) => x.startsWith("--tlas="));
+  return a ? a.split("=")[1].toUpperCase().split(",").map(s => s.trim()) : null;
+})();
 
 // ── String helpers ────────────────────────────────────────────────────────────
 
@@ -61,15 +65,30 @@ function nationalityMatch(a: string | null, b: string | null): boolean {
 type SDBPlayer = {
   strPlayer: string;
   strNationality: string;
-  strThumb?: string;
-  strCutout?: string;
+  strPosition?: string;
   strTeam?: string;
   strTeamLogo?: string;
+  strThumb?: string;
+  strCutout?: string;
 };
+
+// Rough position category mapping: DB position → SDB strPosition keywords
+function positionMatch(dbPos: string | null, sdbPos: string | null | undefined): boolean {
+  if (!dbPos || !sdbPos) return true; // unknown = don't disqualify
+  const db = dbPos.toLowerCase();
+  const sdb = sdbPos.toLowerCase();
+  if (db.includes("goalkeeper") && sdb.includes("goalkeeper")) return true;
+  if ((db.includes("back") || db.includes("defence") || db.includes("center-back") || db.includes("centre-back")) && (sdb.includes("defender") || sdb.includes("back"))) return true;
+  if ((db.includes("midfield")) && sdb.includes("midfield")) return true;
+  if ((db.includes("forward") || db.includes("winger") || db.includes("offence") || db.includes("attacker")) && (sdb.includes("forward") || sdb.includes("attacker") || sdb.includes("winger") || sdb.includes("striker"))) return true;
+  return false;
+}
 
 async function fetchFromSportsDB(
   name: string,
-  nationality: string | null
+  nationality: string | null,
+  position: string | null,
+  teamName: string | null
 ): Promise<{ photo: string | null; club: string | null; clubLogo: string | null } | null> {
   const url = `${SDB_BASE}/searchplayers.php?p=${encodeURIComponent(name)}`;
   let players: SDBPlayer[] = [];
@@ -90,9 +109,13 @@ async function fetchFromSportsDB(
   try {
     if (!players.length) return null;
 
-    const match = players.find(
-      (p) => nameMatch(name, p.strPlayer) && nationalityMatch(nationality, p.strNationality)
-    ) ?? players.find((p) => nameMatch(name, p.strPlayer));
+    // Match with decreasing strictness: name + nationality + position + team → name + nationality + position → name + nationality → name
+    const byName = players.filter(p => nameMatch(name, p.strPlayer));
+    const match =
+      byName.find(p => nationalityMatch(nationality, p.strNationality) && positionMatch(position, p.strPosition) && (!teamName || !p.strTeam || normStr(p.strTeam).includes(normStr(teamName).slice(0, 5)))) ??
+      byName.find(p => nationalityMatch(nationality, p.strNationality) && positionMatch(position, p.strPosition)) ??
+      byName.find(p => nationalityMatch(nationality, p.strNationality)) ??
+      (byName.length === 1 ? byName[0] : undefined);
 
     if (!match) return null;
 
@@ -122,8 +145,9 @@ function bar(done: number, total: number, width = 20): string {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
+  const teamFilter = TLAS ? { team: { tla: { in: TLAS } } } : {};
   const totalToProcess = await prisma.player.count({
-    where: { photo: null, id: { gt: FROM_ID } },
+    where: { photo: null, id: { gt: FROM_ID }, ...teamFilter },
   });
 
   const limit = Math.min(totalToProcess, LIMIT);
@@ -144,10 +168,10 @@ async function main() {
 
   while (processed < limit) {
     const batch = await prisma.player.findMany({
-      where: { photo: null, id: { gt: lastId } },
+      where: { photo: null, id: { gt: lastId }, ...teamFilter },
       orderBy: { id: "asc" },
       take: BATCH_SIZE,
-      select: { id: true, name: true, nationality: true },
+      select: { id: true, name: true, nationality: true, position: true, currentClub: true, team: { select: { name: true, tla: true } } },
     });
 
     if (!batch.length) break;
@@ -161,7 +185,7 @@ async function main() {
       );
 
       try {
-        const result = await fetchFromSportsDB(player.name, player.nationality);
+        const result = await fetchFromSportsDB(player.name, player.nationality, player.position, player.currentClub ?? player.team?.name ?? null);
 
         if (result) {
           const updateData: Record<string, unknown> = {};
