@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import BioSection from "@/components/BioSection";
 
 export const revalidate = 3600;
 
@@ -158,11 +159,14 @@ export default async function CoachPage({ params }: Props) {
       )}
 
       {!hasStats && trophies.length === 0 && (
-        <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center">
+        <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center mb-6">
           <p className="text-[9px] font-bold tracking-[0.3em] uppercase text-[#C8A96B]/40 mb-2">Estatísticas</p>
           <p className="text-[13px] text-[#6B7280]">Dados indisponíveis para este técnico</p>
         </div>
       )}
+
+      {/* ── BIO ── */}
+      {coach.bio && <BioSection bio={coach.bio} />}
     </div>
   );
 }
