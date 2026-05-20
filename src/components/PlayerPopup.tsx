@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getPosition } from "@/lib/positions";
+import BioSection from "@/components/BioSection";
+import TrophiesSection from "@/components/TrophiesSection";
 
 type AFStats = {
   goals: { total: number | null; assists: number | null };
@@ -23,6 +25,7 @@ type PopupData = {
   dateOfBirth: string | null;
   shirtNumber: number | null;
   photo: string | null;
+  bio: string | null;
   team: { id: number; tla: string | null; name: string; logo: string | null } | null;
   currentClub: { name: string; logo: string | null } | null;
   stats: AFStats | null;
@@ -181,6 +184,13 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
             </div>
           </div>
 
+          {/* Bio */}
+          {!loading && d?.bio && (
+            <div className="mb-4">
+              <BioSection bio={d.bio} />
+            </div>
+          )}
+
           {/* Current Club */}
           {!loading && d?.currentClub && (
             <div className="mb-4 rounded-[16px] bg-white/[0.03] border border-white/[0.06] px-4 py-3 flex items-center gap-3">
@@ -259,25 +269,7 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
 
           {/* Trophies */}
           {!loading && d?.trophies && d.trophies.length > 0 && (
-            <div className="mb-4">
-              <p className="mb-2 text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/50">
-                Conquistas
-              </p>
-              <div className="flex flex-col gap-1.5 max-h-[140px] overflow-y-auto">
-                {d.trophies.map((t, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 rounded-[10px] bg-white/[0.02] border border-white/[0.05] px-3 py-2"
-                  >
-                    <span className="text-[14px] flex-shrink-0">🏆</span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[12px] font-semibold text-[#F3F4F6] truncate">{t.league}</div>
-                      <div className="text-[10px] text-[#6B7280]">{t.country} · {t.season}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <TrophiesSection trophies={d.trophies} />
           )}
 
           {/* Stats placeholder — shown only when no stats loaded yet and not loading */}

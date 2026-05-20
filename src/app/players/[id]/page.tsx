@@ -145,6 +145,19 @@ export default async function PlayerPage({ params }: Props) {
       {/* ── CONQUISTAS ── */}
       {trophies.length > 0 && <TrophiesSection trophies={trophies} />}
 
+      {/* ── CLUBE ATUAL ── */}
+      {player.currentClub && (
+        <div className="mb-6 rounded-[20px] bg-white/[0.03] border border-white/[0.07] px-6 py-4 flex items-center gap-4">
+          {player.currentClubLogo && (
+            <Image src={player.currentClubLogo} alt={player.currentClub} width={48} height={48} className="object-contain flex-shrink-0" unoptimized />
+          )}
+          <div className="min-w-0 flex-1">
+            <div className="text-[9px] font-bold tracking-[0.22em] uppercase text-[#C8A96B]/50 mb-0.5">Clube Atual</div>
+            <div className="text-[16px] font-bold text-[#F3F4F6]">{player.currentClub}</div>
+          </div>
+        </div>
+      )}
+
       {/* ── TEAM CARD ── */}
       {team && (
         <Link
@@ -156,14 +169,7 @@ export default async function PlayerPage({ params }: Props) {
           </p>
           <div className="flex items-center gap-4">
             {team.logo ? (
-              <Image
-                src={team.logo}
-                alt={team.name}
-                width={48}
-                height={48}
-                className="object-contain drop-shadow"
-                unoptimized
-              />
+              <Image src={team.logo} alt={team.name} width={48} height={48} className="object-contain drop-shadow" unoptimized />
             ) : (
               <div className="w-12 h-12 rounded-full bg-white/[0.06] flex items-center justify-center text-[11px] font-bold text-[#6B7280]">
                 {team.tla}
@@ -171,9 +177,7 @@ export default async function PlayerPage({ params }: Props) {
             )}
             <div>
               <div className="text-[16px] font-bold text-[#F3F4F6]">{team.name}</div>
-              {team.country && (
-                <div className="text-[11px] text-[#6B7280]">{team.country}</div>
-              )}
+              {team.country && <div className="text-[11px] text-[#6B7280]">{team.country}</div>}
             </div>
             <span className="ml-auto text-[#C8A96B]/40 group-hover:text-[#C8A96B]/70 transition-colors text-[12px]">
               Ver elenco →
@@ -182,7 +186,29 @@ export default async function PlayerPage({ params }: Props) {
         </Link>
       )}
 
-      {/* ── STATS PLACEHOLDER ── */}
+      {/* ── STATS DE TEMPORADA ── */}
+      {(player.statsGoals != null || player.statsAssists != null || player.statsGames != null) ? (
+        <div className="mb-6 rounded-[20px] bg-white/[0.03] border border-white/[0.07] p-6">
+          <p className="mb-4 text-[9px] font-bold tracking-[0.3em] uppercase text-white/50">
+            Temporada 2024/25
+          </p>
+          <div className="grid grid-cols-4 gap-3">
+            <StatBox label="Gols" value={player.statsGoals} />
+            <StatBox label="Assist." value={player.statsAssists} />
+            <StatBox label="Jogos" value={player.statsGames} />
+            <StatBox label="xG" value={player.statsXg != null ? player.statsXg.toFixed(1) : null} />
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center mb-6">
+          <p className="text-[9px] font-bold tracking-[0.3em] uppercase text-[#C8A96B]/40 mb-2">
+            Estatísticas de Temporada
+          </p>
+          <p className="text-[13px] text-[#6B7280]">Dados indisponíveis para este jogador</p>
+        </div>
+      )}
+
+      {/* ── STATS COPA ── */}
       <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center mb-6">
         <p className="text-[9px] font-bold tracking-[0.3em] uppercase text-[#C8A96B]/40 mb-2">
           Estatísticas da Copa
@@ -192,6 +218,15 @@ export default async function PlayerPage({ params }: Props) {
         </p>
       </div>
 
+    </div>
+  );
+}
+
+function StatBox({ label, value }: { label: string; value: number | string | null | undefined }) {
+  return (
+    <div className="rounded-[14px] bg-white/[0.03] border border-white/[0.06] px-4 py-3 text-center">
+      <div className="text-[24px] font-extrabold text-[#F3F4F6] leading-none mb-1">{value ?? "—"}</div>
+      <div className="text-[9px] font-semibold tracking-[0.15em] uppercase text-[#6B7280]">{label}</div>
     </div>
   );
 }

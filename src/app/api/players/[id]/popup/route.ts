@@ -243,6 +243,7 @@ export async function GET(
     dateOfBirth: player.dateOfBirth,
     shirtNumber: player.shirtNumber,
     photo,
+    bio: player.bio ?? null,
     team: player.team
       ? { id: player.team.id, tla: player.team.tla, name: player.team.name, logo: player.team.logo }
       : null,
