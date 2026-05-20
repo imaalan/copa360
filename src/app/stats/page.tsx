@@ -35,7 +35,7 @@ function calcAge(dob: Date): number {
 }
 
 export default async function StatsPage() {
-  const [allPlayers, allTeams, totalMatches] = await Promise.all([
+  const [allPlayers, allTeams] = await Promise.all([
     prisma.player.findMany({
       select: { name: true, position: true, dateOfBirth: true, team: { select: { tla: true, logo: true, name: true } } },
     }),
@@ -43,7 +43,6 @@ export default async function StatsPage() {
       orderBy: { name: "asc" },
       include: { _count: { select: { players: true } } },
     }),
-    prisma.match.count(),
   ]);
 
   // Position distribution (grouped)

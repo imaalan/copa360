@@ -46,15 +46,6 @@ const STAGE_TABS = [
   { key: "knockout",     label: "Mata-Mata" },
 ];
 
-function formatDate(utcDate: Date) {
-  const d = new Date(utcDate);
-  // Show in Brazil time (UTC-3)
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit", month: "short", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
-    timeZone: "America/Sao_Paulo",
-  }).format(d);
-}
 
 function formatDay(utcDate: Date) {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -217,7 +208,6 @@ function MatchList({ matches }: { matches: Match[]; showGroup: boolean }) {
 function MatchCard({ match: m }: { match: Match }) {
   const isFinished = m.status === "FINISHED";
   const isLive     = m.status === "IN_PLAY" || m.status === "PAUSED";
-  const hasScore   = m.homeScore != null && m.awayScore != null;
 
   return (
     <div className="group relative flex items-center gap-4 bg-white/[0.03] border border-white/[0.07] rounded-[16px] px-5 py-4 hover:border-[#C8A96B]/20 transition-colors">
