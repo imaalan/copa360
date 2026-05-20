@@ -59,6 +59,8 @@ export default async function PlayerPage({ params }: Props) {
   const { abbr, pt: label } = getPosition(player.position);
   const age = calcAge(player.dateOfBirth);
   const team = player.team;
+  type Trophy = { league: string; country: string; season: string; place: string };
+  const trophies = (player.trophies as Trophy[] | null) ?? [];
 
   return (
     <div className="px-4 md:px-12 pt-8 md:pt-12 pb-24 max-w-[1440px] mx-auto">
@@ -138,6 +140,26 @@ export default async function PlayerPage({ params }: Props) {
 
       {/* ── BIO ── */}
       {player.bio && <div className="mb-6"><BioSection bio={player.bio} /></div>}
+
+      {/* ── CONQUISTAS ── */}
+      {trophies.length > 0 && (
+        <div className="mb-6 rounded-[20px] bg-white/[0.03] border border-white/[0.07] p-6">
+          <p className="mb-4 text-[9px] font-bold tracking-[0.3em] uppercase text-white/50">
+            Conquistas ({trophies.length})
+          </p>
+          <div className="grid gap-2">
+            {trophies.map((t, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-[12px] bg-white/[0.02] border border-white/[0.05] px-4 py-3">
+                <span className="text-[16px] flex-shrink-0">🏆</span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-semibold text-[#F3F4F6] truncate">{t.league}</div>
+                  <div className="text-[11px] text-[#6B7280]">{t.country} · {t.season}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── TEAM CARD ── */}
       {team && (
