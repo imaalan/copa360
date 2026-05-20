@@ -21,10 +21,36 @@ model Team {
   updatedAt   DateTime @updatedAt
 
   players     Player[]
+  coach       Coach?
   homeMatches Match[]  @relation("HomeTeam")
   awayMatches Match[]  @relation("AwayTeam")
 
   @@map("teams")
+}
+
+model Coach {
+  id              Int       @id @default(autoincrement())
+  externalId      Int?      @unique
+  apiFootballId   Int?
+  name            String
+  nationality     String?
+  dateOfBirth     DateTime?
+  photo           String?
+  contractStart   String?
+  contractUntil   String?
+  // Career stats (from API-Football)
+  statsMatches    Int?
+  statsWins       Int?
+  statsDraws      Int?
+  statsLosses     Int?
+  trophies        Json?
+  statsUpdatedAt  DateTime?
+  teamId          Int?      @unique
+  team            Team?     @relation(fields: [teamId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("coaches")
 }
 
 model Player {

@@ -10,20 +10,13 @@ export const metadata = {
 };
 
 const POSITION_GROUPS: Record<string, string> = {
-  Goalkeeper:            "Goleiros",
-  Defence:               "Defensores",
-  "Centre-Back":         "Defensores",
-  "Left-Back":           "Defensores",
-  "Right-Back":          "Defensores",
-  Midfield:              "Meias",
-  "Defensive Midfield":  "Meias",
-  "Central Midfield":    "Meias",
-  "Attacking Midfield":  "Meias",
-  Offence:               "Atacantes",
-  "Left Winger":         "Atacantes",
-  "Right Winger":        "Atacantes",
-  "Centre-Forward":      "Atacantes",
-  "Secondary Striker":   "Atacantes",
+  GK: "Goleiros",
+  CB: "Defensores", RB: "Defensores", LB: "Defensores",
+  SW: "Defensores", RWB: "Defensores", LWB: "Defensores", DEF: "Defensores",
+  CDM: "Meias", CM: "Meias", CAM: "Meias",
+  RM: "Meias", LM: "Meias", MID: "Meias",
+  RW: "Atacantes", LW: "Atacantes", CF: "Atacantes",
+  ST: "Atacantes", SS: "Atacantes", FWD: "Atacantes",
 };
 
 function calcAge(dob: Date): number {
@@ -35,7 +28,7 @@ function calcAge(dob: Date): number {
 }
 
 export default async function StatsPage() {
-  const [allPlayers, allTeams, totalMatches] = await Promise.all([
+  const [allPlayers, allTeams] = await Promise.all([
     prisma.player.findMany({
       select: { name: true, position: true, dateOfBirth: true, team: { select: { tla: true, logo: true, name: true } } },
     }),
@@ -43,7 +36,6 @@ export default async function StatsPage() {
       orderBy: { name: "asc" },
       include: { _count: { select: { players: true } } },
     }),
-    prisma.match.count(),
   ]);
 
   // Position distribution (grouped)

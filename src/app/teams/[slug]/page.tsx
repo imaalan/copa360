@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import SquadWithPopup from "@/components/SquadWithPopup";
+import CoachCard from "@/components/CoachCard";
+import { getPosition, GROUP_ORDER } from "@/lib/positions";
 
 export const revalidate = 3600;
 
@@ -26,33 +28,14 @@ async function getTeam(slug: string) {
         orderBy: { name: "asc" },
         select: { id: true, name: true, position: true, dateOfBirth: true, photo: true },
       },
+      coach: {
+        select: { id: true, name: true, nationality: true, photo: true, contractStart: true },
+      },
       _count: { select: { players: true } },
     },
   });
 }
 
-// Map API position strings → PT-BR abbreviation + group
-const POSITION_MAP: Record<string, { abbr: string; group: string; order: number }> = {
-  Goalkeeper:           { abbr: "GR",  group: "Goleiros",     order: 0 },
-  Defence:              { abbr: "DEF", group: "Defensores",   order: 1 },
-  "Centre-Back":        { abbr: "ZAG", group: "Defensores",   order: 1 },
-  "Left-Back":          { abbr: "LE",  group: "Defensores",   order: 1 },
-  "Right-Back":         { abbr: "LD",  group: "Defensores",   order: 1 },
-  Midfield:             { abbr: "MEI", group: "Meias",        order: 2 },
-  "Defensive Midfield": { abbr: "VOL", group: "Meias",        order: 2 },
-  "Central Midfield":   { abbr: "MEI", group: "Meias",        order: 2 },
-  "Attacking Midfield": { abbr: "MAI", group: "Meias",        order: 2 },
-  Offence:              { abbr: "ATA", group: "Atacantes",    order: 3 },
-  "Left Winger":        { abbr: "PE",  group: "Atacantes",    order: 3 },
-  "Right Winger":       { abbr: "PD",  group: "Atacantes",    order: 3 },
-  "Centre-Forward":     { abbr: "CA",  group: "Atacantes",    order: 3 },
-  "Secondary Striker":  { abbr: "SA",  group: "Atacantes",    order: 3 },
-};
-
-function getPos(position: string | null) {
-  if (!position) return { abbr: "—", group: "Outros", order: 4 };
-  return POSITION_MAP[position] ?? { abbr: position.slice(0, 3).toUpperCase(), group: "Outros", order: 4 };
-}
 
 
 export default async function TeamPage({ params }: Props) {
@@ -60,17 +43,15 @@ export default async function TeamPage({ params }: Props) {
   const team = await getTeam(slug);
   if (!team) notFound();
 
-  // Group players by position group
   const grouped = team.players.reduce<Record<string, typeof team.players>>((acc, p) => {
-    const { group } = getPos(p.position);
+    const { group } = getPosition(p.position);
     acc[group] ??= [];
     acc[group].push(p);
     return acc;
   }, {});
 
-  const groupOrder = ["Goleiros", "Defensores", "Meias", "Atacantes", "Outros"];
   const sortedGroups = Object.entries(grouped).sort(
-    ([a], [b]) => groupOrder.indexOf(a) - groupOrder.indexOf(b)
+    ([a], [b]) => GROUP_ORDER.indexOf(a) - GROUP_ORDER.indexOf(b)
   );
 
   return (
@@ -144,6 +125,14 @@ export default async function TeamPage({ params }: Props) {
 
       {/* Divider */}
       <div className="mb-8 h-px bg-white/[0.06]" />
+
+      {/* Coach */}
+      {team.coach && (
+        <div className="mb-10">
+          <h2 className="mb-4 text-[11px] font-bold tracking-[0.3em] uppercase text-white/70">Técnico</h2>
+          <CoachCard coach={team.coach} />
+        </div>
+      )}
 
       {/* Squad */}
       <div>

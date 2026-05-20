@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getPosition } from "@/lib/positions";
 
 type AFStats = {
   goals: { total: number | null; assists: number | null };
@@ -26,38 +27,8 @@ type PopupData = {
   currentClub: { name: string; logo: string | null } | null;
   stats: AFStats | null;
   trophies: Trophy[];
-  matches: Array<{
-    id: number;
-    utcDate: string;
-    stage: string | null;
-    group: string | null;
-    status: string;
-    opponent: { tla: string | null; name: string; logo: string | null } | null;
-    isHome: boolean;
-  }>;
 };
 
-const POSITION_MAP: Record<string, { abbr: string; label: string }> = {
-  Goalkeeper:           { abbr: "GR",  label: "Goleiro" },
-  Defence:              { abbr: "DEF", label: "Defensor" },
-  "Centre-Back":        { abbr: "ZAG", label: "Zagueiro" },
-  "Left-Back":          { abbr: "LE",  label: "Lateral Esquerdo" },
-  "Right-Back":         { abbr: "LD",  label: "Lateral Direito" },
-  Midfield:             { abbr: "MEI", label: "Meia" },
-  "Defensive Midfield": { abbr: "VOL", label: "Volante" },
-  "Central Midfield":   { abbr: "MEI", label: "Meia Central" },
-  "Attacking Midfield": { abbr: "MAI", label: "Meia Atacante" },
-  Offence:              { abbr: "ATA", label: "Atacante" },
-  "Left Winger":        { abbr: "PE",  label: "Ponta Esquerda" },
-  "Right Winger":       { abbr: "PD",  label: "Ponta Direita" },
-  "Centre-Forward":     { abbr: "CA",  label: "Centroavante" },
-  "Secondary Striker":  { abbr: "SA",  label: "Segundo Atacante" },
-};
-
-function getPos(position: string | null) {
-  if (!position) return { abbr: "—", label: "—" };
-  return POSITION_MAP[position] ?? { abbr: position.slice(0, 3).toUpperCase(), label: position };
-}
 
 function calcAge(dob: string | null): number | null {
   if (!dob) return null;
@@ -73,22 +44,6 @@ function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
 }
 
-function formatStage(stage: string | null, group: string | null): string {
-  const map: Record<string, string> = {
-    GROUP_STAGE: "Fase de Grupos",
-    LAST_16: "Oitavas",
-    QUARTER_FINALS: "Quartas",
-    SEMI_FINALS: "Semifinal",
-    THIRD_PLACE: "3º Lugar",
-    FINAL: "Final",
-  };
-  const s = stage ? (map[stage] ?? stage) : "";
-  return group ? `${s} · ${group}` : s;
-}
-
-function formatDate(d: string): string {
-  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" }).format(new Date(d));
-}
 
 type PlayerPopupProps = {
   playerId: number | null;
@@ -129,7 +84,7 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
   }, [close]);
 
   const d = data;
-  const { abbr, label } = getPos(d?.position ?? null);
+  const { abbr, pt: label } = getPosition(d?.position ?? null);
   const age = calcAge(d?.dateOfBirth ?? null);
   const photo = photoError ? null : (d?.photo ?? playerPhoto);
 
@@ -277,48 +232,6 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
             </div>
           )}
 
-          {/* Upcoming matches */}
-          {!loading && d?.matches && d.matches.length > 0 && (
-            <div className="mb-4">
-              <p className="mb-2 text-[9px] font-bold tracking-[0.28em] uppercase text-[#C8A96B]/50">
-                Próximos Jogos
-              </p>
-              <div className="flex flex-col gap-1.5">
-                {d.matches.map((m) => (
-                  <div
-                    key={m.id}
-                    className="flex items-center gap-3 rounded-[12px] bg-white/[0.02] border border-white/[0.05] px-4 py-2.5"
-                  >
-                    <span className="text-[10px] text-[#6B7280] w-[52px] flex-shrink-0">
-                      {formatDate(m.utcDate)}
-                    </span>
-                    <span className="text-[9px] font-semibold tracking-[0.1em] uppercase text-[#C8A96B]/40 flex-1 truncate">
-                      {formatStage(m.stage, m.group)}
-                    </span>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className="text-[12px] font-bold text-[#F3F4F6]">
-                        {m.isHome ? d.team?.tla : m.opponent?.tla}
-                      </span>
-                      <span className="text-[10px] text-white/20">vs</span>
-                      <span className="text-[12px] font-bold text-[#F3F4F6]">
-                        {m.isHome ? m.opponent?.tla : d.team?.tla}
-                      </span>
-                      {m.opponent?.logo && (
-                        <Image
-                          src={m.opponent.logo}
-                          alt={m.opponent.name}
-                          width={20}
-                          height={20}
-                          className="object-contain opacity-60"
-                          unoptimized
-                        />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Season Stats */}
           {!loading && d?.stats && (

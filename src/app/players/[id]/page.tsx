@@ -2,32 +2,12 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getPosition } from "@/lib/positions";
 
 export const revalidate = 3600;
 
 type Props = { params: Promise<{ id: string }> };
 
-const POSITION_MAP: Record<string, { abbr: string; label: string }> = {
-  Goalkeeper:           { abbr: "GR",  label: "Goleiro" },
-  Defence:              { abbr: "DEF", label: "Defensor" },
-  "Centre-Back":        { abbr: "ZAG", label: "Zagueiro" },
-  "Left-Back":          { abbr: "LE",  label: "Lateral Esquerdo" },
-  "Right-Back":         { abbr: "LD",  label: "Lateral Direito" },
-  Midfield:             { abbr: "MEI", label: "Meia" },
-  "Defensive Midfield": { abbr: "VOL", label: "Volante" },
-  "Central Midfield":   { abbr: "MEI", label: "Meia Central" },
-  "Attacking Midfield": { abbr: "MAI", label: "Meia Atacante" },
-  Offence:              { abbr: "ATA", label: "Atacante" },
-  "Left Winger":        { abbr: "PE",  label: "Ponta Esquerda" },
-  "Right Winger":       { abbr: "PD",  label: "Ponta Direita" },
-  "Centre-Forward":     { abbr: "CA",  label: "Centroavante" },
-  "Secondary Striker":  { abbr: "SA",  label: "Segundo Atacante" },
-};
-
-function getPos(position: string | null) {
-  if (!position) return { abbr: "—", label: "Posição desconhecida" };
-  return POSITION_MAP[position] ?? { abbr: position.slice(0, 3).toUpperCase(), label: position };
-}
 
 function calcAge(dob: Date | null): number | null {
   if (!dob) return null;
@@ -75,7 +55,7 @@ export default async function PlayerPage({ params }: Props) {
 
   if (!player) notFound();
 
-  const { abbr, label } = getPos(player.position);
+  const { abbr, pt: label } = getPosition(player.position);
   const age = calcAge(player.dateOfBirth);
   const team = player.team;
 

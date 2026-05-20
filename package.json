@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,6 +17,7 @@
     "enrich:stats": "tsx scripts/enrich-stats.ts",
     "enrich:names": "tsx scripts/enrich-names.ts",
     "enrich:all": "npm run enrich:names -- --all && npm run enrich:photos && npm run enrich:stats -- --force",
+    "sync:squads": "tsx scripts/sync-squads.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
@@ -33,6 +35,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",

@@ -2,7 +2,7 @@
 
 > A Copa do Mundo como você nunca viu.
 
-Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2026** — seleções, jogadores, estatísticas e histórias, com a profundidade de um veículo de jornalismo esportivo e a energia visual do futebol de alto nível.
+Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2026** — seleções, jogadores, técnicos, estatísticas e histórias, com a profundidade de um veículo de jornalismo esportivo e a energia visual do futebol de alto nível.
 
 ---
 
@@ -10,13 +10,14 @@ Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2
 
 | Página | Status | Descrição |
 |---|---|---|
-| `/` — Home | ✅ Concluído | Splash screen, countdown ao vivo, featured players, mosaico dinâmico de seleções |
-| `/teams` | ✅ Concluído | 48 seleções com busca por nome/TLA e cards com logo |
-| `/teams/[slug]` | ✅ Concluído | Perfil da seleção: elenco agrupado por posição + popup de jogador |
-| `/players` | ✅ Concluído | Explorador com busca, filtro por posição/time e paginação |
-| `/players/[id]` | ✅ Concluído | Perfil do jogador: foto real, troféus, clube atual, stats |
-| `/matches` | ✅ Concluído | 104 jogos com filtros por fase/grupo e badge de status |
-| `/stats` | ✅ Concluído | Análises: distribuição por posição, idade média, tamanho dos elencos |
+| `/` — Home | ✅ | Splash screen, countdown ao vivo, featured players, mosaico dinâmico de seleções |
+| `/teams` | ✅ | 48 seleções com busca por nome/TLA e cards com logo |
+| `/teams/[slug]` | ✅ | Perfil da seleção: técnico com popup + elenco agrupado por posição |
+| `/players` | ✅ | Explorador com busca, filtro por posição/time e paginação |
+| `/players/[id]` | ✅ | Perfil do jogador: foto real, troféus, clube atual, stats |
+| `/coaches/[id]` | ✅ | Perfil do técnico: carreira, conquistas, link para seleção |
+| `/matches` | ✅ | 104 jogos com filtros por fase/grupo e badge de status |
+| `/stats` | ✅ | Análises: distribuição por posição, idade média, tamanho dos elencos |
 
 ---
 
@@ -27,9 +28,10 @@ Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2
 - **Featured players** — camisa 10 de BRA, FRA, ARG e ENG com link para perfil
 - **Mosaico de seleções** com rotação automática — 6 aleatórias do pool de 48, troca a cada 8s com fade
 - **PlayerPopup** com foto real, troféus, clube atual e stats, via TheSportsDB + football-data.org
+- **CoachCard + CoachPopup** — técnico de cada seleção com modal de stats e link para perfil completo
+- **Sistema de posições FIFA** — siglas canônicas (GK, CB, CM, ST...) com agrupamento em PT-BR
 - **Mobile responsivo**: hamburger menu com overlay full-screen, bottom sheet animado (slide-up)
-- **Banco completo**: 48 seleções, 1213+ jogadores, 104 jogos, fotos enriquecidas via TheSportsDB
-- **48 testes E2E** (Playwright) cobrindo todas as páginas e fluxos principais
+- **Banco completo**: 48 seleções, 1247+ jogadores, 48 técnicos, 104 jogos
 
 ---
 
@@ -41,11 +43,11 @@ Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2
 | Linguagem | TypeScript |
 | Estilo | Tailwind CSS 3 |
 | Font | Sora (Google Fonts) |
-| ORM | Prisma |
+| ORM | Prisma 5.22 |
 | Banco | PostgreSQL (Neon) |
-| APIs de dados | football-data.org v4 · TheSportsDB (free) |
+| APIs de dados | football-data.org v4 · TheSportsDB (free) · API-Football (free) |
 | Testes E2E | Playwright |
-| Deploy | Vercel (pendente) |
+| Deploy | Vercel |
 
 ---
 
@@ -66,39 +68,50 @@ Copa360 segue política **Zero Trust** para credenciais:
 copa360/
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx              # Layout global: NavHeader, Splash, font Sora
-│   │   ├── page.tsx                # Home: hero, countdown, featured players, mosaico
-│   │   ├── api/players/[id]/popup/ # Route Handler: dados enriquecidos do jogador
+│   │   ├── layout.tsx                    # Layout global: NavHeader, Splash, font Sora
+│   │   ├── page.tsx                      # Home: hero, countdown, featured players, mosaico
+│   │   ├── api/
+│   │   │   ├── players/[id]/popup/       # Route Handler: dados enriquecidos do jogador
+│   │   │   └── coaches/[id]/             # Route Handler: dados do técnico
 │   │   ├── teams/
-│   │   │   ├── page.tsx            # Lista das 48 seleções
-│   │   │   └── [slug]/page.tsx     # Perfil da seleção + elenco
+│   │   │   ├── page.tsx                  # Lista das 48 seleções
+│   │   │   └── [slug]/page.tsx           # Perfil da seleção: técnico + elenco
 │   │   ├── players/
-│   │   │   ├── page.tsx            # Explorador de jogadores
-│   │   │   └── [id]/page.tsx       # Perfil do jogador
-│   │   ├── matches/page.tsx        # 104 jogos com filtros
-│   │   └── stats/page.tsx          # Análises e rankings
+│   │   │   ├── page.tsx                  # Explorador de jogadores
+│   │   │   └── [id]/page.tsx             # Perfil do jogador
+│   │   ├── coaches/
+│   │   │   └── [id]/page.tsx             # Perfil do técnico
+│   │   ├── matches/page.tsx              # 104 jogos com filtros
+│   │   └── stats/page.tsx                # Análises e rankings
 │   ├── components/
-│   │   ├── NavHeader.tsx           # Navbar responsiva + hamburger mobile
-│   │   ├── Splash.tsx              # Overlay de entrada (sessionStorage-gated)
-│   │   ├── CountdownTimer.tsx      # Countdown ao vivo
-│   │   ├── TeamMosaic.tsx          # Mosaico com rotação automática
-│   │   ├── TeamsGrid.tsx           # Grid de seleções com busca
-│   │   ├── PlayersGrid.tsx         # Grid de jogadores com filtros e paginação
-│   │   ├── MatchesView.tsx         # Lista de jogos com filtros por fase/grupo
-│   │   ├── PlayerPopup.tsx         # Modal/bottom-sheet com dados enriquecidos
-│   │   └── SquadWithPopup.tsx      # Elenco da seleção + integração popup
+│   │   ├── NavHeader.tsx                 # Navbar responsiva + hamburger mobile
+│   │   ├── Splash.tsx                    # Overlay de entrada (sessionStorage-gated)
+│   │   ├── CountdownTimer.tsx            # Countdown ao vivo
+│   │   ├── TeamMosaic.tsx                # Mosaico com rotação automática
+│   │   ├── TeamsGrid.tsx                 # Grid de seleções com busca
+│   │   ├── PlayersGrid.tsx               # Grid de jogadores com filtros e paginação
+│   │   ├── MatchesView.tsx               # Lista de jogos com filtros por fase/grupo
+│   │   ├── PlayerPopup.tsx               # Modal/bottom-sheet com dados enriquecidos
+│   │   ├── SquadWithPopup.tsx            # Elenco da seleção + integração popup
+│   │   ├── CoachCard.tsx                 # Card do técnico (abre CoachPopup)
+│   │   └── CoachPopup.tsx                # Modal do técnico: stats + conquistas
 │   └── lib/
-│       ├── prisma.ts               # Client Prisma singleton
-│       └── football-api.ts         # Client football-data.org API
+│       ├── prisma.ts                     # Client Prisma singleton
+│       ├── football-api.ts               # Client football-data.org API
+│       └── positions.ts                  # Sistema de posições FIFA — fonte única
 ├── prisma/
-│   ├── schema.prisma               # Schema: Team, Player, Match, Competition
-│   └── seed.ts                     # Seed: 48 seleções + elencos + 104 jogos
+│   ├── schema.prisma                     # Schema: Team, Player, Match, Coach, Competition
+│   └── seed.ts                           # Seed: 48 seleções + elencos + 104 jogos
 ├── scripts/
-│   ├── enrich-photos.ts            # Enriquecimento em lote via TheSportsDB
-│   └── check-enrichment.ts         # Relatório de cobertura de fotos/clubes
-├── e2e/                            # Testes Playwright (48 testes, todas as páginas)
+│   ├── enrich-photos.ts                  # Fotos de jogadores em lote via TheSportsDB
+│   ├── enrich-stats.ts                   # Stats (gols/assist/xG) via Understat
+│   ├── enrich-names.ts                   # Normalização de nomes
+│   ├── enrich-coaches.ts                 # Fotos + stats + troféus de técnicos
+│   ├── seed-coaches.ts                   # Seed dos 48 técnicos (anúncios oficiais)
+│   └── check-enrichment.ts              # Relatório de cobertura de fotos/stats
+├── e2e/                                  # Testes Playwright
 ├── playwright.config.ts
-└── design.md                       # Sistema de design canônico
+└── design.md                             # Sistema de design canônico
 ```
 
 ---
@@ -127,10 +140,16 @@ npm run db:push
 # 4. Popular com dados reais (48 seleções, elencos, 104 jogos)
 npm run db:seed
 
-# 5. (Opcional) Enriquecer fotos dos jogadores via TheSportsDB
-npm run enrich:photos
+# 5. Seed dos técnicos
+npx tsx scripts/seed-coaches.ts
 
-# 6. Rodar o servidor
+# 6. (Opcional) Enriquecer fotos e stats
+npm run enrich:all
+
+# 7. (Opcional) Enriquecer técnicos
+npx tsx scripts/enrich-coaches.ts
+
+# 8. Rodar o servidor
 npm run dev
 ```
 
@@ -146,30 +165,42 @@ Acesse em [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Build de produção |
 | `npm run db:seed` | Popula banco com 48 seleções, elencos e 104 jogos |
 | `npm run db:studio` | Prisma Studio — UI de banco de dados |
-| `npm run enrich:photos` | Busca fotos em lote via TheSportsDB (~85 req/min) |
-| `npm run enrich:stats` | Busca stats (gols/assist/jogos/xG) via Understat (top 5 ligas) |
-| `npm run test:e2e` | Roda os 48 testes Playwright |
+| `npm run db:push` | Aplica schema ao banco (sem migrations) |
+| `npm run enrich:photos` | Fotos de jogadores em lote via TheSportsDB |
+| `npm run enrich:stats` | Stats (gols/assist/jogos/xG) via Understat (top 5 ligas) |
+| `npm run enrich:names` | Normalização de nomes dos jogadores |
+| `npm run enrich:all` | Sequência completa: names → photos → stats |
+| `npm run test:e2e` | Roda os testes Playwright |
 | `npm run test:e2e:ui` | Playwright com UI interativa |
 | `npm run typecheck` | Verificação de tipos TypeScript |
 
 ### Enriquecimento de fotos
 
 ```bash
-npx tsx scripts/enrich-photos.ts              # todos sem foto
-npx tsx scripts/enrich-photos.ts --limit=50   # primeiros 50
-npx tsx scripts/enrich-photos.ts --dry-run    # preview, sem escrita
-npx tsx scripts/enrich-photos.ts --from=500   # a partir do ID 500
+npx tsx scripts/enrich-photos.ts                    # todos sem foto
+npx tsx scripts/enrich-photos.ts --tlas=BRA,FRA     # seleções específicas
+npx tsx scripts/enrich-photos.ts --limit=50         # primeiros 50
+npx tsx scripts/enrich-photos.ts --dry-run          # preview, sem escrita
 ```
 
 ### Enriquecimento de stats
 
-Busca gols, assistências, jogos e xG via [Understat](https://understat.com) (gratuito, sem chave). Cobre La Liga, Premier League, Bundesliga, Ligue 1 e Serie A — ~432 dos 1213 jogadores (jogadores fora das top 5 ligas não são cobertos).
+Busca gols, assistências, jogos e xG via [Understat](https://understat.com) (gratuito, sem chave). Cobre La Liga, Premier League, Bundesliga, Ligue 1 e Serie A.
 
 ```bash
-npx tsx scripts/enrich-stats.ts              # todos sem stats
-npx tsx scripts/enrich-stats.ts --dry-run    # preview, sem escrita
-npx tsx scripts/enrich-stats.ts --force      # sobrescreve mesmo quem já tem stats
-npx tsx scripts/enrich-stats.ts --season=2023  # temporada alternativa (padrão: 2024)
+npx tsx scripts/enrich-stats.ts                     # todos sem stats
+npx tsx scripts/enrich-stats.ts --tlas=BRA,FRA      # seleções específicas
+npx tsx scripts/enrich-stats.ts --dry-run           # preview, sem escrita
+npx tsx scripts/enrich-stats.ts --force             # sobrescreve quem já tem stats
+npx tsx scripts/enrich-stats.ts --season=2023       # temporada alternativa (padrão: 2024)
+```
+
+### Enriquecimento de técnicos
+
+Busca fotos via TheSportsDB e stats/troféus via API-Football.
+
+```bash
+npx tsx scripts/enrich-coaches.ts
 ```
 
 ---
@@ -177,12 +208,12 @@ npx tsx scripts/enrich-stats.ts --season=2023  # temporada alternativa (padrão:
 ## Testes E2E
 
 ```bash
-npm run test:e2e          # 48 testes, todos em Chromium
+npm run test:e2e          # todos os testes, Chromium
 npm run test:e2e:ui       # com UI visual do Playwright
 npm run test:e2e:report   # relatório HTML do último run
 ```
 
-Cobertura: home (splash, countdown, featured players, mosaico), navegação, `/teams`, `/teams/[slug]`, `/players`, `/matches`, `/stats`.
+Cobertura: home (splash, countdown, featured players, mosaico), navegação, `/teams`, `/teams/[slug]`, `/players`, `/players/[id]`, `/coaches/[id]`, `/matches`, `/stats`.
 
 ---
 
@@ -224,9 +255,11 @@ O que **não** fazemos: estética gamer, neon, scanlines, #FFD700, escudos, bola
 - [x] PlayerPopup: modal enriquecido via multi-API
 - [x] Mobile responsivo: hamburger nav, bottom sheet, layouts adaptados
 - [x] Script de enriquecimento de fotos em lote (TheSportsDB)
-- [x] 48 testes E2E com Playwright
-- [x] Script de enriquecimento de stats (Understat): 432/1213 jogadores com gols/assists/xG
-- [x] Vercel Cron para atualização diária do banco
+- [x] Script de enriquecimento de stats (Understat): top 5 ligas
+- [x] Sistema de posições FIFA (`positions.ts`) — siglas canônicas + PT-BR
+- [x] Técnicos: seed + enriquecimento + CoachCard + CoachPopup + `/coaches/[id]`
+- [x] Testes E2E com Playwright
+- [ ] CI/CD com GitHub Actions (PR gate + nightly schedule)
 - [ ] Deploy em produção (Vercel)
 
 ---
