@@ -16,6 +16,7 @@
     "enrich:photos": "tsx scripts/enrich-photos.ts",
     "enrich:stats": "tsx scripts/enrich-stats.ts",
     "enrich:names": "tsx scripts/enrich-names.ts",
+    "enrich:bios": "tsx scripts/enrich-bios.ts",
     "enrich:all": "npm run enrich:names -- --all && npm run enrich:photos && npm run enrich:stats -- --force",
     "sync:squads": "tsx scripts/sync-squads.ts",
     "test": "jest",

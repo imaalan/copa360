@@ -44,6 +44,7 @@ model Coach {
   statsDraws      Int?
   statsLosses     Int?
   trophies        Json?
+  bio             String?
   statsUpdatedAt  DateTime?
   teamId          Int?      @unique
   team            Team?     @relation(fields: [teamId], references: [id])
@@ -66,6 +67,7 @@ model Player {
   currentClub     String?
   currentClubLogo String?
   trophies        Json?
+  bio             String?
   statsGoals      Int?
   statsAssists    Int?
   statsGames      Int?

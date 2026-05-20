@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getPosition } from "@/lib/positions";
+import BioSection from "@/components/BioSection";
 
 export const revalidate = 3600;
 
@@ -173,7 +174,7 @@ export default async function PlayerPage({ params }: Props) {
       )}
 
       {/* ── STATS PLACEHOLDER ── */}
-      <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center">
+      <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center mb-6">
         <p className="text-[9px] font-bold tracking-[0.3em] uppercase text-[#C8A96B]/40 mb-2">
           Estatísticas da Copa
         </p>
@@ -181,6 +182,9 @@ export default async function PlayerPage({ params }: Props) {
           Disponível após o início do torneio · 19 de junho de 2026
         </p>
       </div>
+
+      {/* ── BIO ── */}
+      {player.bio && <BioSection bio={player.bio} />}
     </div>
   );
 }
