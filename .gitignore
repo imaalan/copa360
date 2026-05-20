@@ -39,3 +39,4 @@ test_*.ts
 # local-only scripts (not tracked)
 scripts/_*.ts
 scripts/_*.js
+demo-recording/
