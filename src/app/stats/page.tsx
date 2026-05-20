@@ -10,20 +10,13 @@ export const metadata = {
 };
 
 const POSITION_GROUPS: Record<string, string> = {
-  Goalkeeper:            "Goleiros",
-  Defence:               "Defensores",
-  "Centre-Back":         "Defensores",
-  "Left-Back":           "Defensores",
-  "Right-Back":          "Defensores",
-  Midfield:              "Meias",
-  "Defensive Midfield":  "Meias",
-  "Central Midfield":    "Meias",
-  "Attacking Midfield":  "Meias",
-  Offence:               "Atacantes",
-  "Left Winger":         "Atacantes",
-  "Right Winger":        "Atacantes",
-  "Centre-Forward":      "Atacantes",
-  "Secondary Striker":   "Atacantes",
+  GK: "Goleiros",
+  CB: "Defensores", RB: "Defensores", LB: "Defensores",
+  SW: "Defensores", RWB: "Defensores", LWB: "Defensores", DEF: "Defensores",
+  CDM: "Meias", CM: "Meias", CAM: "Meias",
+  RM: "Meias", LM: "Meias", MID: "Meias",
+  RW: "Atacantes", LW: "Atacantes", CF: "Atacantes",
+  ST: "Atacantes", SS: "Atacantes", FWD: "Atacantes",
 };
 
 function calcAge(dob: Date): number {
