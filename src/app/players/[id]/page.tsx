@@ -136,6 +136,9 @@ export default async function PlayerPage({ params }: Props) {
         </div>
       </div>
 
+      {/* ── BIO ── */}
+      {player.bio && <div className="mb-6"><BioSection bio={player.bio} /></div>}
+
       {/* ── TEAM CARD ── */}
       {team && (
         <Link
@@ -183,8 +186,6 @@ export default async function PlayerPage({ params }: Props) {
         </p>
       </div>
 
-      {/* ── BIO ── */}
-      {player.bio && <BioSection bio={player.bio} />}
     </div>
   );
 }
