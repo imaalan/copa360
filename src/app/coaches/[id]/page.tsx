@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import BioSection from "@/components/BioSection";
+import TrophiesSection from "@/components/TrophiesSection";
 
 export const revalidate = 3600;
 
@@ -144,22 +145,7 @@ export default async function CoachPage({ params }: Props) {
       )}
 
       {/* Trophies */}
-      {trophies.length > 0 && (
-        <div className="mb-6 rounded-[20px] bg-white/[0.03] border border-white/[0.07] p-6">
-          <p className="mb-4 text-[9px] font-bold tracking-[0.3em] uppercase text-white/50">Conquistas ({trophies.length})</p>
-          <div className="grid gap-2">
-            {trophies.map((t, i) => (
-              <div key={i} className="flex items-center gap-3 rounded-[12px] bg-white/[0.02] border border-white/[0.05] px-4 py-3">
-                <span className="text-[16px] flex-shrink-0">🏆</span>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[13px] font-semibold text-[#F3F4F6] truncate">{t.league}</div>
-                  <div className="text-[11px] text-[#6B7280]">{t.country} · {t.season}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {trophies.length > 0 && <TrophiesSection trophies={trophies} />}
 
       {!hasStats && trophies.length === 0 && (
         <div className="rounded-[20px] border border-dashed border-white/[0.08] px-8 py-10 text-center mb-6">
