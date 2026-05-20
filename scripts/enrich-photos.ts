@@ -72,14 +72,30 @@ type SDBPlayer = {
   strCutout?: string;
 };
 
-// Rough position category mapping: DB position → SDB strPosition keywords
+// Map FIFA siglas → position group for TheSportsDB matching
+const SIGLA_GROUP: Record<string, "gk" | "def" | "mid" | "fwd"> = {
+  GK: "gk",
+  CB: "def", RB: "def", LB: "def", SW: "def", RWB: "def", LWB: "def", DEF: "def",
+  CDM: "mid", CM: "mid", CAM: "mid", RM: "mid", LM: "mid", MID: "mid",
+  RW: "fwd", LW: "fwd", CF: "fwd", ST: "fwd", SS: "fwd", FWD: "fwd",
+};
+
 function positionMatch(dbPos: string | null, sdbPos: string | null | undefined): boolean {
   if (!dbPos || !sdbPos) return true; // unknown = don't disqualify
-  const db = dbPos.toLowerCase();
   const sdb = sdbPos.toLowerCase();
+  // FIFA sigla path (new)
+  const group = SIGLA_GROUP[dbPos.toUpperCase()];
+  if (group) {
+    if (group === "gk") return sdb.includes("goalkeeper");
+    if (group === "def") return sdb.includes("defender") || sdb.includes("back");
+    if (group === "mid") return sdb.includes("midfield");
+    if (group === "fwd") return sdb.includes("forward") || sdb.includes("attacker") || sdb.includes("winger") || sdb.includes("striker");
+  }
+  // Legacy string path (fallback)
+  const db = dbPos.toLowerCase();
   if (db.includes("goalkeeper") && sdb.includes("goalkeeper")) return true;
-  if ((db.includes("back") || db.includes("defence") || db.includes("center-back") || db.includes("centre-back")) && (sdb.includes("defender") || sdb.includes("back"))) return true;
-  if ((db.includes("midfield")) && sdb.includes("midfield")) return true;
+  if ((db.includes("back") || db.includes("defence") || db.includes("centre-back")) && (sdb.includes("defender") || sdb.includes("back"))) return true;
+  if (db.includes("midfield") && sdb.includes("midfield")) return true;
   if ((db.includes("forward") || db.includes("winger") || db.includes("offence") || db.includes("attacker")) && (sdb.includes("forward") || sdb.includes("attacker") || sdb.includes("winger") || sdb.includes("striker"))) return true;
   return false;
 }
