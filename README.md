@@ -4,6 +4,8 @@
 
 Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2026** — seleções, jogadores, técnicos, estatísticas e histórias, com a profundidade de um veículo de jornalismo esportivo e a energia visual do futebol de alto nível.
 
+![Copa360 preview](demo/preview.gif)
+
 ---
 
 ## Páginas
