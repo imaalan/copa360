@@ -30,6 +30,10 @@ const SEASON = (() => {
   const a = argv.find((x) => x.startsWith("--season="));
   return a ? a.split("=")[1] : "2024";
 })();
+const TLAS = (() => {
+  const a = argv.find((x) => x.startsWith("--tlas="));
+  return a ? a.split("=")[1].toUpperCase().split(",").map(s => s.trim()) : null;
+})();
 
 // ── String helpers ────────────────────────────────────────────────────────────
 
@@ -111,14 +115,19 @@ async function main() {
   console.log(`\n[enrich-stats] season=${SEASON} dry=${DRY_RUN} force=${FORCE}\n`);
 
   // 1. Load all Copa360 players
+  const teamFilter = TLAS ? { team: { tla: { in: TLAS } } } : {};
   const players = await prisma.player.findMany({
     select: {
       id: true,
       name: true,
+      nationality: true,
+      position: true,
+      currentClub: true,
       statsGoals: true,
       statsUpdatedAt: true,
+      team: { select: { name: true, tla: true } },
     },
-    ...(FORCE ? {} : { where: { statsGoals: null } }),
+    where: FORCE ? { ...teamFilter } : { statsGoals: null, ...teamFilter },
   });
 
   console.log(`Players to enrich: ${players.length}`);
@@ -161,7 +170,12 @@ async function main() {
   let notFound = 0;
 
   for (const player of players) {
-    const us = understatPlayers.find((u) => namesMatch(player.name, u.player_name));
+    // Match by name; if multiple candidates, use currentClub or team to disambiguate
+    const candidates = understatPlayers.filter(u => namesMatch(player.name, u.player_name));
+    const club = (player.currentClub ?? player.team?.name ?? "").toLowerCase();
+    const us = candidates.length > 1
+      ? (candidates.find(u => club && u.team_title.toLowerCase().includes(club.slice(0, 6))) ?? candidates[0])
+      : candidates[0];
 
     if (!us) {
       notFound++;

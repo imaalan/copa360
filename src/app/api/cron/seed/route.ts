@@ -1,8 +1,8 @@
 export const runtime = "nodejs";
-// Hobby: 60s max — may be tight for 1200+ player upserts; upgrade to Pro for 300s
 export const maxDuration = 60;
 
 import { prisma } from "@/lib/prisma";
+import { normPosition } from "@/lib/positions";
 
 const API_BASE = "https://api.football-data.org/v4";
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY ?? "";
@@ -84,7 +84,7 @@ export async function GET(req: Request) {
           where: { externalId: Number(p.id) },
           update: {
             name: String(p.name),
-            position: p.position ? String(p.position) : null,
+            position: normPosition(p.position ? String(p.position) : null) ?? "MID",
             nationality: p.nationality ? String(p.nationality) : null,
             dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
             shirtNumber: p.shirtNumber != null ? Number(p.shirtNumber) : null,
@@ -93,7 +93,7 @@ export async function GET(req: Request) {
           create: {
             externalId: Number(p.id),
             name: String(p.name),
-            position: p.position ? String(p.position) : null,
+            position: normPosition(p.position ? String(p.position) : null) ?? "MID",
             nationality: p.nationality ? String(p.nationality) : null,
             dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
             shirtNumber: p.shirtNumber != null ? Number(p.shirtNumber) : null,

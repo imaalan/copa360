@@ -48,9 +48,6 @@ test.describe("GET /api/players/[id]/popup", () => {
 
     // trophies is always an array
     expect(Array.isArray(body.trophies)).toBe(true);
-
-    // matches is always an array
-    expect(Array.isArray(body.matches)).toBe(true);
   });
 
   test("returns 404 for non-existent player id", async ({ request }) => {

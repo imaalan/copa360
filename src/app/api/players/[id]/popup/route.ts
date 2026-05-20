@@ -11,6 +11,7 @@ const AF_BASE = process.env.API_FOOTBALL_URL ?? "https://v3.football.api-sports.
 type SDBPlayer = {
   strPlayer: string;
   strNationality: string;
+  strPosition?: string;
   strThumb?: string;
   strCutout?: string;
   strTeam?: string;
@@ -18,9 +19,21 @@ type SDBPlayer = {
   strDescriptionEN?: string;
 };
 
+function sdbPositionMatch(dbPos: string | null, sdbPos: string | null | undefined): boolean {
+  if (!dbPos || !sdbPos) return true;
+  const db = dbPos.toLowerCase(), sdb = sdbPos.toLowerCase();
+  if (db.includes("goalkeeper") && sdb.includes("goalkeeper")) return true;
+  if ((db.includes("back") || db.includes("defence") || db.includes("centre-back")) && (sdb.includes("defender") || sdb.includes("back"))) return true;
+  if (db.includes("midfield") && sdb.includes("midfield")) return true;
+  if ((db.includes("forward") || db.includes("winger") || db.includes("offence")) && (sdb.includes("forward") || sdb.includes("winger") || sdb.includes("striker") || sdb.includes("attacker"))) return true;
+  return false;
+}
+
 async function fetchFromSportsDB(
   name: string,
-  nationality: string | null
+  nationality: string | null,
+  position: string | null = null,
+  teamName: string | null = null
 ): Promise<{ photo: string | null; club: string | null; clubLogo: string | null } | null> {
   try {
     const url = `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(name)}`;
@@ -30,9 +43,12 @@ async function fetchFromSportsDB(
     const players: SDBPlayer[] = data.player ?? [];
     if (!players.length) return null;
 
-    const match = players.find(
-      (p) => nameMatch(name, p.strPlayer) && nationalityMatch(nationality, p.strNationality)
-    );
+    const byName = players.filter(p => nameMatch(name, p.strPlayer));
+    const match =
+      byName.find(p => nationalityMatch(nationality, p.strNationality) && sdbPositionMatch(position, p.strPosition as string | undefined) && (!teamName || !p.strTeam || normStr(p.strTeam).includes(normStr(teamName).slice(0, 5)))) ??
+      byName.find(p => nationalityMatch(nationality, p.strNationality) && sdbPositionMatch(position, p.strPosition as string | undefined)) ??
+      byName.find(p => nationalityMatch(nationality, p.strNationality)) ??
+      (byName.length === 1 ? byName[0] : null);
     if (!match) return null;
 
     const thumb = match.strThumb ?? match.strCutout ?? null;
@@ -141,27 +157,7 @@ export async function GET(
     where: { id: playerId },
     include: {
       team: {
-        select: {
-          id: true, tla: true, name: true, logo: true,
-          homeMatches: {
-            where: { status: { not: "FINISHED" } },
-            orderBy: { utcDate: "asc" },
-            take: 3,
-            select: {
-              id: true, utcDate: true, stage: true, group: true, status: true,
-              awayTeam: { select: { tla: true, name: true, logo: true } },
-            },
-          },
-          awayMatches: {
-            where: { status: { not: "FINISHED" } },
-            orderBy: { utcDate: "asc" },
-            take: 3,
-            select: {
-              id: true, utcDate: true, stage: true, group: true, status: true,
-              homeTeam: { select: { tla: true, name: true, logo: true } },
-            },
-          },
-        },
+        select: { id: true, tla: true, name: true, logo: true },
       },
     },
   });
@@ -178,7 +174,7 @@ export async function GET(
   let currentClubLogo = player.currentClubLogo;
 
   const sdb = (!photo || !currentClub)
-    ? await fetchFromSportsDB(player.name, player.nationality)
+    ? await fetchFromSportsDB(player.name, player.nationality, player.position, player.team?.name ?? null)
     : null;
 
   if (sdb) {
@@ -239,15 +235,6 @@ export async function GET(
     await prisma.player.update({ where: { id: playerId }, data: updates });
   }
 
-  // ── Matches ───────────────────────────────────────────────────────────────
-
-  const matches = [
-    ...(player.team?.homeMatches ?? []).map((m) => ({ ...m, opponent: m.awayTeam, isHome: true })),
-    ...(player.team?.awayMatches ?? []).map((m) => ({ ...m, opponent: m.homeTeam, isHome: false })),
-  ]
-    .sort((a, b) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime())
-    .slice(0, 3);
-
   return NextResponse.json({
     id: player.id,
     name: player.name,
@@ -262,6 +249,5 @@ export async function GET(
     currentClub: currentClub ? { name: currentClub, logo: currentClubLogo } : null,
     stats: afStats,
     trophies: trophies ?? [],
-    matches,
   });
 }

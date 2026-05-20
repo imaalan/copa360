@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import PlayerPopup from "@/components/PlayerPopup";
+import { getPosition, GROUP_TO_FILTER } from "@/lib/positions";
 
 type Player = {
   id: number;
@@ -17,28 +18,12 @@ type Player = {
 
 type Team = { id: number; name: string; tla: string | null };
 
-const POSITION_META: Record<string, { abbr: string; group: string }> = {
-  Goalkeeper:           { abbr: "GR",  group: "Goleiro" },
-  Defence:              { abbr: "DEF", group: "Defensor" },
-  "Centre-Back":        { abbr: "ZAG", group: "Defensor" },
-  "Left-Back":          { abbr: "LE",  group: "Defensor" },
-  "Right-Back":         { abbr: "LD",  group: "Defensor" },
-  Midfield:             { abbr: "MEI", group: "Meia" },
-  "Defensive Midfield": { abbr: "VOL", group: "Meia" },
-  "Central Midfield":   { abbr: "MEI", group: "Meia" },
-  "Attacking Midfield": { abbr: "MAI", group: "Meia" },
-  Offence:              { abbr: "ATA", group: "Atacante" },
-  "Left Winger":        { abbr: "PE",  group: "Atacante" },
-  "Right Winger":       { abbr: "PD",  group: "Atacante" },
-  "Centre-Forward":     { abbr: "CA",  group: "Atacante" },
-  "Secondary Striker":  { abbr: "SA",  group: "Atacante" },
-};
-
 const POSITION_GROUPS = ["Todos", "Goleiro", "Defensor", "Meia", "Atacante"];
 
 function getMeta(position: string | null) {
-  if (!position) return { abbr: "—", group: "Outro" };
-  return POSITION_META[position] ?? { abbr: position.slice(0, 3).toUpperCase(), group: "Outro" };
+  const { abbr, group } = getPosition(position);
+  const filterGroup = GROUP_TO_FILTER[group] ?? "Outro";
+  return { abbr, group: filterGroup };
 }
 
 function calcAge(dob: Date | null): number | null {

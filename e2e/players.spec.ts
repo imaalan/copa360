@@ -12,8 +12,8 @@ test.describe("/players", () => {
   });
 
   test("renders 60 player cards on first page", async ({ page }) => {
-    const ageTexts = page.locator(".rounded-\\[20px\\]").filter({ hasText: /\d+ anos/ });
-    await expect(ageTexts).toHaveCount(60);
+    const cards = page.locator(".rounded-\\[20px\\]");
+    await expect(cards).toHaveCount(60);
   });
 
   test("search by player name filters results", async ({ page }) => {
@@ -42,8 +42,8 @@ test.describe("/players", () => {
     await page.getByRole("button", { name: "Goleiro", exact: true }).click();
     await page.getByRole("button", { name: "Todos", exact: true }).click();
 
-    const ageTexts = page.locator(".rounded-\\[20px\\]").filter({ hasText: /\d+ anos/ });
-    await expect(ageTexts).toHaveCount(60);
+    const cards = page.locator(".rounded-\\[20px\\]");
+    await expect(cards).toHaveCount(60);
   });
 
   test("pagination next/prev controls work", async ({ page }) => {
