@@ -104,6 +104,9 @@ export default async function CoachPage({ params }: Props) {
         </div>
       </div>
 
+      {/* ── BIO ── */}
+      {coach.bio && <div className="mb-6"><BioSection bio={coach.bio} /></div>}
+
       {/* Team card */}
       {team && (
         <Link href={`/teams/${(team.tla ?? "").toLowerCase()}`} className="group block mb-6 rounded-[20px] bg-white/[0.03] border border-white/[0.07] px-6 py-4 hover:border-[#C8A96B]/25 transition-colors no-underline">
@@ -165,8 +168,6 @@ export default async function CoachPage({ params }: Props) {
         </div>
       )}
 
-      {/* ── BIO ── */}
-      {coach.bio && <BioSection bio={coach.bio} />}
     </div>
   );
 }
