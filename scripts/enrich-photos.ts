@@ -22,6 +22,7 @@ const SDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 
 const argv = process.argv.slice(2);
 const DRY_RUN = argv.includes("--dry-run");
+const REFRESH_CLUB = argv.includes("--refresh-club");
 const LIMIT = (() => {
   const a = argv.find((x) => x.startsWith("--limit="));
   return a ? parseInt(a.split("=")[1], 10) : Infinity;
@@ -162,17 +163,20 @@ function bar(done: number, total: number, width = 20): string {
 
 async function main() {
   const teamFilter = TLAS ? { team: { tla: { in: TLAS } } } : {};
+  const photoFilter = REFRESH_CLUB ? {} : { photo: null };
+
   const totalToProcess = await prisma.player.count({
-    where: { photo: null, id: { gt: FROM_ID }, ...teamFilter },
+    where: { ...photoFilter, id: { gt: FROM_ID }, ...teamFilter },
   });
 
   const limit = Math.min(totalToProcess, LIMIT);
 
-  console.log(`\nCopa360 · Photo Enrichment`);
+  console.log(`\nCopa360 · Photo Enrichment${REFRESH_CLUB ? " (refresh-club mode)" : ""}`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-  console.log(`Players without photo : ${totalToProcess}`);
+  console.log(`Players to process    : ${totalToProcess}`);
   console.log(`Processing limit      : ${limit === Infinity ? "all" : limit}`);
   console.log(`Dry run               : ${DRY_RUN}`);
+  console.log(`Refresh club          : ${REFRESH_CLUB}`);
   console.log(`From ID               : ${FROM_ID}`);
   console.log(`Estimated time        : ~${Math.ceil((limit * DELAY_MS) / 60000)} min (at ${DELAY_MS}ms/req)\n`);
 
@@ -184,7 +188,7 @@ async function main() {
 
   while (processed < limit) {
     const batch = await prisma.player.findMany({
-      where: { photo: null, id: { gt: lastId }, ...teamFilter },
+      where: { ...photoFilter, id: { gt: lastId }, ...teamFilter },
       orderBy: { id: "asc" },
       take: BATCH_SIZE,
       select: { id: true, name: true, nationality: true, position: true, currentClub: true, team: { select: { name: true, tla: true } } },
@@ -205,7 +209,8 @@ async function main() {
 
         if (result) {
           const updateData: Record<string, unknown> = {};
-          if (result.photo) updateData.photo = result.photo;
+          if (result.photo && !REFRESH_CLUB) updateData.photo = result.photo;
+          // In refresh-club mode: always overwrite club with TheSportsDB data
           if (result.club) updateData.currentClub = result.club;
           if (result.clubLogo) updateData.currentClubLogo = result.clubLogo;
 
@@ -213,7 +218,7 @@ async function main() {
             await prisma.player.update({ where: { id: player.id }, data: updateData });
           }
 
-          if (result.photo) found++;
+          if (result.club || result.photo) found++;
           else notFound++;
         } else {
           notFound++;

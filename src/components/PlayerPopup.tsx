@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getPosition } from "@/lib/positions";
@@ -59,11 +59,23 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
   const [data, setData] = useState<PopupData | null>(null);
   const [loading, setLoading] = useState(true);
   const [photoError, setPhotoError] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const touchStartY = useRef(0);
 
   const close = useCallback(() => {
     setData(null);
     onClose();
   }, [onClose]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    const atTop = !scrollRef.current || scrollRef.current.scrollTop === 0;
+    if (dy > 72 && atTop) close();
+  }, [close]);
 
   useEffect(() => {
     if (!playerId) return;
@@ -103,6 +115,8 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
       <div
         className="popup-modal relative w-full md:max-w-[680px] rounded-t-[28px] md:rounded-[28px] bg-[#13161C] border border-white/[0.08] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Drag handle (mobile only) */}
         <div className="md:hidden flex justify-center pt-3 pb-1">
@@ -129,7 +143,7 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
           </div>
         )}
 
-        <div className="relative p-7 max-h-[85vh] overflow-y-auto">
+        <div ref={scrollRef} className="relative p-7 max-h-[85vh] overflow-y-auto">
           {/* Header */}
           <div className="flex gap-6 mb-6">
             {/* Photo */}
