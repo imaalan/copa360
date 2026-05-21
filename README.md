@@ -4,6 +4,8 @@
 
 Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2026** — seleções, jogadores, técnicos, estatísticas e histórias, com a profundidade de um veículo de jornalismo esportivo e a energia visual do futebol de alto nível.
 
+**[→ copa360.vercel.app](https://copa360.vercel.app)**
+
 ![Copa360 preview](demo/preview.gif)
 
 ---
@@ -29,7 +31,9 @@ Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2
 - **Countdown ao vivo** para 19 de junho de 2026 (abertura do torneio)
 - **Featured players** — camisa 10 de BRA, FRA, ARG e ENG com link para perfil
 - **Mosaico de seleções** com rotação automática — 6 aleatórias do pool de 48, troca a cada 8s com fade
-- **PlayerPopup** com foto real, troféus, clube atual e stats, via TheSportsDB + football-data.org
+- **Biografia em PT-BR** — jogadores e técnicos com bio expandível ("Ver mais / Ver menos") via TheSportsDB + Wikipedia PT-BR
+- **Troféus com expand** — exibe 3 por padrão; botão para revelar todas as conquistas
+- **PlayerPopup** — espelho exato do perfil `/players/[id]`: bio, troféus, clube atual e stats via multi-API
 - **CoachCard + CoachPopup** — técnico de cada seleção com modal de stats e link para perfil completo
 - **Sistema de posições FIFA** — siglas canônicas (GK, CB, CM, ST...) com agrupamento em PT-BR
 - **Mobile responsivo**: hamburger menu com overlay full-screen, bottom sheet animado (slide-up)
@@ -93,7 +97,9 @@ copa360/
 │   │   ├── TeamsGrid.tsx                 # Grid de seleções com busca
 │   │   ├── PlayersGrid.tsx               # Grid de jogadores com filtros e paginação
 │   │   ├── MatchesView.tsx               # Lista de jogos com filtros por fase/grupo
-│   │   ├── PlayerPopup.tsx               # Modal/bottom-sheet com dados enriquecidos
+│   │   ├── BioSection.tsx                # Bio expansível com fade + "Ver mais/menos"
+│   │   ├── TrophiesSection.tsx           # Troféus: 3 por padrão + expand
+│   │   ├── PlayerPopup.tsx               # Modal/bottom-sheet — espelho do perfil /players/[id]
 │   │   ├── SquadWithPopup.tsx            # Elenco da seleção + integração popup
 │   │   ├── CoachCard.tsx                 # Card do técnico (abre CoachPopup)
 │   │   └── CoachPopup.tsx                # Modal do técnico: stats + conquistas
@@ -108,6 +114,7 @@ copa360/
 │   ├── enrich-photos.ts                  # Fotos de jogadores em lote via TheSportsDB
 │   ├── enrich-stats.ts                   # Stats (gols/assist/xG) via Understat
 │   ├── enrich-names.ts                   # Normalização de nomes
+│   ├── enrich-bios.ts                    # Biografias PT-BR: TheSportsDB + Wikipedia
 │   ├── enrich-coaches.ts                 # Fotos + stats + troféus de técnicos
 │   ├── seed-coaches.ts                   # Seed dos 48 técnicos (anúncios oficiais)
 │   └── check-enrichment.ts              # Relatório de cobertura de fotos/stats
@@ -148,7 +155,10 @@ npx tsx scripts/seed-coaches.ts
 # 6. (Opcional) Enriquecer fotos e stats
 npm run enrich:all
 
-# 7. (Opcional) Enriquecer técnicos
+# 7. (Opcional) Enriquecer bios em PT-BR
+npm run enrich:bios
+
+# 8. (Opcional) Enriquecer técnicos
 npx tsx scripts/enrich-coaches.ts
 
 # 8. Rodar o servidor
@@ -172,6 +182,7 @@ Acesse em [http://localhost:3000](http://localhost:3000).
 | `npm run enrich:stats` | Stats (gols/assist/jogos/xG) via Understat (top 5 ligas) |
 | `npm run enrich:names` | Normalização de nomes dos jogadores |
 | `npm run enrich:all` | Sequência completa: names → photos → stats |
+| `npm run enrich:bios` | Biografias PT-BR via TheSportsDB + Wikipedia |
 | `npm run test:e2e` | Roda os testes Playwright |
 | `npm run test:e2e:ui` | Playwright com UI interativa |
 | `npm run typecheck` | Verificação de tipos TypeScript |
@@ -195,6 +206,19 @@ npx tsx scripts/enrich-stats.ts --tlas=BRA,FRA      # seleções específicas
 npx tsx scripts/enrich-stats.ts --dry-run           # preview, sem escrita
 npx tsx scripts/enrich-stats.ts --force             # sobrescreve quem já tem stats
 npx tsx scripts/enrich-stats.ts --season=2023       # temporada alternativa (padrão: 2024)
+```
+
+### Enriquecimento de bios
+
+Busca biografias em PT-BR via TheSportsDB (`strDescriptionPT`) com fallback para Wikipedia PT-BR. Valida nome + nacionalidade + ano de nascimento para evitar falsos positivos.
+
+```bash
+npm run enrich:bios                          # jogadores + técnicos
+npm run enrich:bios -- --players-only        # só jogadores
+npm run enrich:bios -- --coaches-only        # só técnicos
+npm run enrich:bios -- --tlas=BRA,FRA        # seleções específicas
+npm run enrich:bios -- --force               # sobrescreve quem já tem bio
+npm run enrich:bios -- --dry-run             # preview, sem escrita
 ```
 
 ### Enriquecimento de técnicos
@@ -261,8 +285,11 @@ O que **não** fazemos: estética gamer, neon, scanlines, #FFD700, escudos, bola
 - [x] Sistema de posições FIFA (`positions.ts`) — siglas canônicas + PT-BR
 - [x] Técnicos: seed + enriquecimento + CoachCard + CoachPopup + `/coaches/[id]`
 - [x] Testes E2E com Playwright
-- [ ] CI/CD com GitHub Actions (PR gate + nightly schedule)
-- [ ] Deploy em produção (Vercel)
+- [x] Biografias PT-BR: jogadores e técnicos com expand (TheSportsDB + Wikipedia PT-BR)
+- [x] Troféus na página de perfil com expand ("Ver mais / Ver menos")
+- [x] Popup e perfil como espelhos — mesma estrutura e dados
+- [x] CI/CD com GitHub Actions (PR gate + nightly schedule)
+- [x] Deploy em produção — [copa360.vercel.app](https://copa360.vercel.app)
 
 ---
 
