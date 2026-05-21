@@ -138,7 +138,7 @@ export default async function Home() {
               <Link
                 key={player.id}
                 href={`/players/${player.id}`}
-                className="group bg-white/[0.03] border border-white/[0.07] rounded-[28px] p-5 hover:border-[#C8A96B]/30 transition-colors no-underline"
+                className="group bg-white/[0.03] border border-white/[0.07] rounded-[28px] p-5 hover:border-[#C8A96B]/30 hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(0,0,0,0.45)] transition-all duration-200 no-underline"
               >
                 {/* Photo or initials */}
                 <div className="aspect-square rounded-[14px] bg-white/[0.05] overflow-hidden mb-3.5 relative flex items-center justify-center">
