@@ -210,46 +210,46 @@ function MatchCard({ match: m }: { match: Match }) {
   const isLive     = m.status === "IN_PLAY" || m.status === "PAUSED";
 
   return (
-    <div className="group relative flex items-center gap-4 bg-white/[0.03] border border-white/[0.07] rounded-[16px] px-5 py-4 hover:border-[#C8A96B]/20 transition-colors">
+    <div className="group relative flex items-center gap-2 md:gap-4 bg-white/[0.03] border border-white/[0.07] rounded-[16px] px-3 md:px-5 py-3 md:py-4 hover:border-[#C8A96B]/20 transition-colors">
       {/* Live pulse */}
       {isLive && (
-        <span className="absolute top-3 right-3 flex h-2 w-2">
+        <span className="absolute top-2.5 right-2.5 md:hidden flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
         </span>
       )}
 
       {/* Time */}
-      <div className="w-12 flex-shrink-0 text-center">
-        <div className="text-[11px] font-semibold text-[#6B7280]">{formatTime(m.utcDate)}</div>
-        <div className="text-[9px] text-white/20 mt-0.5">BRT</div>
+      <div className="w-10 md:w-12 flex-shrink-0 text-center">
+        <div className="text-[10px] md:text-[11px] font-semibold text-[#6B7280]">{formatTime(m.utcDate)}</div>
+        <div className="text-[8px] md:text-[9px] text-white/20 mt-0.5">BRT</div>
       </div>
 
       {/* Home team */}
       <TeamBlock team={m.homeTeam} align="right" />
 
       {/* Score / VS */}
-      <div className="flex-shrink-0 w-20 flex items-center justify-center gap-2">
+      <div className="flex-shrink-0 w-14 md:w-20 flex items-center justify-center gap-1 md:gap-2">
         {isFinished || isLive ? (
-          <div className="flex items-center gap-2">
-            <span className={`text-[22px] font-extrabold tabular-nums tracking-[-0.04em] ${isLive ? "text-red-400" : "text-[#F3F4F6]"}`}>
+          <div className="flex items-center gap-1 md:gap-2">
+            <span className={`text-[18px] md:text-[22px] font-extrabold tabular-nums tracking-[-0.04em] ${isLive ? "text-red-400" : "text-[#F3F4F6]"}`}>
               {m.homeScore}
             </span>
-            <span className="text-[#6B7280] text-[14px]">·</span>
-            <span className={`text-[22px] font-extrabold tabular-nums tracking-[-0.04em] ${isLive ? "text-red-400" : "text-[#F3F4F6]"}`}>
+            <span className="text-[#6B7280] text-[12px] md:text-[14px]">·</span>
+            <span className={`text-[18px] md:text-[22px] font-extrabold tabular-nums tracking-[-0.04em] ${isLive ? "text-red-400" : "text-[#F3F4F6]"}`}>
               {m.awayScore}
             </span>
           </div>
         ) : (
-          <span className="text-[11px] font-bold text-[#6B7280] tracking-[0.12em]">VS</span>
+          <span className="text-[10px] md:text-[11px] font-bold text-[#6B7280] tracking-[0.12em]">VS</span>
         )}
       </div>
 
       {/* Away team */}
       <TeamBlock team={m.awayTeam} align="left" />
 
-      {/* Status badge */}
-      <div className="ml-auto flex-shrink-0">
+      {/* Status badge — desktop only */}
+      <div className="ml-auto hidden md:flex flex-shrink-0">
         <StatusBadge status={m.status} />
       </div>
     </div>
@@ -259,20 +259,19 @@ function MatchCard({ match: m }: { match: Match }) {
 function TeamBlock({ team, align }: { team: MatchTeam; align: "left" | "right" }) {
   const isRight = align === "right";
   return (
-    <div className={`flex items-center gap-2 md:gap-2.5 flex-1 ${isRight ? "flex-row-reverse" : ""}`}>
-      <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 flex items-center justify-center">
+    <div className={`flex items-center gap-1.5 md:gap-2.5 flex-1 min-w-0 ${isRight ? "flex-row-reverse" : ""}`}>
+      <div className="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 flex items-center justify-center">
         {team?.logo ? (
           <Image src={team.logo} alt={team?.name ?? ""} width={32} height={32} className="object-contain" unoptimized />
         ) : (
-          <div className="w-7 h-7 rounded-full bg-white/[0.06]" />
+          <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-white/[0.06]" />
         )}
       </div>
-      <div className={`min-w-0 ${isRight ? "text-right" : ""}`}>
-        <div className="text-[15px] md:text-[13px] font-extrabold text-[#F3F4F6] tracking-[-0.02em]">
+      <div className={`min-w-0 flex-1 ${isRight ? "text-right" : ""}`}>
+        <div className="text-[13px] md:text-[13px] font-extrabold text-[#F3F4F6] tracking-[-0.02em] truncate">
           {team?.tla ?? "—"}
         </div>
         <div className="hidden md:block text-[10px] text-[#6B7280] truncate">{team?.name ?? "—"}</div>
-        <div className="md:hidden text-[9px] text-[#6B7280] truncate">{team?.name ?? "—"}</div>
       </div>
     </div>
   );

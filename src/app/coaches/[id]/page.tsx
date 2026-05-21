@@ -54,7 +54,7 @@ export default async function CoachPage({ params }: Props) {
   const winRate = hasStats ? Math.round(((coach.statsWins ?? 0) / coach.statsMatches!) * 100) : null;
 
   return (
-    <div className="px-4 md:px-12 pt-8 md:pt-12 pb-24 max-w-[1440px] mx-auto">
+    <div className="animate-page-in px-4 md:px-12 pt-8 md:pt-12 pb-24 max-w-[1440px] mx-auto">
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center gap-2 text-[11px] text-[#6B7280]">
         <Link href="/" className="hover:text-[#C8A96B] transition-colors">Início</Link>
