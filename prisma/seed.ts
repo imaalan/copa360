@@ -1,16 +1,32 @@
 import { PrismaClient } from "@prisma/client";
+import https from "https";
+import { URL } from "url";
 
 const prisma = new PrismaClient();
 
 const API_BASE = "https://api.football-data.org/v4";
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY ?? "";
 
-async function apiFetch(path: string) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { "X-Auth-Token": API_KEY },
+// Node 24 undici has TLS issues with this host; https module works fine.
+const _agent = new https.Agent({ keepAlive: false });
+function apiFetch(path: string): Promise<Record<string, unknown>> {
+  return new Promise((resolve, reject) => {
+    const u = new URL(`${API_BASE}${path}`);
+    const req = https.get(
+      { hostname: u.hostname, path: u.pathname + u.search, headers: { "X-Auth-Token": API_KEY }, agent: _agent },
+      res => {
+        const chunks: Buffer[] = [];
+        res.on("data", c => chunks.push(c as Buffer));
+        res.on("end", () => {
+          if (res.statusCode && res.statusCode >= 400)
+            return reject(new Error(`API ${path} → ${res.statusCode}`));
+          resolve(JSON.parse(Buffer.concat(chunks).toString()));
+        });
+      }
+    );
+    req.on("error", reject);
+    req.setTimeout(30000, () => { req.destroy(); reject(new Error("Timeout")); });
   });
-  if (!res.ok) throw new Error(`API ${path} → ${res.status}`);
-  return res.json() as Promise<Record<string, unknown>>;
 }
 
 async function main() {
@@ -97,6 +113,18 @@ async function main() {
       });
       playerCount++;
     }
+
+    // Remove players no longer in the current squad (stale or null externalId)
+    const squadIds = squad.map(p => Number(p.id)).filter(n => !isNaN(n) && n > 0);
+    await prisma.player.deleteMany({
+      where: {
+        teamId: team.id,
+        OR: [
+          { externalId: null },
+          { externalId: { notIn: squadIds } },
+        ],
+      },
+    });
 
     console.log(`   ✅ ${team.name} (${team.tla}) — ${playerCount} jogadores`);
   }

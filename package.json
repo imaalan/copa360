@@ -19,6 +19,7 @@
     "enrich:bios": "tsx scripts/enrich-bios.ts",
     "enrich:all": "npm run enrich:names -- --all && npm run enrich:photos && npm run enrich:stats -- --force",
     "sync:squads": "tsx scripts/sync-squads.ts",
+    "cleanup:squads": "tsx scripts/cleanup-squads.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
