@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import https from "https";
 import { URL } from "url";
+import { normPosition } from "../src/lib/positions";
 
 const prisma = new PrismaClient();
 
@@ -93,7 +94,7 @@ async function main() {
         where: { externalId: Number(p.id) },
         update: {
           name: String(p.name),
-          position: p.position ? String(p.position) : null,
+          position: normPosition(p.position ? String(p.position) : null) ?? String(p.position ?? ""),
           nationality: p.nationality ? String(p.nationality) : null,
           dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
           photo: p.photo ? String(p.photo) : null,
@@ -103,7 +104,7 @@ async function main() {
         create: {
           externalId: Number(p.id),
           name: String(p.name),
-          position: p.position ? String(p.position) : null,
+          position: normPosition(p.position ? String(p.position) : null) ?? String(p.position ?? ""),
           nationality: p.nationality ? String(p.nationality) : null,
           dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
           photo: p.photo ? String(p.photo) : null,
