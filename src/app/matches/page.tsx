@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import MatchesView from "@/components/MatchesView";
 
-export const revalidate = 300;
+export const revalidate = 60; // Copa em andamento: placares com no máx. 1min de atraso
 
 export const metadata = {
   title: "Jogos — Copa360",

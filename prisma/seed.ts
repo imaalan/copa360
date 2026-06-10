@@ -1,182 +1,34 @@
+/**
+ * prisma/seed.ts — Sincronização manual via `npm run db:seed`.
+ *
+ * Agora é um wrapper fino de src/lib/sync-core.ts (a MESMA lógica do cron
+ * diário). Garantias:
+ *   - NÃO apaga fotos/enriquecimento (photo, clube, bio, troféus, stats);
+ *   - NÃO reverte nomes melhorados pelo enrich-names;
+ *   - posições sempre normalizadas para sigla FIFA (normPosition).
+ */
+
 import { PrismaClient } from "@prisma/client";
-import https from "https";
-import { URL } from "url";
-import { normPosition } from "../src/lib/positions";
+import { syncWorldCupData } from "../src/lib/sync-core";
 
 const prisma = new PrismaClient();
-
-const API_BASE = "https://api.football-data.org/v4";
-const API_KEY = process.env.FOOTBALL_DATA_API_KEY ?? "";
-
-// Node 24 undici has TLS issues with this host; https module works fine.
-const _agent = new https.Agent({ keepAlive: false });
-function apiFetch(path: string): Promise<Record<string, unknown>> {
-  return new Promise((resolve, reject) => {
-    const u = new URL(`${API_BASE}${path}`);
-    const req = https.get(
-      { hostname: u.hostname, path: u.pathname + u.search, headers: { "X-Auth-Token": API_KEY }, agent: _agent },
-      res => {
-        const chunks: Buffer[] = [];
-        res.on("data", c => chunks.push(c as Buffer));
-        res.on("end", () => {
-          if (res.statusCode && res.statusCode >= 400)
-            return reject(new Error(`API ${path} → ${res.statusCode}`));
-          resolve(JSON.parse(Buffer.concat(chunks).toString()));
-        });
-      }
-    );
-    req.on("error", reject);
-    req.setTimeout(30000, () => { req.destroy(); reject(new Error("Timeout")); });
-  });
-}
 
 async function main() {
   console.log("🌍 Copa360 seed iniciado...\n");
 
-  // 1. Competition
-  console.log("📋 Buscando competição FIFA World Cup 2026...");
-  const comp = await apiFetch("/competitions/WC");
-  const season = comp.currentSeason as Record<string, unknown>;
+  const result = await syncWorldCupData(prisma, { log: console.log });
 
-  const competition = await prisma.competition.upsert({
-    where: { externalId: Number(comp.id) },
-    update: {},
-    create: {
-      externalId: Number(comp.id),
-      name: String(comp.name),
-      code: String(comp.code),
-      areaName: "World",
-      emblem: comp.emblem ? String(comp.emblem) : null,
-      type: String(comp.type),
-      season: String((season as Record<string, unknown>).id ?? ""),
-      startDate: season.startDate ? new Date(String(season.startDate)) : null,
-      endDate: season.endDate ? new Date(String(season.endDate)) : null,
-    },
-  });
-  console.log(`   ✅ ${competition.name} (id: ${competition.id})\n`);
+  const [totalTeams, totalPlayers, totalMatches] = await Promise.all([
+    prisma.team.count(),
+    prisma.player.count(),
+    prisma.match.count(),
+  ]);
 
-  // 2. Teams + Players
-  console.log("⚽ Buscando 48 seleções + elencos...");
-  const teamsData = await apiFetch("/competitions/WC/teams");
-  const teams = teamsData.teams as Array<Record<string, unknown>>;
-
-  console.log(`   ${teams.length} seleções encontradas\n`);
-
-  for (const t of teams) {
-    const team = await prisma.team.upsert({
-      where: { externalId: Number(t.id) },
-      update: {
-        name: String(t.name),
-        code: String((t.area as Record<string, unknown>)?.code ?? ""),
-        tla: t.tla ? String(t.tla) : null,
-        logo: t.crest ? String(t.crest) : null,
-        country: String((t.area as Record<string, unknown>)?.name ?? ""),
-        founded: t.founded ? Number(t.founded) : null,
-        venue: t.venue ? String(t.venue) : null,
-      },
-      create: {
-        externalId: Number(t.id),
-        name: String(t.name),
-        code: String((t.area as Record<string, unknown>)?.code ?? ""),
-        tla: t.tla ? String(t.tla) : null,
-        logo: t.crest ? String(t.crest) : null,
-        country: String((t.area as Record<string, unknown>)?.name ?? ""),
-        founded: t.founded ? Number(t.founded) : null,
-        venue: t.venue ? String(t.venue) : null,
-      },
-    });
-
-    const squad = (t.squad as Array<Record<string, unknown>>) ?? [];
-    let playerCount = 0;
-
-    for (const p of squad) {
-      await prisma.player.upsert({
-        where: { externalId: Number(p.id) },
-        update: {
-          name: String(p.name),
-          position: normPosition(p.position ? String(p.position) : null) ?? String(p.position ?? ""),
-          nationality: p.nationality ? String(p.nationality) : null,
-          dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
-          photo: p.photo ? String(p.photo) : null,
-          shirtNumber: p.shirtNumber != null ? Number(p.shirtNumber) : null,
-          teamId: team.id,
-        },
-        create: {
-          externalId: Number(p.id),
-          name: String(p.name),
-          position: normPosition(p.position ? String(p.position) : null) ?? String(p.position ?? ""),
-          nationality: p.nationality ? String(p.nationality) : null,
-          dateOfBirth: p.dateOfBirth ? new Date(String(p.dateOfBirth)) : null,
-          photo: p.photo ? String(p.photo) : null,
-          shirtNumber: p.shirtNumber != null ? Number(p.shirtNumber) : null,
-          teamId: team.id,
-        },
-      });
-      playerCount++;
-    }
-
-    // Remove players no longer in the current squad (stale or null externalId)
-    const squadIds = squad.map(p => Number(p.id)).filter(n => !isNaN(n) && n > 0);
-    await prisma.player.deleteMany({
-      where: {
-        teamId: team.id,
-        OR: [
-          { externalId: null },
-          { externalId: { notIn: squadIds } },
-        ],
-      },
-    });
-
-    console.log(`   ✅ ${team.name} (${team.tla}) — ${playerCount} jogadores`);
-  }
-
-  // 3. Matches
-  console.log("\n📅 Buscando 104 jogos...");
-  const matchesData = await apiFetch("/competitions/WC/matches");
-  const matches = matchesData.matches as Array<Record<string, unknown>>;
-
-  // Build externalId → internal id map for teams
-  const teamMap = new Map<number, number>();
-  const dbTeams = await prisma.team.findMany({ select: { id: true, externalId: true } });
-  for (const t of dbTeams) if (t.externalId) teamMap.set(t.externalId, t.id);
-
-  for (const m of matches) {
-    const home = m.homeTeam as Record<string, unknown>;
-    const away = m.awayTeam as Record<string, unknown>;
-    const score = m.score as Record<string, unknown>;
-    const fullTime = score?.fullTime as Record<string, unknown> | null;
-
-    await prisma.match.upsert({
-      where: { externalId: Number(m.id) },
-      update: {
-        status: String(m.status),
-        homeScore: fullTime?.home != null ? Number(fullTime.home) : null,
-        awayScore: fullTime?.away != null ? Number(fullTime.away) : null,
-      },
-      create: {
-        externalId: Number(m.id),
-        utcDate: new Date(String(m.utcDate)),
-        status: String(m.status),
-        matchday: m.matchday != null ? Number(m.matchday) : null,
-        stage: m.stage ? String(m.stage) : null,
-        group: m.group ? String(m.group) : null,
-        homeTeamId: home?.id ? (teamMap.get(Number(home.id)) ?? null) : null,
-        awayTeamId: away?.id ? (teamMap.get(Number(away.id)) ?? null) : null,
-        homeScore: fullTime?.home != null ? Number(fullTime.home) : null,
-        awayScore: fullTime?.away != null ? Number(fullTime.away) : null,
-        venue: m.venue ? String(m.venue) : null,
-        competitionId: competition.id,
-      },
-    });
-  }
-
-  const totalTeams = await prisma.team.count();
-  const totalPlayers = await prisma.player.count();
-  const totalMatches = await prisma.match.count();
-
-  console.log(`   ✅ ${totalMatches} jogos inseridos`);
   console.log(`\n🏆 Seed concluído!`);
-  console.log(`   ${totalTeams} seleções · ${totalPlayers} jogadores · ${totalMatches} jogos`);
+  console.log(
+    `   Sincronizados: ${result.teams} seleções · ${result.players} jogadores · ${result.matches} jogos`
+  );
+  console.log(`   Totais no banco: ${totalTeams} seleções · ${totalPlayers} jogadores · ${totalMatches} jogos`);
 }
 
 main()

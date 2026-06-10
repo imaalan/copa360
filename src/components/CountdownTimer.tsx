@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from "react";
 
-const TARGET = new Date("2026-06-19T18:00:00Z");
+// Fallback aproximado caso o banco ainda não tenha jogos sincronizados.
+// O valor REAL vem da prop targetIso (min utcDate dos jogos futuros) — a
+// constante antiga (2026-06-19) estava simplesmente errada: a abertura é 11/06.
+const FALLBACK_ISO = "2026-06-11T00:00:00Z";
+
 const pad = (n: number) => String(n).padStart(2, "0");
 
 type TimeLeft = { d: string; h: string; m: string; s: string } | null;
 
-function calc(): TimeLeft {
-  const delta = TARGET.getTime() - Date.now();
+function calc(targetMs: number): TimeLeft {
+  const delta = targetMs - Date.now();
   if (delta <= 0) return null;
   return {
     d: pad(Math.floor(delta / 86400000)),
@@ -25,14 +29,16 @@ const UNITS = [
   { key: "s", label: "Segundos" },
 ] as const;
 
-export default function CountdownTimer() {
+export default function CountdownTimer({ targetIso }: { targetIso?: string }) {
   const [time, setTime] = useState<TimeLeft>(null);
 
   useEffect(() => {
-    setTime(calc());
-    const id = setInterval(() => setTime(calc()), 1000);
+    const targetMs = new Date(targetIso ?? FALLBACK_ISO).getTime();
+    if (Number.isNaN(targetMs)) return;
+    setTime(calc(targetMs));
+    const id = setInterval(() => setTime(calc(targetMs)), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [targetIso]);
 
   if (!time) return null;
 

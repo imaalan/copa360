@@ -13,14 +13,8 @@ const FEATURED_STARS: Record<string, string[]> = {
   ENG: ["Jude Bellingham", "Harry Kane", "Phil Foden"],
 };
 
-const ATTACK_POSITIONS = [
-  "Left Winger",
-  "Right Winger",
-  "Centre-Forward",
-  "Attacking Midfield",
-  "Secondary Striker",
-  "Offence",
-];
+// Siglas FIFA — formato real do banco (normPosition). Strings legadas não casam mais.
+const ATTACK_POSITIONS = ["LW", "RW", "CF", "ST", "SS", "CAM", "FWD"];
 
 function getInitials(name: string) {
   return name
@@ -57,32 +51,40 @@ async function getFeaturedPlayers() {
 
 function posLabel(pos: string | null): string {
   const map: Record<string, string> = {
-    "Left Winger": "ATA",
-    "Right Winger": "ATA",
-    "Centre-Forward": "ATA",
-    "Attacking Midfield": "MEI",
-    "Secondary Striker": "ATA",
-    Offence: "ATA",
-    Midfield: "MEI",
-    "Central Midfield": "MEI",
-    "Defensive Midfield": "VOL",
-    Defence: "DEF",
-    "Centre-Back": "ZAG",
-    "Left-Back": "LE",
-    "Right-Back": "LD",
-    Goalkeeper: "GR",
+    GK: "GOL",
+    CB: "ZAG", SW: "ZAG", RB: "LD", LB: "LE", RWB: "LD", LWB: "LE", DEF: "DEF",
+    CDM: "VOL", CM: "MEI", CAM: "MEI", RM: "MEI", LM: "MEI", MID: "MEI",
+    RW: "PTA", LW: "PTA", CF: "ATA", ST: "ATA", SS: "ATA", FWD: "ATA",
   };
   return map[pos ?? ""] ?? "JOG";
 }
 
 export default async function Home() {
-  const [featuredPlayers, allTeams] = await Promise.all([
+  const now = new Date();
+  const [featuredPlayers, allTeams, nextMatch, playedCount] = await Promise.all([
     getFeaturedPlayers(),
     prisma.team.findMany({
       select: { id: true, tla: true, name: true, logo: true },
       orderBy: { name: "asc" },
     }),
+    // Próximo jogo direto do banco — nada de data hardcoded (a abertura é 11/06, não 19/06).
+    prisma.match.findFirst({
+      where: { utcDate: { gt: now } },
+      orderBy: { utcDate: "asc" },
+      select: { utcDate: true },
+    }),
+    prisma.match.count({ where: { utcDate: { lte: now } } }),
   ]);
+
+  const tournamentStarted = playedCount > 0;
+  const countdownLabel = nextMatch
+    ? `${tournamentStarted ? "Próximo jogo" : "Abertura"} · ${nextMatch.utcDate.toLocaleDateString("pt-BR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "America/Sao_Paulo",
+      })}`
+    : "FIFA World Cup 2026";
 
   return (
     <>
@@ -106,9 +108,9 @@ export default async function Home() {
 
         <div className="mt-12">
           <p className="mb-5 text-[9px] font-semibold tracking-[0.38em] uppercase text-white/20">
-            Abertura · 19 de junho de 2026
+            {countdownLabel}
           </p>
-          <CountdownTimer />
+          <CountdownTimer targetIso={nextMatch?.utcDate.toISOString()} />
         </div>
       </section>
 

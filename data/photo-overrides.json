@@ -1,0 +1,13 @@
+{
+  "_doc": "Correções manuais de foto — FASE 0 do enrich-photos (sempre vence todas as fontes). Chave = externalId do jogador na football-data.org. Edite na mão ou use: npx tsx scripts/set-photo.ts --name=\"Fulano\" --tla=XXX --url=\"https://...\" --note=\"motivo\". Commit este arquivo: é ele que faz a correção sobreviver a qualquer reseed em qualquer ambiente.",
+  "_exemplo": {
+    "286444": {
+      "photo": "https://COLE_AQUI_A_URL_CORRETA.png",
+      "verified": true,
+      "note": "Rayan (BRA) recebia foto do homônimo Rayan Cherki (FRA). Substitua a chave pelo externalId real (veja com: npx tsx scripts/set-photo.ts --name=Rayan --tla=BRA --dry-run --url=x) e mova este bloco para dentro de \"players\".",
+      "name": "Rayan",
+      "tla": "BRA"
+    }
+  },
+  "players": {}
+}

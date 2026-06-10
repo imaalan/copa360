@@ -28,7 +28,7 @@ const DRY_RUN = argv.includes("--dry-run");
 const FORCE = argv.includes("--force");
 const SEASON = (() => {
   const a = argv.find((x) => x.startsWith("--season="));
-  return a ? a.split("=")[1] : "2024";
+  return a ? a.split("=")[1] : "2025";
 })();
 const TLAS = (() => {
   const a = argv.find((x) => x.startsWith("--tlas="));
