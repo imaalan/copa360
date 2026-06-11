@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-06-11T00:28:37.388Z",
+  "dryRun": true,
+  "afUnmatched": [],
+  "sdbRejected": [
+    {
+      "playerId": 178,
+      "name": "Danilo dos Santos de Oliveira",
+      "tla": "BRA",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Danilo Santos",
+          "nationality": "Brazil",
+          "dateBorn": "2001-04-19"
+        }
+      ]
+    },
+    {
+      "playerId": 180,
+      "name": "Thiago",
+      "tla": "BRA",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Thiago Alcantara",
+          "nationality": "Spain",
+          "dateBorn": "1991-04-11"
+        }
+      ]
+    },
+    {
+      "playerId": 182,
+      "name": "Martinelli",
+      "tla": "BRA",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Luca Martinelli",
+          "nationality": "Italy",
+          "dateBorn": "1988-12-20"
+        }
+      ]
+    },
+    {
+      "playerId": 5148,
+      "name": "Wesley",
+      "tla": "BRA",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Wesley Atkinson",
+          "nationality": "England",
+          "dateBorn": "1994-10-13"
+        }
+      ]
+    }
+  ],
+  "downloadFailed": []
+}

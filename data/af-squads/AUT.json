@@ -1,0 +1,210 @@
+[
+  {
+    "id": 7598,
+    "name": "P. Pentz",
+    "age": 28,
+    "number": 13,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/7598.png"
+  },
+  {
+    "id": 7525,
+    "name": "A. Schlager",
+    "age": 29,
+    "number": 1,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/7525.png"
+  },
+  {
+    "id": 221605,
+    "name": "F. Wiegele",
+    "age": 24,
+    "number": 12,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/221605.png"
+  },
+  {
+    "id": 126640,
+    "name": "D. Affengruber",
+    "age": 24,
+    "number": 2,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/126640.png"
+  },
+  {
+    "id": 505,
+    "name": "D. Alaba",
+    "age": 33,
+    "number": 8,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/505.png"
+  },
+  {
+    "id": 25287,
+    "name": "K. Danso",
+    "age": 27,
+    "number": 3,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/25287.png"
+  },
+  {
+    "id": 25314,
+    "name": "M. Friedl",
+    "age": 27,
+    "number": 23,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/25314.png"
+  },
+  {
+    "id": 26240,
+    "name": "P. Lienhart",
+    "age": 29,
+    "number": 15,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/26240.png"
+  },
+  {
+    "id": 25915,
+    "name": "P. Mwene",
+    "age": 31,
+    "number": 16,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/25915.png"
+  },
+  {
+    "id": 711,
+    "name": "S. Posch",
+    "age": 28,
+    "number": 5,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/711.png"
+  },
+  {
+    "id": 7090,
+    "name": "M. Svoboda",
+    "age": 27,
+    "number": 25,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/7090.png"
+  },
+  {
+    "id": 715,
+    "name": "C. Baumgartner",
+    "age": 26,
+    "number": 19,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/715.png"
+  },
+  {
+    "id": 138935,
+    "name": "C. Chukwuemeka",
+    "age": 22,
+    "number": 17,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/138935.png"
+  },
+  {
+    "id": 719,
+    "name": "F. Grillitsch",
+    "age": 30,
+    "number": 10,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/719.png"
+  },
+  {
+    "id": 1157,
+    "name": "K. Laimer",
+    "age": 28,
+    "number": 20,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/1157.png"
+  },
+  {
+    "id": 7327,
+    "name": "A. Prass",
+    "age": 24,
+    "number": 22,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/7327.png"
+  },
+  {
+    "id": 1159,
+    "name": "M. Sabitzer",
+    "age": 31,
+    "number": 9,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/1159.png"
+  },
+  {
+    "id": 1095,
+    "name": "X. Schlager",
+    "age": 28,
+    "number": 4,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/1095.png"
+  },
+  {
+    "id": 7562,
+    "name": "R. Schmid",
+    "age": 25,
+    "number": 18,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/7562.png"
+  },
+  {
+    "id": 417,
+    "name": "A. Schöpf",
+    "age": 31,
+    "number": 26,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/417.png"
+  },
+  {
+    "id": 7328,
+    "name": "N. Seiwald",
+    "age": 24,
+    "number": 6,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/7328.png"
+  },
+  {
+    "id": 327895,
+    "name": "P. Wanner",
+    "age": 20,
+    "number": 24,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/327895.png"
+  },
+  {
+    "id": 126642,
+    "name": "P. Wimmer",
+    "age": 24,
+    "number": 21,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/126642.png"
+  },
+  {
+    "id": 18830,
+    "name": "M. Arnautovic",
+    "age": 36,
+    "number": 7,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/18830.png"
+  },
+  {
+    "id": 25297,
+    "name": "M. Gregoritsch",
+    "age": 31,
+    "number": 11,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/25297.png"
+  },
+  {
+    "id": 7722,
+    "name": "S. Kalajdzic",
+    "age": 28,
+    "number": 14,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/7722.png"
+  }
+]

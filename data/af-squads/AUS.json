@@ -1,0 +1,210 @@
+[
+  {
+    "id": 353883,
+    "name": "P. Beach",
+    "age": 22,
+    "number": 18,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/353883.png"
+  },
+  {
+    "id": 6870,
+    "name": "P. Izzo",
+    "age": 30,
+    "number": 12,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/6870.png"
+  },
+  {
+    "id": 2741,
+    "name": "M. Ryan",
+    "age": 33,
+    "number": 1,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/2741.png"
+  },
+  {
+    "id": 225,
+    "name": "A. Behich",
+    "age": 35,
+    "number": 16,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/225.png"
+  },
+  {
+    "id": 337587,
+    "name": "J. Bos",
+    "age": 23,
+    "number": 5,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/337587.png"
+  },
+  {
+    "id": 20457,
+    "name": "C. Burgess",
+    "age": 30,
+    "number": 21,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/20457.png"
+  },
+  {
+    "id": 348568,
+    "name": "A. Circati",
+    "age": 22,
+    "number": 3,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/348568.png"
+  },
+  {
+    "id": 33847,
+    "name": "J. Geria",
+    "age": 32,
+    "number": 6,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/33847.png"
+  },
+  {
+    "id": 426480,
+    "name": "L. Herrington",
+    "age": 18,
+    "number": 25,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/426480.png"
+  },
+  {
+    "id": 20079,
+    "name": "H. Souttar",
+    "age": 27,
+    "number": 19,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/20079.png"
+  },
+  {
+    "id": 2742,
+    "name": "M. Degenek",
+    "age": 31,
+    "number": 2,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/2742.png"
+  },
+  {
+    "id": 6808,
+    "name": "J. Italiano",
+    "age": 24,
+    "number": 4,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/6808.png"
+  },
+  {
+    "id": 153622,
+    "name": "K. Trewin",
+    "age": 24,
+    "number": 15,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/153622.png"
+  },
+  {
+    "id": 2749,
+    "name": "J. Irvine",
+    "age": 32,
+    "number": 22,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/2749.png"
+  },
+  {
+    "id": 6832,
+    "name": "C. Devlin",
+    "age": 27,
+    "number": 14,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/6832.png"
+  },
+  {
+    "id": 7050,
+    "name": "A. O Neill",
+    "age": 27,
+    "number": 13,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/7050.png"
+  },
+  {
+    "id": 441269,
+    "name": "Paul Okon-Engstler",
+    "age": 20,
+    "number": 24,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/441269.png"
+  },
+  {
+    "id": 6904,
+    "name": "C. Metcalfe",
+    "age": 26,
+    "number": 8,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/6904.png"
+  },
+  {
+    "id": 38123,
+    "name": "A. Hrustic",
+    "age": 29,
+    "number": 10,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/38123.png"
+  },
+  {
+    "id": 342035,
+    "name": "C. Volpato",
+    "age": 22,
+    "number": 20,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/342035.png"
+  },
+  {
+    "id": 338014,
+    "name": "N. Irankunda",
+    "age": 19,
+    "number": 17,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/338014.png"
+  },
+  {
+    "id": 2751,
+    "name": "M. Leckie",
+    "age": 34,
+    "number": 7,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/2751.png"
+  },
+  {
+    "id": 2755,
+    "name": "A. Mabil",
+    "age": 30,
+    "number": 11,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/2755.png"
+  },
+  {
+    "id": 296645,
+    "name": "T. Yengi",
+    "age": 25,
+    "number": 26,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/296645.png"
+  },
+  {
+    "id": 198352,
+    "name": "M. Touré",
+    "age": 21,
+    "number": 9,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/198352.png"
+  },
+  {
+    "id": 312459,
+    "name": "N. Velupillay",
+    "age": 24,
+    "number": 23,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/312459.png"
+  }
+]

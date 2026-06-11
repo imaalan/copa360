@@ -1,0 +1,42 @@
+{
+  "ALG": {
+    "id": 1532,
+    "name": "Algeria"
+  },
+  "ARG": {
+    "id": 26,
+    "name": "Argentina"
+  },
+  "AUS": {
+    "id": 20,
+    "name": "Australia"
+  },
+  "AUT": {
+    "id": 775,
+    "name": "Austria"
+  },
+  "BEL": {
+    "id": 1,
+    "name": "Belgium"
+  },
+  "BRA": {
+    "id": 6,
+    "name": "Brazil"
+  },
+  "CAN": {
+    "id": 1717,
+    "name": "Canada W"
+  },
+  "IRQ": {
+    "id": 1567,
+    "name": "Iraq"
+  },
+  "JOR": {
+    "id": 1548,
+    "name": "Jordan"
+  },
+  "QAT": {
+    "id": 1569,
+    "name": "Qatar"
+  }
+}

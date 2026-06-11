@@ -11,7 +11,7 @@ export function normNat(s: string): string {
 /** Fuzzy name match: exact, substring, or last-name match. */
 export function nameMatch(a: string, b: string | undefined): boolean {
   if (!b) return false;
-  const na = normStr(a), nb = normStr(b);
+  const na = normStr(a).replace(/-/g, " "), nb = normStr(b).replace(/-/g, " ");
   if (na === nb || nb.includes(na) || na.includes(nb)) return true;
   // Abbreviated first name: "J. Bellingham" vs "Jude Bellingham"
   const aLast = na.split(" ").slice(-1)[0];

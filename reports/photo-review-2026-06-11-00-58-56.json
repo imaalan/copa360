@@ -1,0 +1,377 @@
+{
+  "generatedAt": "2026-06-11T00:43:00.880Z",
+  "dryRun": false,
+  "afUnmatched": [
+    {
+      "playerId": 409,
+      "name": "Rayan Aït Nouri",
+      "tla": "ALG"
+    },
+    {
+      "playerId": 5372,
+      "name": "Oussama Benbout",
+      "tla": "ALG"
+    },
+    {
+      "playerId": 5395,
+      "name": "Anis Moussa",
+      "tla": "ALG"
+    },
+    {
+      "playerId": 115,
+      "name": "Nico Paz",
+      "tla": "ARG"
+    },
+    {
+      "playerId": 420,
+      "name": "Jordan Bos",
+      "tla": "AUS"
+    },
+    {
+      "playerId": 423,
+      "name": "Aiden O'Neill",
+      "tla": "AUS"
+    }
+  ],
+  "sdbRejected": [
+    {
+      "playerId": 11,
+      "name": "Emiliano Martínez",
+      "tla": "URY",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Emiliano Martinez",
+          "nationality": "Argentina",
+          "dateBorn": "1992-09-02"
+        }
+      ]
+    },
+    {
+      "playerId": 16,
+      "name": "Juan Sanabria",
+      "tla": "URY",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Juan Sanabria",
+          "nationality": "Colombia",
+          "dateBorn": "1994-11-04"
+        }
+      ]
+    },
+    {
+      "playerId": 334,
+      "name": "Hyun-Gyu Oh",
+      "tla": "KOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Hyun Gyu Lim",
+          "nationality": "South Korea",
+          "dateBorn": "1985-01-16"
+        }
+      ]
+    },
+    {
+      "playerId": 928,
+      "name": "Christian Martinez",
+      "tla": "PAN",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Christian Martínez",
+          "nationality": "El Salvador",
+          "dateBorn": "1994-04-19"
+        }
+      ]
+    },
+    {
+      "playerId": 940,
+      "name": "C.J. dos Santos",
+      "tla": "CPV",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Jonathan dos Santos",
+          "nationality": "Mexico",
+          "dateBorn": "1990-04-26"
+        }
+      ]
+    },
+    {
+      "playerId": 943,
+      "name": "Roberto Lopes",
+      "tla": "CPV",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Pico",
+          "nationality": "Cape Verde",
+          "dateBorn": "1992-06-17"
+        }
+      ]
+    },
+    {
+      "playerId": 963,
+      "name": "Gilson Tavares",
+      "tla": "CPV",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Benchimol",
+          "nationality": "Cape Verde",
+          "dateBorn": "2001-12-29"
+        }
+      ]
+    },
+    {
+      "playerId": 991,
+      "name": "Edo Kayembe",
+      "tla": "COD",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Edo Kayembe",
+          "nationality": "DR Congo",
+          "dateBorn": "1998-08-03"
+        }
+      ]
+    },
+    {
+      "playerId": 994,
+      "name": "Aaron Wan-Bissaka",
+      "tla": "COD",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Aaron Wan-Bissaka",
+          "nationality": "DR Congo",
+          "dateBorn": "1997-06-26"
+        }
+      ]
+    },
+    {
+      "playerId": 1032,
+      "name": "Sultan Al Brake",
+      "tla": "QAT",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Sultan Al-Brake",
+          "nationality": "Qatar",
+          "dateBorn": "1996-04-07"
+        }
+      ]
+    },
+    {
+      "playerId": 1043,
+      "name": "Edmílson",
+      "tla": "QAT",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Edmílson",
+          "nationality": "Brazil",
+          "dateBorn": "1976-07-10"
+        }
+      ]
+    },
+    {
+      "playerId": 1046,
+      "name": "Abdallah Al Fakhouri",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Abdallah Al-Fakhouri",
+          "nationality": "Jordan",
+          "dateBorn": "2000-01-22"
+        }
+      ]
+    },
+    {
+      "playerId": 1049,
+      "name": "Yazan Al Arab",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Yazan Al-Arab",
+          "nationality": "Jordan",
+          "dateBorn": "1996-01-31"
+        }
+      ]
+    },
+    {
+      "playerId": 1052,
+      "name": "Mohammad Abu Hasheesh",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Mohammad Abu Hashish",
+          "nationality": "Jordan",
+          "dateBorn": "1995-05-09"
+        }
+      ]
+    },
+    {
+      "playerId": 1054,
+      "name": "Mahmoud Al Mardi",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Mahmoud Al-Mardi",
+          "nationality": "Jordan",
+          "dateBorn": "1993-10-06"
+        }
+      ]
+    },
+    {
+      "playerId": 1056,
+      "name": "Nizar Al Rashdan",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Nizar Al-Rashdan",
+          "nationality": "Jordan",
+          "dateBorn": "1999-03-23"
+        }
+      ]
+    },
+    {
+      "playerId": 1057,
+      "name": "Noor Al Rawabdeh",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Noor Al-Rawabdeh",
+          "nationality": "Jordan",
+          "dateBorn": "1997-02-24"
+        }
+      ]
+    },
+    {
+      "playerId": 1061,
+      "name": "Ibrahim Sabra",
+      "tla": "JOR",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Ibrahim Sabra",
+          "nationality": "Jordan",
+          "dateBorn": "2005-12-31"
+        }
+      ]
+    },
+    {
+      "playerId": 1062,
+      "name": "Musa Al Taamari",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Musa Al-Taamari",
+          "nationality": "Jordan",
+          "dateBorn": "1997-06-10"
+        }
+      ]
+    },
+    {
+      "playerId": 1074,
+      "name": "Amir Al Ammari",
+      "tla": "IRQ",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Amir Al-Ammari",
+          "nationality": "Iraq",
+          "dateBorn": "1997-07-27"
+        }
+      ]
+    },
+    {
+      "playerId": 5304,
+      "name": "Cho Wi-Je",
+      "tla": "KOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Choo-Choo Coleman",
+          "nationality": "United States",
+          "dateBorn": "1937-08-25"
+        }
+      ]
+    },
+    {
+      "playerId": 5499,
+      "name": "Kevin Rodríguez",
+      "tla": "ECU",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Kevin Rodríguez",
+          "nationality": "Colombia",
+          "dateBorn": "2002-07-02"
+        }
+      ]
+    },
+    {
+      "playerId": 6189,
+      "name": "Aaron Hickey",
+      "tla": "SCO",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Aaron Hickey",
+          "nationality": "Scotland",
+          "dateBorn": "2002-06-10"
+        }
+      ]
+    },
+    {
+      "playerId": 6196,
+      "name": "Ben Doak",
+      "tla": "SCO",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Ben Gannon-Doak",
+          "nationality": "Scotland",
+          "dateBorn": "2005-11-11"
+        }
+      ]
+    },
+    {
+      "playerId": 6198,
+      "name": "Tyler Fletcher",
+      "tla": "SCO",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Tyler Fletcher",
+          "nationality": "Scotland",
+          "dateBorn": "2007-03-19"
+        }
+      ]
+    },
+    {
+      "playerId": 6201,
+      "name": "Ross Stewart",
+      "tla": "SCO",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Ross Stewart",
+          "nationality": "Scotland",
+          "dateBorn": "1995-04-16"
+        }
+      ]
+    }
+  ],
+  "downloadFailed": []
+}

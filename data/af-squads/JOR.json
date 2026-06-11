@@ -1,0 +1,210 @@
+[
+  {
+    "id": 140607,
+    "name": "Yazid Abu Layla",
+    "age": 32,
+    "number": 1,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/140607.png"
+  },
+  {
+    "id": 163884,
+    "name": "Abdallah Al Fakhouri",
+    "age": 25,
+    "number": 22,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/163884.png"
+  },
+  {
+    "id": 163908,
+    "name": "Noureddin Zaid",
+    "age": 32,
+    "number": 12,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/163908.png"
+  },
+  {
+    "id": 542822,
+    "name": "H. Abu Al Dahab",
+    "age": 25,
+    "number": 4,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/542822.png"
+  },
+  {
+    "id": 542710,
+    "name": "M. Abu Hasheesh",
+    "age": 30,
+    "number": 2,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/542710.png"
+  },
+  {
+    "id": 102538,
+    "name": "M. Abualnadi",
+    "age": 24,
+    "number": 16,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/102538.png"
+  },
+  {
+    "id": 53900,
+    "name": "Yazan Al Arab",
+    "age": 29,
+    "number": 5,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/53900.png"
+  },
+  {
+    "id": 213978,
+    "name": "Saed Al Rosan",
+    "age": 28,
+    "number": 19,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/213978.png"
+  },
+  {
+    "id": 664028,
+    "name": "A. Badawi",
+    "age": 28,
+    "number": 26,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/664028.png"
+  },
+  {
+    "id": 310835,
+    "name": "Abdallah Naseeb",
+    "age": 31,
+    "number": 3,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/310835.png"
+  },
+  {
+    "id": 72140,
+    "name": "Saleem Obaid",
+    "age": 33,
+    "number": 17,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/72140.png"
+  },
+  {
+    "id": 53902,
+    "name": "Ehsan Haddad",
+    "age": 31,
+    "number": 23,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/53902.png"
+  },
+  {
+    "id": 310785,
+    "name": "Mohannad Abu Taha",
+    "age": 22,
+    "number": 20,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/310785.png"
+  },
+  {
+    "id": 651096,
+    "name": "M. Al Daoud",
+    "age": 33,
+    "number": 25,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/651096.png"
+  },
+  {
+    "id": 542768,
+    "name": "Ibrahim Sa'deh",
+    "age": 25,
+    "number": 15,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/542768.png"
+  },
+  {
+    "id": 213980,
+    "name": "Nizar Al Rashdan",
+    "age": 26,
+    "number": 21,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/213980.png"
+  },
+  {
+    "id": 140609,
+    "name": "Noor Al Rawabdeh",
+    "age": 28,
+    "number": 8,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/140609.png"
+  },
+  {
+    "id": 104242,
+    "name": "Rajaei Ayed",
+    "age": 32,
+    "number": 14,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/104242.png"
+  },
+  {
+    "id": 198211,
+    "name": "Amer Jamous",
+    "age": 23,
+    "number": 6,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/198211.png"
+  },
+  {
+    "id": 123530,
+    "name": "Mahmoud Al Mardi",
+    "age": 32,
+    "number": 13,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/123530.png"
+  },
+  {
+    "id": 72142,
+    "name": "Mohammed Abu Zurayq",
+    "age": 28,
+    "number": 7,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/72142.png"
+  },
+  {
+    "id": 568556,
+    "name": "O. Al Fakhouri",
+    "age": 19,
+    "number": 11,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/568556.png"
+  },
+  {
+    "id": 575283,
+    "name": "A. Azaizeh",
+    "age": 21,
+    "number": 24,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/575283.png"
+  },
+  {
+    "id": 164026,
+    "name": "Ali Olwan",
+    "age": 25,
+    "number": 9,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/164026.png"
+  },
+  {
+    "id": 432841,
+    "name": "Ibrahim Sabra",
+    "age": 20,
+    "number": 18,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/432841.png"
+  },
+  {
+    "id": 15286,
+    "name": "Mousa Tamari",
+    "age": 28,
+    "number": 10,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/15286.png"
+  }
+]
