@@ -38,5 +38,21 @@
   "QAT": {
     "id": 1569,
     "name": "Qatar"
+  },
+  "CIV": {
+    "id": 1501,
+    "name": "Ivory Coast"
+  },
+  "COD": {
+    "id": 1508,
+    "name": "Congo DR"
+  },
+  "COL": {
+    "id": 8,
+    "name": "Colombia"
+  },
+  "CPV": {
+    "id": 1533,
+    "name": "Cape Verde Islands"
   }
 }

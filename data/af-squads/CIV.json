@@ -1,0 +1,210 @@
+[
+  {
+    "id": 64190,
+    "name": "Y. Fofana",
+    "age": 25,
+    "number": 1,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/64190.png"
+  },
+  {
+    "id": 277046,
+    "name": "M. Koné",
+    "age": 23,
+    "number": 16,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/277046.png"
+  },
+  {
+    "id": 30393,
+    "name": "A. Lafont",
+    "age": 26,
+    "number": 23,
+    "position": "Goalkeeper",
+    "photo": "https://media.api-sports.io/football/players/30393.png"
+  },
+  {
+    "id": 135068,
+    "name": "E. Agbadou",
+    "age": 28,
+    "number": 20,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/135068.png"
+  },
+  {
+    "id": 354753,
+    "name": "O. Diomande",
+    "age": 22,
+    "number": 2,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/354753.png"
+  },
+  {
+    "id": 161747,
+    "name": "G. Doué",
+    "age": 23,
+    "number": 17,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/161747.png"
+  },
+  {
+    "id": 22002,
+    "name": "G. Konan",
+    "age": 30,
+    "number": 3,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/22002.png"
+  },
+  {
+    "id": 48119,
+    "name": "O. Kossounou",
+    "age": 24,
+    "number": 7,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/48119.png"
+  },
+  {
+    "id": 1807,
+    "name": "E. Ndicka",
+    "age": 26,
+    "number": 21,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/1807.png"
+  },
+  {
+    "id": 20836,
+    "name": "C. Operi",
+    "age": 28,
+    "number": 13,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/20836.png"
+  },
+  {
+    "id": 30504,
+    "name": "W. Singo",
+    "age": 25,
+    "number": 5,
+    "position": "Defender",
+    "photo": "https://media.api-sports.io/football/players/30504.png"
+  },
+  {
+    "id": 30807,
+    "name": "S. Fofana",
+    "age": 30,
+    "number": 6,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/30807.png"
+  },
+  {
+    "id": 474591,
+    "name": "C. Inao Oulai",
+    "age": 19,
+    "number": 26,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/474591.png"
+  },
+  {
+    "id": 1642,
+    "name": "F. Kessié",
+    "age": 29,
+    "number": 8,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/1642.png"
+  },
+  {
+    "id": 22149,
+    "name": "I. Sangaré",
+    "age": 28,
+    "number": 18,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/22149.png"
+  },
+  {
+    "id": 3243,
+    "name": "J. Seri",
+    "age": 34,
+    "number": 4,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/3243.png"
+  },
+  {
+    "id": 263228,
+    "name": "P. Guiagon",
+    "age": 24,
+    "number": 25,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/263228.png"
+  },
+  {
+    "id": 387643,
+    "name": "B. Touré",
+    "age": 19,
+    "number": 24,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/387643.png"
+  },
+  {
+    "id": 301771,
+    "name": "S. Adingra",
+    "age": 23,
+    "number": 10,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/301771.png"
+  },
+  {
+    "id": 275651,
+    "name": "A. Bonny",
+    "age": 22,
+    "number": 9,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/275651.png"
+  },
+  {
+    "id": 334429,
+    "name": "O. Diakité",
+    "age": 22,
+    "number": 14,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/334429.png"
+  },
+  {
+    "id": 157997,
+    "name": "A. Diallo",
+    "age": 23,
+    "number": 15,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/157997.png"
+  },
+  {
+    "id": 513776,
+    "name": "Y. Diomande",
+    "age": 19,
+    "number": 11,
+    "position": "Midfielder",
+    "photo": "https://media.api-sports.io/football/players/513776.png"
+  },
+  {
+    "id": 137303,
+    "name": "E. Guessand",
+    "age": 24,
+    "number": 22,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/137303.png"
+  },
+  {
+    "id": 3246,
+    "name": "N. Pépé",
+    "age": 30,
+    "number": 19,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/3246.png"
+  },
+  {
+    "id": 162707,
+    "name": "E. Wahi",
+    "age": 22,
+    "number": 12,
+    "position": "Attacker",
+    "photo": "https://media.api-sports.io/football/players/162707.png"
+  }
+]

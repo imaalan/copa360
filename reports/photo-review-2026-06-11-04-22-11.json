@@ -1,0 +1,350 @@
+{
+  "generatedAt": "2026-06-11T04:06:26.012Z",
+  "dryRun": false,
+  "afUnmatched": [
+    {
+      "playerId": 5372,
+      "name": "Oussama Benbout",
+      "tla": "ALG"
+    },
+    {
+      "playerId": 115,
+      "name": "Nico Paz",
+      "tla": "ARG"
+    },
+    {
+      "playerId": 420,
+      "name": "Jordan Bos",
+      "tla": "AUS"
+    },
+    {
+      "playerId": 423,
+      "name": "Aiden O'Neill",
+      "tla": "AUS"
+    },
+    {
+      "playerId": 824,
+      "name": "Maxime Crépeau",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 825,
+      "name": "Dayne St. Clair",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 826,
+      "name": "Owen Goodman",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 839,
+      "name": "Tani Oluwaseyi",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 827,
+      "name": "Richie Laryea",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 828,
+      "name": "Joel Waterman",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 841,
+      "name": "Luc De Fougerolles",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 834,
+      "name": "Jonathan Osorio",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 844,
+      "name": "Marcelo Flores",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 837,
+      "name": "Nathan-Dylan Saliba",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 831,
+      "name": "Ali Ahmed",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 832,
+      "name": "Niko Sigur",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 847,
+      "name": "Liam Millar",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5831,
+      "name": "Ismael Kone",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 835,
+      "name": "Mathieu Choinière",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 848,
+      "name": "Cyle Larin",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 845,
+      "name": "Derek Cornelius",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 849,
+      "name": "Jonathan David",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5817,
+      "name": "Alphonso Davies",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5823,
+      "name": "Moise Bombito",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5819,
+      "name": "Alfie Jones",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5822,
+      "name": "Alistair Johnston",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5826,
+      "name": "Stephen Eustáquio",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5837,
+      "name": "Jacob Shaffelburg",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5839,
+      "name": "Promise Akinpelu",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 1022,
+      "name": "Evan N'Dicka",
+      "tla": "CIV"
+    },
+    {
+      "playerId": 1086,
+      "name": "Ali Jassim El-Aibi",
+      "tla": "IRQ"
+    },
+    {
+      "playerId": 6099,
+      "name": "Ali Yousif",
+      "tla": "IRQ"
+    },
+    {
+      "playerId": 1058,
+      "name": "Ibrahim Saadeh",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6050,
+      "name": "Noureddin Bani Ateyah",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6064,
+      "name": "Mohammad Al-Dawoud",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6072,
+      "name": "Odeh Fakhoury",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6028,
+      "name": "Ró-Ró",
+      "tla": "QAT"
+    }
+  ],
+  "sdbRejected": [
+    {
+      "playerId": 11,
+      "name": "Emiliano Martínez",
+      "tla": "URY",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Emiliano Martinez",
+          "nationality": "Argentina",
+          "dateBorn": "1992-09-02"
+        }
+      ]
+    },
+    {
+      "playerId": 16,
+      "name": "Juan Sanabria",
+      "tla": "URY",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Juan Sanabria",
+          "nationality": "Colombia",
+          "dateBorn": "1994-11-04"
+        }
+      ]
+    },
+    {
+      "playerId": 58,
+      "name": "Víctor Muñoz",
+      "tla": "ESP",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Víctor Muñoz",
+          "nationality": "Spain",
+          "dateBorn": "1957-03-15"
+        }
+      ]
+    },
+    {
+      "playerId": 67,
+      "name": "Pedri",
+      "tla": "ESP",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Pedrinho",
+          "nationality": "Portugal",
+          "dateBorn": "1985-03-06"
+        }
+      ]
+    },
+    {
+      "playerId": 79,
+      "name": "Rodri",
+      "tla": "ESP",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Jay Rodriguez",
+          "nationality": "England",
+          "dateBorn": "1989-07-29"
+        }
+      ]
+    },
+    {
+      "playerId": 82,
+      "name": "Roberto Fernández",
+      "tla": "PAR",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Roberto Fernández",
+          "nationality": "Bolivia",
+          "dateBorn": "1999-07-12"
+        }
+      ]
+    },
+    {
+      "playerId": 831,
+      "name": "Ali Ahmed",
+      "tla": "CAN",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Ahmed Diaa Ali Ali",
+          "nationality": "Bahrain",
+          "dateBorn": "2003-08-17"
+        }
+      ]
+    },
+    {
+      "playerId": 834,
+      "name": "Jonathan Osorio",
+      "tla": "CAN",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Jonathan Osorio",
+          "nationality": "Canada",
+          "dateBorn": "1992-06-12"
+        }
+      ]
+    },
+    {
+      "playerId": 849,
+      "name": "Jonathan David",
+      "tla": "CAN",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Jonathan David",
+          "nationality": "Canada",
+          "dateBorn": "2000-01-04"
+        }
+      ]
+    },
+    {
+      "playerId": 5071,
+      "name": "Kaku",
+      "tla": "PAR",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Alex Kakuba",
+          "nationality": "Uganda",
+          "dateBorn": "1991-06-12"
+        }
+      ]
+    },
+    {
+      "playerId": 5229,
+      "name": "Álvaro Fidalgo",
+      "tla": "MEX",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Álvaro Fidalgo",
+          "nationality": "Mexico",
+          "dateBorn": "1997-04-09"
+        }
+      ]
+    },
+    {
+      "playerId": 5234,
+      "name": "Julián Quiñones",
+      "tla": "MEX",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Julián Quiñones",
+          "nationality": "Mexico",
+          "dateBorn": "1997-03-24"
+        }
+      ]
+    }
+  ],
+  "downloadFailed": []
+}
