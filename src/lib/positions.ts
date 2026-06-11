@@ -17,34 +17,35 @@ export type PositionSigla =
 export type PositionInfo = {
   sigla: PositionSigla;
   pt: string;        // PT-BR full label
+  abbr: string;      // PT-BR badge text
   group: string;     // UI filter group (PT-BR)
   order: number;     // sort order within group
 };
 
 export const POSITIONS: Record<PositionSigla, PositionInfo> = {
-  GK:  { sigla: "GK",  pt: "Goleiro",            group: "Goleiros",   order: 0 },
+  GK:  { sigla: "GK",  pt: "Goleiro",            abbr: "GR",   group: "Goleiros",   order: 0 },
   // Defesa
-  CB:  { sigla: "CB",  pt: "Zagueiro",            group: "Defensores", order: 10 },
-  SW:  { sigla: "SW",  pt: "Líbero",              group: "Defensores", order: 11 },
-  RB:  { sigla: "RB",  pt: "Lateral Direito",     group: "Defensores", order: 12 },
-  LB:  { sigla: "LB",  pt: "Lateral Esquerdo",    group: "Defensores", order: 13 },
-  RWB: { sigla: "RWB", pt: "Ala Direito",         group: "Defensores", order: 14 },
-  LWB: { sigla: "LWB", pt: "Ala Esquerdo",        group: "Defensores", order: 15 },
-  DEF: { sigla: "DEF", pt: "Defensor",            group: "Defensores", order: 19 },
+  CB:  { sigla: "CB",  pt: "Zagueiro",           abbr: "ZAG",  group: "Defensores", order: 10 },
+  SW:  { sigla: "SW",  pt: "Líbero",             abbr: "ZAG",  group: "Defensores", order: 11 },
+  RB:  { sigla: "RB",  pt: "Lateral Direito",    abbr: "LAT",  group: "Defensores", order: 12 },
+  LB:  { sigla: "LB",  pt: "Lateral Esquerdo",   abbr: "LAT",  group: "Defensores", order: 13 },
+  RWB: { sigla: "RWB", pt: "Ala Direito",        abbr: "LAT",  group: "Defensores", order: 14 },
+  LWB: { sigla: "LWB", pt: "Ala Esquerdo",       abbr: "LAT",  group: "Defensores", order: 15 },
+  DEF: { sigla: "DEF", pt: "Defensor",           abbr: "DEF",  group: "Defensores", order: 19 },
   // Meio-campo
-  CDM: { sigla: "CDM", pt: "Volante",             group: "Meias",      order: 20 },
-  CM:  { sigla: "CM",  pt: "Meia Central",        group: "Meias",      order: 21 },
-  CAM: { sigla: "CAM", pt: "Meia Ofensivo",       group: "Meias",      order: 22 },
-  RM:  { sigla: "RM",  pt: "Meia Direito",        group: "Meias",      order: 23 },
-  LM:  { sigla: "LM",  pt: "Meia Esquerdo",       group: "Meias",      order: 24 },
-  MID: { sigla: "MID", pt: "Meia",                group: "Meias",      order: 29 },
+  CDM: { sigla: "CDM", pt: "Volante",            abbr: "VOL",  group: "Meias",      order: 20 },
+  CM:  { sigla: "CM",  pt: "Meia Central",       abbr: "MEI",  group: "Meias",      order: 21 },
+  CAM: { sigla: "CAM", pt: "Meia Ofensivo",      abbr: "MEI",  group: "Meias",      order: 22 },
+  RM:  { sigla: "RM",  pt: "Meia Direito",       abbr: "MEI",  group: "Meias",      order: 23 },
+  LM:  { sigla: "LM",  pt: "Meia Esquerdo",      abbr: "MEI",  group: "Meias",      order: 24 },
+  MID: { sigla: "MID", pt: "Meia",               abbr: "MEI",  group: "Meias",      order: 29 },
   // Ataque
-  RW:  { sigla: "RW",  pt: "Ponta Direita",       group: "Atacantes",  order: 30 },
-  LW:  { sigla: "LW",  pt: "Ponta Esquerda",      group: "Atacantes",  order: 31 },
-  CF:  { sigla: "CF",  pt: "Centroavante",        group: "Atacantes",  order: 32 },
-  ST:  { sigla: "ST",  pt: "Atacante",            group: "Atacantes",  order: 33 },
-  SS:  { sigla: "SS",  pt: "Segundo Atacante",    group: "Atacantes",  order: 34 },
-  FWD: { sigla: "FWD", pt: "Atacante",            group: "Atacantes",  order: 39 },
+  RW:  { sigla: "RW",  pt: "Ponta Direita",      abbr: "ATA",  group: "Atacantes",  order: 30 },
+  LW:  { sigla: "LW",  pt: "Ponta Esquerda",     abbr: "ATA",  group: "Atacantes",  order: 31 },
+  CF:  { sigla: "CF",  pt: "Centroavante",       abbr: "ATA",  group: "Atacantes",  order: 32 },
+  ST:  { sigla: "ST",  pt: "Atacante",           abbr: "ATA",  group: "Atacantes",  order: 33 },
+  SS:  { sigla: "SS",  pt: "Segundo Atacante",   abbr: "ATA",  group: "Atacantes",  order: 34 },
+  FWD: { sigla: "FWD", pt: "Atacante",           abbr: "ATA",  group: "Atacantes",  order: 39 },
 };
 
 export const GROUP_ORDER = ["Goleiros", "Defensores", "Meias", "Atacantes", "Outros"];
@@ -58,11 +59,11 @@ export const GROUP_TO_FILTER: Record<string, string> = {
   Atacantes:  "Atacante",
 };
 
-export function getPosition(sigla: string | null): PositionInfo & { abbr: string } {
-  if (!sigla) return { sigla: "MID" as PositionSigla, pt: "—", group: "Outros", order: 99, abbr: "—" };
+export function getPosition(sigla: string | null): PositionInfo {
+  if (!sigla) return { sigla: "MID" as PositionSigla, pt: "—", abbr: "—", group: "Outros", order: 99 };
   const info = POSITIONS[sigla as PositionSigla];
-  if (info) return { ...info, abbr: sigla };
-  return { sigla: sigla as PositionSigla, pt: sigla, group: "Outros", order: 99, abbr: sigla.slice(0, 3) };
+  if (info) return { ...info, abbr: info.abbr };
+  return { sigla: sigla as PositionSigla, pt: sigla, abbr: sigla.slice(0, 3), group: "Outros", order: 99 };
 }
 
 // Map from old football-data.org / TM strings → FIFA sigla (for DB migration + enrichment scripts)
