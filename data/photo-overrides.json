@@ -9,5 +9,13 @@
       "tla": "BRA"
     }
   },
-  "players": {}
+  "players": {
+    "203356": {
+      "photo": "https://media.api-sports.io/football/players/407806.png",
+      "verified": true,
+      "note": "Rayan BRA recebia foto do homonimo Rayan Cherki (FRA) - AF ID 407806 correto",
+      "name": "Rayan",
+      "tla": "BRA"
+    }
+  }
 }
