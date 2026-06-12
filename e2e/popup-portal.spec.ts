@@ -4,7 +4,8 @@ test.describe("popup portal fix", () => {
   test.use({ viewport: { width: 1280, height: 720 } });
 
   test.beforeEach(async ({ page }) => {
-    await page.goto("/teams/bra");
+    await page.addInitScript(() => sessionStorage.setItem('copa360_splash_seen', '1'));
+    await page.goto('/teams/bra');
   });
 
   test("CA1 renders popup as a direct child of body", async ({ page }) => {
