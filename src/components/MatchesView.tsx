@@ -271,7 +271,7 @@ function TeamBlock({ team, align }: { team: MatchTeam; align: "left" | "right" }
         <div className="text-[13px] md:text-[13px] font-extrabold text-[#F3F4F6] tracking-[-0.02em] truncate">
           {team?.tla ?? "—"}
         </div>
-        <div className="hidden md:block text-[10px] text-[#6B7280] truncate">{team?.name ?? "—"}</div>
+        <div className="text-[10px] text-[#6B7280] truncate">{team?.name ?? "—"}</div>
       </div>
     </div>
   );
