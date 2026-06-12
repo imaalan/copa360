@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { getPosition } from "@/lib/positions";
@@ -56,11 +57,14 @@ type PlayerPopupProps = {
 };
 
 export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose }: PlayerPopupProps) {
+  const [mounted, setMounted] = useState(false);
   const [data, setData] = useState<PopupData | null>(null);
   const [loading, setLoading] = useState(true);
   const [photoError, setPhotoError] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const close = useCallback(() => {
     setData(null);
@@ -103,7 +107,9 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
   const age = calcAge(d?.dateOfBirth ?? null);
   const photo = photoError ? null : (d?.photo ?? playerPhoto);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4"
       onClick={close}
@@ -325,7 +331,8 @@ export default function PlayerPopup({ playerId, playerName, playerPhoto, onClose
           }
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }
 

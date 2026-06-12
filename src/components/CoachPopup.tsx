@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -41,9 +42,12 @@ type Props = {
 };
 
 export default function CoachPopup({ coachId, coachName, coachPhoto, onClose }: Props) {
+  const [mounted, setMounted] = useState(false);
   const [data, setData]       = useState<CoachData | null>(null);
   const [loading, setLoading] = useState(true);
   const [photoError, setPhotoError] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const close = useCallback(() => { setData(null); onClose(); }, [onClose]);
 
@@ -66,7 +70,9 @@ export default function CoachPopup({ coachId, coachName, coachPhoto, onClose }: 
   const age = calcAge(d?.dateOfBirth ?? null);
   const photo = photoError ? null : (d?.photo ?? coachPhoto);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4" onClick={close}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
@@ -197,7 +203,8 @@ export default function CoachPopup({ coachId, coachName, coachPhoto, onClose }: 
           @keyframes slideUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }
 
