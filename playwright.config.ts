@@ -22,10 +22,10 @@ export default defineConfig({
   ],
 
   webServer: isExternalTarget ? undefined : {
-    command: "npm run dev",
+    command: process.env.CI ? "npm start" : "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 60_000,
     env: {
       DATABASE_URL: process.env.DATABASE_URL ?? "",
       FOOTBALL_DATA_API_KEY: process.env.FOOTBALL_DATA_API_KEY ?? "",
