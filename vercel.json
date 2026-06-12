@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/seed",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/scores",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

@@ -16,14 +16,6 @@ const FEATURED_STARS: Record<string, string[]> = {
 // Siglas FIFA — formato real do banco (normPosition). Strings legadas não casam mais.
 const ATTACK_POSITIONS = ["LW", "RW", "CF", "ST", "SS", "CAM", "FWD"];
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
 
 async function getFeaturedPlayers() {
   const tlas = ["BRA", "FRA", "ARG", "ENG"];
@@ -144,7 +136,7 @@ export default async function Home() {
               >
                 {/* Photo or initials */}
                 <div className="aspect-square rounded-[14px] bg-white/[0.05] overflow-hidden mb-3.5 relative flex items-center justify-center">
-                  {player.photo ? (
+                  {player.photo && (
                     <Image
                       src={player.photo}
                       alt={player.name}
@@ -152,10 +144,6 @@ export default async function Home() {
                       className="object-cover"
                       unoptimized
                     />
-                  ) : (
-                    <span className="text-[28px] font-extrabold text-white/20 tracking-[-0.04em]">
-                      {getInitials(player.name)}
-                    </span>
                   )}
                 </div>
 
