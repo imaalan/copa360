@@ -40,6 +40,25 @@ const GROUP_LABEL: Record<string, string> = {
   GROUP_J: "Grupo J", GROUP_K: "Grupo K", GROUP_L: "Grupo L",
 };
 
+const TEAM_NAME_PTBR: Record<string, string> = {
+  ALG: "Argélia",       ARG: "Argentina",          AUS: "Austrália",
+  AUT: "Áustria",       BEL: "Bélgica",            BIH: "Bósnia e Herzegovina",
+  BRA: "Brasil",        CAN: "Canadá",             CIV: "Costa do Marfim",
+  COD: "Congo (RD)",    COL: "Colômbia",           CPV: "Cabo Verde",
+  CRO: "Croácia",       CUW: "Curaçao",            CZE: "Tchéquia",
+  ECU: "Equador",       EGY: "Egito",              ENG: "Inglaterra",
+  ESP: "Espanha",       FRA: "França",             GER: "Alemanha",
+  GHA: "Gana",          HAI: "Haiti",              IRN: "Irã",
+  IRQ: "Iraque",        JOR: "Jordânia",           JPN: "Japão",
+  KOR: "Coreia do Sul", KSA: "Arábia Saudita",     MAR: "Marrocos",
+  MEX: "México",        NED: "Países Baixos",      NOR: "Noruega",
+  NZL: "Nova Zelândia", PAN: "Panamá",             PAR: "Paraguai",
+  POR: "Portugal",      QAT: "Catar",              RSA: "África do Sul",
+  SCO: "Escócia",       SEN: "Senegal",            SUI: "Suíça",
+  SWE: "Suécia",        TUN: "Tunísia",            TUR: "Turquia",
+  URY: "Uruguai",       USA: "Estados Unidos",     UZB: "Uzbequistão",
+};
+
 const STAGE_TABS = [
   { key: "all",          label: "Todos" },
   { key: "GROUP_STAGE",  label: "Grupos" },
@@ -271,7 +290,9 @@ function TeamBlock({ team, align }: { team: MatchTeam; align: "left" | "right" }
         <div className="text-[13px] md:text-[13px] font-extrabold text-[#F3F4F6] tracking-[-0.02em] truncate">
           {team?.tla ?? "—"}
         </div>
-        <div className="text-[10px] text-[#6B7280] truncate">{team?.name ?? "—"}</div>
+        <div className="text-[10px] text-[#6B7280] truncate">
+          {(team?.tla && TEAM_NAME_PTBR[team.tla]) ?? team?.name ?? "—"}
+        </div>
       </div>
     </div>
   );
