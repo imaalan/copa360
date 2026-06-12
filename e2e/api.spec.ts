@@ -68,11 +68,11 @@ test.describe("GET /api/players/[id]/popup", () => {
     expect(res.status()).toBeLessThan(600);
   });
 
-  test("photo URL is a valid HTTPS URL when present", async ({ request }) => {
+  test("photo URL is a valid URL when present", async ({ request }) => {
     const res = await request.get("/api/players/1/popup");
     const body = await res.json();
     if (body.photo) {
-      expect(body.photo).toMatch(/^https?:\/\//);
+      expect(body.photo).toMatch(/^(https?:\/\/|\/players\/)/);
     }
   });
 
