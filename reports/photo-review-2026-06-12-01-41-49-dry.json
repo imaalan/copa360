@@ -1,0 +1,96 @@
+{
+  "generatedAt": "2026-06-12T01:41:25.999Z",
+  "dryRun": true,
+  "afUnmatched": [
+    {
+      "playerId": 1086,
+      "name": "Ali Jassim El-Aibi",
+      "tla": "IRQ"
+    },
+    {
+      "playerId": 6099,
+      "name": "Ali Yousif",
+      "tla": "IRQ"
+    },
+    {
+      "playerId": 1058,
+      "name": "Ibrahim Saadeh",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6050,
+      "name": "Noureddin Bani Ateyah",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6064,
+      "name": "Mohammad Al-Dawoud",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6072,
+      "name": "Odeh Fakhoury",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6028,
+      "name": "Ró-Ró",
+      "tla": "QAT"
+    }
+  ],
+  "sdbRejected": [
+    {
+      "playerId": 6050,
+      "name": "Noureddin Bani Ateyah",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Nour Bani Attiah",
+          "nationality": "Jordan",
+          "dateBorn": "1993-01-25"
+        }
+      ]
+    },
+    {
+      "playerId": 6064,
+      "name": "Mohammad Al-Dawoud",
+      "tla": "JOR",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Mohammad Al-Dawoud",
+          "nationality": "Jordan",
+          "dateBorn": "1992-04-12"
+        }
+      ]
+    },
+    {
+      "playerId": 6072,
+      "name": "Odeh Fakhoury",
+      "tla": "JOR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Odeh Al-Fakhouri",
+          "nationality": "Jordan",
+          "dateBorn": "2005-11-20"
+        }
+      ]
+    },
+    {
+      "playerId": 6099,
+      "name": "Ali Yousif",
+      "tla": "IRQ",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Yousif Ali Al-Mheiri",
+          "nationality": "United Arab Emirates",
+          "dateBorn": "1999-11-30"
+        }
+      ]
+    }
+  ],
+  "downloadFailed": []
+}

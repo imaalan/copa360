@@ -1,68 +1,73 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { normStr, nameMatch, nationalityMatch } from "@/lib/utils";
+import { normStr } from "@/lib/utils";
+import {
+  pickSdbCandidate,
+  siglaToGroup,
+  type SdbCandidate,
+} from "@/lib/photo-matching";
 
 const FD_KEY = process.env.FOOTBALL_DATA_API_KEY ?? "";
 const AF_KEY = process.env.API_FOOTBALL_KEY ?? "";
 const AF_BASE = process.env.API_FOOTBALL_URL ?? "https://v3.football.api-sports.io";
 
-// ── TheSportsDB ───────────────────────────────────────────────────────────────
+// ── TheSportsDB (matching ESTRITO via lib compartilhada) ─────────────────────
+//
+// Antes: cascata frouxa com fallback `byName.length === 1 → aceita`, que
+// persistia fotos de homônimos no banco (caso Rayan BRA × Rayan Cherki FRA).
+// Agora: pickSdbCandidate — nacionalidade canônica obrigatória + DOB
+// obrigatória quando comparável. Ambíguo = não enriquece (fica p/ o script
+// offline + overrides), em vez de chutar.
 
-type SDBPlayer = {
-  strPlayer: string;
-  strNationality: string;
-  strPosition?: string;
-  strThumb?: string;
-  strCutout?: string;
-  strTeam?: string;
-  strTeamLogo?: string;
-  strDescriptionEN?: string;
+type SdbResult = {
+  photo: string | null;
+  club: string | null;
+  clubLogo: string | null;
+  sdbPlayerId: string | null;
 };
 
-function sdbPositionMatch(dbPos: string | null, sdbPos: string | null | undefined): boolean {
-  if (!dbPos || !sdbPos) return true;
-  const db = dbPos.toLowerCase(), sdb = sdbPos.toLowerCase();
-  if (db.includes("goalkeeper") && sdb.includes("goalkeeper")) return true;
-  if ((db.includes("back") || db.includes("defence") || db.includes("centre-back")) && (sdb.includes("defender") || sdb.includes("back"))) return true;
-  if (db.includes("midfield") && sdb.includes("midfield")) return true;
-  if ((db.includes("forward") || db.includes("winger") || db.includes("offence")) && (sdb.includes("forward") || sdb.includes("winger") || sdb.includes("striker") || sdb.includes("attacker"))) return true;
-  return false;
-}
-
-async function fetchFromSportsDB(
-  name: string,
-  nationality: string | null,
-  position: string | null = null,
-  teamName: string | null = null
-): Promise<{ photo: string | null; club: string | null; clubLogo: string | null } | null> {
+async function fetchFromSportsDB(target: {
+  name: string;
+  nationality: string | null;
+  dateOfBirth: Date | null;
+  position: string | null;
+}): Promise<SdbResult | null> {
   try {
-    const url = `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(name)}`;
+    const url = `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(target.name)}`;
     const res = await fetch(url, { next: { revalidate: 86400 } });
     if (!res.ok) return null;
-    const data = await res.json();
-    const players: SDBPlayer[] = data.player ?? [];
-    if (!players.length) return null;
+    const data = (await res.json()) as { player?: SdbCandidate[] };
+    const candidates = data.player ?? [];
 
-    const byName = players.filter(p => nameMatch(name, p.strPlayer));
-    const match =
-      byName.find(p => nationalityMatch(nationality, p.strNationality) && sdbPositionMatch(position, p.strPosition as string | undefined) && (!teamName || !p.strTeam || normStr(p.strTeam).includes(normStr(teamName).slice(0, 5)))) ??
-      byName.find(p => nationalityMatch(nationality, p.strNationality) && sdbPositionMatch(position, p.strPosition as string | undefined)) ??
-      byName.find(p => nationalityMatch(nationality, p.strNationality)) ??
-      (byName.length === 1 ? byName[0] : null);
-    if (!match) return null;
+    const pick = pickSdbCandidate(
+      {
+        name: target.name,
+        nationality: target.nationality,
+        dateOfBirth: target.dateOfBirth,
+        posGroup: siglaToGroup(target.position),
+      },
+      candidates
+    );
+    if (!pick.ok) return null;
 
-    const thumb = match.strThumb ?? match.strCutout ?? null;
-    const photo = thumb && !thumb.includes("placeholder") ? thumb : null;
-    const club = match.strTeam ?? null;
-    const clubLogo = match.strTeamLogo ?? null;
-
-    return { photo, club, clubLogo };
+    return {
+      photo: pick.photo,
+      club: pick.candidate.strTeam ?? null,
+      clubLogo: pick.candidate.strTeamLogo ?? null,
+      sdbPlayerId: pick.candidate.idPlayer ? String(pick.candidate.idPlayer) : null,
+    };
   } catch {
     return null;
   }
 }
 
 // ── API-Football ──────────────────────────────────────────────────────────────
+//
+// IMPORTANTE: a rota NÃO faz mais busca por nome na API-Football em runtime.
+// Aquela busca (a) queimava 2–4 requests da quota free (100/dia) por popup
+// aberto e (b) casava por sobrenome — outra porta de entrada de homônimos.
+// O apiFootballId agora nasce offline (enrich-photos FASE A, match por elenco)
+// e a rota apenas CONSOME o id quando ele já existe no banco.
 
 type AFStats = {
   goals: { total: number | null; assists: number | null };
@@ -79,27 +84,6 @@ async function afFetch(path: string) {
   });
   if (!res.ok) return null;
   return res.json() as Promise<{ response: unknown[] }>;
-}
-
-async function findAFPlayerId(name: string, clubName: string): Promise<number | null> {
-  // Step 1: find team ID in API-Football
-  const teamData = await afFetch(`/teams?search=${encodeURIComponent(clubName.slice(0, 20))}`);
-  const teams = teamData?.response as Array<{ team: { id: number; name: string } }> | undefined;
-  if (!teams?.length) return null;
-
-  const teamId = teams[0].team.id;
-
-  // Step 2: search player by name + team (1 request per season instead of paging)
-  const searchName = normStr(name).split(" ").slice(-1)[0]; // last name
-  for (const season of [2024, 2023, 2022]) {
-    const playersData = await afFetch(`/players?search=${encodeURIComponent(searchName)}&team=${teamId}&season=${season}`);
-    const players = playersData?.response as Array<{ player: { id: number; name: string } }> | undefined;
-    if (!players?.length) continue;
-
-    const found = players.find((p) => nameMatch(name, p.player.name));
-    if (found) return found.player.id;
-  }
-  return null;
 }
 
 async function fetchAFStats(playerId: number): Promise<{ stats: AFStats | null; photo: string | null }> {
@@ -168,22 +152,35 @@ export async function GET(
 
   const updates: Record<string, unknown> = {};
 
-  // 1. Photo + club from TheSportsDB
   let photo = player.photo;
   let currentClub = player.currentClub;
   let currentClubLogo = player.currentClubLogo;
 
-  const sdb = (!photo || !currentClub)
-    ? await fetchFromSportsDB(player.name, player.nationality, player.position, player.team?.name ?? null)
+  // 1. Foto + clube via TheSportsDB — SOMENTE se a foto não está travada.
+  //    photoVerified=true significa correção manual/override: runtime nunca toca.
+  const needsSdb = (!photo && !player.photoVerified) || !currentClub;
+  const sdb = needsSdb
+    ? await fetchFromSportsDB({
+        name: player.name,
+        nationality: player.nationality,
+        dateOfBirth: player.dateOfBirth,
+        position: player.position,
+      })
     : null;
 
   if (sdb) {
-    if (!photo && sdb.photo) { photo = sdb.photo; updates.photo = photo; }
+    if (!photo && !player.photoVerified && sdb.photo) {
+      photo = sdb.photo;
+      updates.photo = photo;
+      updates.photoSource = "thesportsdb";
+      updates.photoUpdatedAt = new Date();
+    }
+    if (!player.sdbPlayerId && sdb.sdbPlayerId) updates.sdbPlayerId = sdb.sdbPlayerId;
     if (!currentClub && sdb.club) { currentClub = sdb.club; updates.currentClub = currentClub; }
     if (!currentClubLogo && sdb.clubLogo) { currentClubLogo = sdb.clubLogo; updates.currentClubLogo = currentClubLogo; }
   }
 
-  // 2. Club from football-data.org if still missing
+  // 2. Clube via football-data.org se ainda faltar
   if (!currentClub && player.externalId) {
     const fdClub = await fetchFDClub(player.externalId, player.team?.name ?? null);
     if (fdClub) {
@@ -194,29 +191,30 @@ export async function GET(
     }
   }
 
-  // 3. API-Football: player ID, trophies, CDN photo (stats now come from Understat cache in DB)
-  let apiFootballId = player.apiFootballId;
+  // 3. API-Football: APENAS consome apiFootballId já resolvido offline.
+  const apiFootballId = player.apiFootballId;
   let trophies = player.trophies as Trophy[] | null;
 
-  if (!apiFootballId && currentClub) {
-    apiFootballId = await findAFPlayerId(player.name, currentClub);
-    if (apiFootballId) updates.apiFootballId = apiFootballId;
-  }
-
-  if (apiFootballId) {
-    const afResult = await fetchAFStats(apiFootballId);
-
-    // AF returns the CDN photo URL in the stats response — use as fallback if no photo yet
-    if (!photo && afResult.photo) { photo = afResult.photo; updates.photo = photo; }
-
-    // Fetch trophies only if not cached
+  if (apiFootballId && AF_KEY) {
+    // Troféus só se ainda não cacheados (1 request, depois fica no banco).
     if (!trophies) {
       trophies = await fetchAFTrophies(apiFootballId);
       if (trophies.length) updates.trophies = trophies;
     }
+
+    // Foto da CDN como último fallback (id estável ⇒ sem risco de homônimo).
+    if (!photo && !player.photoVerified) {
+      const afResult = await fetchAFStats(apiFootballId);
+      if (afResult.photo) {
+        photo = afResult.photo;
+        updates.photo = photo;
+        updates.photoSource = "api-football";
+        updates.photoUpdatedAt = new Date();
+      }
+    }
   }
 
-  // Build stats from Understat cache (preferred) or API-Football fallback
+  // Stats a partir do cache Understat no banco
   const afStats: AFStats | null = (() => {
     if (player.statsGoals != null) {
       return {
