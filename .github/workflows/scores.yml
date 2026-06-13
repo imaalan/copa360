@@ -1,0 +1,16 @@
+name: Update Scores
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update-scores:
+    name: Update Scores
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call scores endpoint
+        run: |
+          curl -X GET https://copa360.vercel.app/api/cron/scores \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 
 type MatchTeam = { name: string; tla: string | null; logo: string | null } | null;
@@ -105,6 +105,16 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
   const [stageTab, setStageTab] = useState("all");
   const [groupFilter, setGroupFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const chipsRef = useRef<HTMLDivElement>(null);
+
+  const updateScrollState = useCallback(() => {
+    const el = chipsRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
+  }, []);
 
   const matchDays = useMemo(() => {
     const seen = new Map<string, Date>();
@@ -116,6 +126,10 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([key, date]) => ({ key, label: formatDateChip(date) }));
   }, [matches]);
+
+  useEffect(() => {
+    updateScrollState();
+  }, [updateScrollState, matchDays]);
 
   const groups = useMemo(() => {
     const g = new Set(matches.map((m) => m.group).filter(Boolean) as string[]);
@@ -186,30 +200,52 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
       </div>
 
       {/* Date chips */}
-      <div className="mb-6 flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mb-6 relative flex items-center gap-1.5">
         <button
-          onClick={() => setDateFilter("all")}
-          className={`flex-shrink-0 h-[36px] px-3 rounded-[10px] text-[10px] font-bold tracking-[0.08em] uppercase transition-colors ${
-            dateFilter === "all"
-              ? "bg-[#C8A96B] text-[#111315]"
-              : "bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6]"
-          }`}
+          aria-label="Datas anteriores"
+          onClick={() => { chipsRef.current?.scrollBy({ left: -200, behavior: "smooth" }); }}
+          disabled={!canScrollLeft}
+          className="hidden md:flex flex-shrink-0 h-[36px] w-[36px] items-center justify-center rounded-full bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6] transition-colors disabled:opacity-0 disabled:pointer-events-none"
         >
-          Todas as datas
+          ‹
         </button>
-        {matchDays.map((d) => (
+        <div
+          ref={chipsRef}
+          onScroll={updateScrollState}
+          className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           <button
-            key={d.key}
-            onClick={() => setDateFilter(d.key)}
+            onClick={() => setDateFilter("all")}
             className={`flex-shrink-0 h-[36px] px-3 rounded-[10px] text-[10px] font-bold tracking-[0.08em] uppercase transition-colors ${
-              dateFilter === d.key
+              dateFilter === "all"
                 ? "bg-[#C8A96B] text-[#111315]"
                 : "bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6]"
             }`}
           >
-            {d.label}
+            Todas as datas
           </button>
-        ))}
+          {matchDays.map((d) => (
+            <button
+              key={d.key}
+              onClick={() => setDateFilter(d.key)}
+              className={`flex-shrink-0 h-[36px] px-3 rounded-[10px] text-[10px] font-bold tracking-[0.08em] uppercase transition-colors ${
+                dateFilter === d.key
+                  ? "bg-[#C8A96B] text-[#111315]"
+                  : "bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6]"
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+        <button
+          aria-label="Próximas datas"
+          onClick={() => { chipsRef.current?.scrollBy({ left: 200, behavior: "smooth" }); }}
+          disabled={!canScrollRight}
+          className="hidden md:flex flex-shrink-0 h-[36px] w-[36px] items-center justify-center rounded-full bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6] transition-colors disabled:opacity-0 disabled:pointer-events-none"
+        >
+          ›
+        </button>
       </div>
 
       {/* Flat list by date OR sections by stage */}
