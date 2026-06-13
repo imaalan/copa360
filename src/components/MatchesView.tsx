@@ -82,9 +82,40 @@ function formatTime(utcDate: Date) {
 
 const KNOCKOUT_STAGES = ["LAST_32", "LAST_16", "QUARTER_FINALS", "SEMI_FINALS", "THIRD_PLACE", "FINAL"];
 
+function toBRTDateKey(utcDate: Date): string {
+  const [d, m, y] = new Intl.DateTimeFormat("pt-BR", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: "America/Sao_Paulo",
+  }).format(new Date(utcDate)).split("/");
+  return `${y}-${m}-${d}`;
+}
+
+function formatDateChip(utcDate: Date): string {
+  const parts = new Intl.DateTimeFormat("pt-BR", {
+    weekday: "short", day: "2-digit", month: "2-digit",
+    timeZone: "America/Sao_Paulo",
+  }).formatToParts(new Date(utcDate));
+  const wd = (parts.find(p => p.type === "weekday")?.value ?? "").replace(".", "").toUpperCase();
+  const day = parts.find(p => p.type === "day")?.value ?? "";
+  const mon = parts.find(p => p.type === "month")?.value ?? "";
+  return `${wd} ${day}/${mon}`;
+}
+
 export default function MatchesView({ matches }: { matches: Match[] }) {
   const [stageTab, setStageTab] = useState("all");
   const [groupFilter, setGroupFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
+
+  const matchDays = useMemo(() => {
+    const seen = new Map<string, Date>();
+    for (const m of matches) {
+      const key = toBRTDateKey(m.utcDate);
+      if (!seen.has(key)) seen.set(key, m.utcDate);
+    }
+    return Array.from(seen.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, date]) => ({ key, label: formatDateChip(date) }));
+  }, [matches]);
 
   const groups = useMemo(() => {
     const g = new Set(matches.map((m) => m.group).filter(Boolean) as string[]);
@@ -96,9 +127,10 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
       if (stageTab === "GROUP_STAGE" && m.stage !== "GROUP_STAGE") return false;
       if (stageTab === "knockout" && !KNOCKOUT_STAGES.includes(m.stage ?? "")) return false;
       if (groupFilter !== "all" && m.group !== groupFilter) return false;
+      if (dateFilter !== "all" && toBRTDateKey(m.utcDate) !== dateFilter) return false;
       return true;
     });
-  }, [matches, stageTab, groupFilter]);
+  }, [matches, stageTab, groupFilter, dateFilter]);
 
   // Group by stage then by day
   const sections = useMemo(() => {
@@ -153,27 +185,60 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
         </span>
       </div>
 
-      {/* Sections by stage */}
-      <div className="flex flex-col gap-12">
-        {sections.map(({ stage, label, matches: sMatches }) => (
-          <div key={stage}>
-            {/* Stage header */}
-            <div className="mb-4 flex items-center gap-4">
-              <h2 className="text-[11px] font-bold tracking-[0.28em] uppercase text-white/70">
-                {label}
-              </h2>
-              <div className="flex-1 h-px bg-white/[0.06]" />
-              <span className="text-[10px] text-[#6B7280]">{sMatches.length} jogos</span>
-            </div>
-
-            {/* Group sub-headers for group stage */}
-            {stage === "GROUP_STAGE"
-              ? <GroupStageSection matches={sMatches} />
-              : <MatchList matches={sMatches} showGroup={false} />
-            }
-          </div>
+      {/* Date chips */}
+      <div className="mb-6 flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <button
+          onClick={() => setDateFilter("all")}
+          className={`flex-shrink-0 h-[36px] px-3 rounded-[10px] text-[10px] font-bold tracking-[0.08em] uppercase transition-colors ${
+            dateFilter === "all"
+              ? "bg-[#C8A96B] text-[#111315]"
+              : "bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6]"
+          }`}
+        >
+          Todas as datas
+        </button>
+        {matchDays.map((d) => (
+          <button
+            key={d.key}
+            onClick={() => setDateFilter(d.key)}
+            className={`flex-shrink-0 h-[36px] px-3 rounded-[10px] text-[10px] font-bold tracking-[0.08em] uppercase transition-colors ${
+              dateFilter === d.key
+                ? "bg-[#C8A96B] text-[#111315]"
+                : "bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6]"
+            }`}
+          >
+            {d.label}
+          </button>
         ))}
       </div>
+
+      {/* Flat list by date OR sections by stage */}
+      {dateFilter !== "all" ? (
+        <div className="flex flex-col gap-2">
+          {filtered.map((m) => <MatchCard key={m.id} match={m} />)}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-12">
+          {sections.map(({ stage, label, matches: sMatches }) => (
+            <div key={stage}>
+              {/* Stage header */}
+              <div className="mb-4 flex items-center gap-4">
+                <h2 className="text-[11px] font-bold tracking-[0.28em] uppercase text-white/70">
+                  {label}
+                </h2>
+                <div className="flex-1 h-px bg-white/[0.06]" />
+                <span className="text-[10px] text-[#6B7280]">{sMatches.length} jogos</span>
+              </div>
+
+              {/* Group sub-headers for group stage */}
+              {stage === "GROUP_STAGE"
+                ? <GroupStageSection matches={sMatches} />
+                : <MatchList matches={sMatches} showGroup={false} />
+              }
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }
