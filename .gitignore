@@ -40,3 +40,5 @@ test_*.ts
 scripts/_*.ts
 scripts/_*.js
 demo-recording/
+.vercel
+.env*

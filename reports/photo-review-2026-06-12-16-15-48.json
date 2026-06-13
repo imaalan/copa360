@@ -1,0 +1,319 @@
+{
+  "generatedAt": "2026-06-12T16:07:57.137Z",
+  "dryRun": false,
+  "afUnmatched": [
+    {
+      "playerId": 5372,
+      "name": "Oussama Benbout",
+      "tla": "ALG"
+    },
+    {
+      "playerId": 420,
+      "name": "Jordan Bos",
+      "tla": "AUS"
+    },
+    {
+      "playerId": 423,
+      "name": "Aiden O'Neill",
+      "tla": "AUS"
+    },
+    {
+      "playerId": 824,
+      "name": "Maxime Crépeau",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 834,
+      "name": "Jonathan Osorio",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 831,
+      "name": "Ali Ahmed",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5831,
+      "name": "Ismael Kone",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 849,
+      "name": "Jonathan David",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5817,
+      "name": "Alphonso Davies",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5823,
+      "name": "Moise Bombito",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5819,
+      "name": "Alfie Jones",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5822,
+      "name": "Alistair Johnston",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5826,
+      "name": "Stephen Eustáquio",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5837,
+      "name": "Jacob Shaffelburg",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 5839,
+      "name": "Promise Akinpelu",
+      "tla": "CAN"
+    },
+    {
+      "playerId": 1022,
+      "name": "Evan N'Dicka",
+      "tla": "CIV"
+    },
+    {
+      "playerId": 1086,
+      "name": "Ali Jassim El-Aibi",
+      "tla": "IRQ"
+    },
+    {
+      "playerId": 6099,
+      "name": "Ali Yousif",
+      "tla": "IRQ"
+    },
+    {
+      "playerId": 1058,
+      "name": "Ibrahim Saadeh",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6050,
+      "name": "Noureddin Bani Ateyah",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6064,
+      "name": "Mohammad Al-Dawoud",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6072,
+      "name": "Odeh Fakhoury",
+      "tla": "JOR"
+    },
+    {
+      "playerId": 6028,
+      "name": "Ró-Ró",
+      "tla": "QAT"
+    }
+  ],
+  "sdbRejected": [
+    {
+      "playerId": 11,
+      "name": "Emiliano Martínez",
+      "tla": "URY",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Emiliano Martinez",
+          "nationality": "Argentina",
+          "dateBorn": "1992-09-02"
+        }
+      ]
+    },
+    {
+      "playerId": 16,
+      "name": "Juan Sanabria",
+      "tla": "URY",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Juan Sanabria",
+          "nationality": "Colombia",
+          "dateBorn": "1994-11-04"
+        }
+      ]
+    },
+    {
+      "playerId": 58,
+      "name": "Víctor Muñoz",
+      "tla": "ESP",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Víctor Muñoz",
+          "nationality": "Spain",
+          "dateBorn": "1957-03-15"
+        }
+      ]
+    },
+    {
+      "playerId": 67,
+      "name": "Pedri",
+      "tla": "ESP",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Pedrinho",
+          "nationality": "Portugal",
+          "dateBorn": "1985-03-06"
+        }
+      ]
+    },
+    {
+      "playerId": 79,
+      "name": "Rodri",
+      "tla": "ESP",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Jay Rodriguez",
+          "nationality": "England",
+          "dateBorn": "1989-07-29"
+        }
+      ]
+    },
+    {
+      "playerId": 82,
+      "name": "Roberto Fernández",
+      "tla": "PAR",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Roberto Fernández",
+          "nationality": "Bolivia",
+          "dateBorn": "1999-07-12"
+        }
+      ]
+    },
+    {
+      "playerId": 92,
+      "name": "Mauricio",
+      "tla": "PAR",
+      "reason": "no-nationality-match",
+      "candidates": [
+        {
+          "name": "Mauricio",
+          "nationality": "Brazil",
+          "dateBorn": "1988-09-20"
+        }
+      ]
+    },
+    {
+      "playerId": 94,
+      "name": "Matías Galarza",
+      "tla": "PAR",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Matías Galarza",
+          "nationality": "Paraguay",
+          "dateBorn": "2002-03-04"
+        }
+      ]
+    },
+    {
+      "playerId": 189,
+      "name": "José Sá",
+      "tla": "POR",
+      "reason": "no-name-match",
+      "candidates": [
+        {
+          "name": "Joseph Dodoo",
+          "nationality": "England",
+          "dateBorn": "1995-06-29"
+        }
+      ]
+    },
+    {
+      "playerId": 599,
+      "name": "Hassan Kadesh",
+      "tla": "KSA",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Hassan Kadesh",
+          "nationality": "Saudi Arabia",
+          "dateBorn": "1992-09-26"
+        }
+      ]
+    },
+    {
+      "playerId": 606,
+      "name": "Khalid Al Ghannam",
+      "tla": "KSA",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Khalid Al-Ghannam",
+          "nationality": "Saudi Arabia",
+          "dateBorn": "2000-11-08"
+        }
+      ]
+    },
+    {
+      "playerId": 609,
+      "name": "Abdullah Al-Hamdan",
+      "tla": "KSA",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Abdullah Al-Hamdan",
+          "nationality": "Saudi Arabia",
+          "dateBorn": "1999-09-13"
+        }
+      ]
+    },
+    {
+      "playerId": 1177,
+      "name": "Lewis Ferguson",
+      "tla": "SCO",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Lewis Ferguson",
+          "nationality": "Scotland",
+          "dateBorn": "2019-01-29"
+        }
+      ]
+    },
+    {
+      "playerId": 1178,
+      "name": "Ryan Christie",
+      "tla": "SCO",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Ryan Christie",
+          "nationality": "Scotland",
+          "dateBorn": "1995-04-28"
+        }
+      ]
+    },
+    {
+      "playerId": 1190,
+      "name": "Tyrick Bodak",
+      "tla": "CUW",
+      "reason": "dob-mismatch",
+      "candidates": [
+        {
+          "name": "Tyrick Bodak",
+          "nationality": "Curacao",
+          "dateBorn": "2002-05-15"
+        }
+      ]
+    }
+  ],
+  "downloadFailed": []
+}
