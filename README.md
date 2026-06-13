@@ -20,7 +20,7 @@ Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2
 | `/players` | ✅ | Explorador com busca, filtro por posição/time e paginação |
 | `/players/[id]` | ✅ | Perfil do jogador: foto real, troféus, clube atual, stats |
 | `/coaches/[id]` | ✅ | Perfil do técnico: carreira, conquistas, link para seleção |
-| `/matches` | ✅ | 104 jogos com filtros por fase/grupo e badge de status |
+| `/matches` | ✅ | 104 jogos com filtros por fase/grupo/data, placares ao vivo e nomes em PT-BR |
 | `/stats` | ✅ | Análises: distribuição por posição, idade média, tamanho dos elencos |
 
 ---
@@ -36,6 +36,9 @@ Copa360 é uma plataforma editorial e premium para explorar a **FIFA World Cup 2
 - **PlayerPopup** — espelho exato do perfil `/players/[id]`: bio, troféus, clube atual e stats via multi-API
 - **CoachCard + CoachPopup** — técnico de cada seleção com modal de stats e link para perfil completo
 - **Sistema de posições FIFA** — siglas canônicas (GK, CB, CM, ST...) com agrupamento em PT-BR
+- **Filtro por data na aba de jogos** — chips horizontais deslizáveis estilo Globo Esporte; ao selecionar uma data exibe lista flat em ordem cronológica
+- **Nomes das seleções em PT-BR** — 48 times localizados na aba de jogos (mobile e desktop)
+- **Placares ao vivo** — cron DB-first a cada 5min via GitHub Actions chama `/api/cron/scores` e invalida o cache ISR de `/matches`
 - **Mobile responsivo**: hamburger menu com overlay full-screen, bottom sheet animado (slide-up)
 - **Banco completo**: 48 seleções, 1247+ jogadores, 48 técnicos, 104 jogos
 
@@ -78,7 +81,10 @@ copa360/
 │   │   ├── page.tsx                      # Home: hero, countdown, featured players, mosaico
 │   │   ├── api/
 │   │   │   ├── players/[id]/popup/       # Route Handler: dados enriquecidos do jogador
-│   │   │   └── coaches/[id]/             # Route Handler: dados do técnico
+│   │   │   ├── coaches/[id]/             # Route Handler: dados do técnico
+│   │   │   └── cron/
+│   │   │       ├── seed/                 # Sync diário: seleções + elencos + jogos (06:00 UTC)
+│   │   │       └── scores/               # Atualização de placares DB-first (GitHub Actions)
 │   │   ├── teams/
 │   │   │   ├── page.tsx                  # Lista das 48 seleções
 │   │   │   └── [slug]/page.tsx           # Perfil da seleção: técnico + elenco
@@ -96,7 +102,7 @@ copa360/
 │   │   ├── TeamMosaic.tsx                # Mosaico com rotação automática
 │   │   ├── TeamsGrid.tsx                 # Grid de seleções com busca
 │   │   ├── PlayersGrid.tsx               # Grid de jogadores com filtros e paginação
-│   │   ├── MatchesView.tsx               # Lista de jogos com filtros por fase/grupo
+│   │   ├── MatchesView.tsx               # Lista de jogos com filtros por fase/grupo/data e nomes PT-BR
 │   │   ├── BioSection.tsx                # Bio expansível com fade + "Ver mais/menos"
 │   │   ├── TrophiesSection.tsx           # Troféus: 3 por padrão + expand
 │   │   ├── PlayerPopup.tsx               # Modal/bottom-sheet — espelho do perfil /players/[id]
@@ -106,6 +112,7 @@ copa360/
 │   └── lib/
 │       ├── prisma.ts                     # Client Prisma singleton
 │       ├── football-api.ts               # Client football-data.org API
+│       ├── sync-core.ts                  # Sync unificado seed+cron — nunca sobrescreve foto/nome
 │       └── positions.ts                  # Sistema de posições FIFA — fonte única
 ├── prisma/
 │   ├── schema.prisma                     # Schema: Team, Player, Match, Coach, Competition
@@ -117,7 +124,8 @@ copa360/
 │   ├── enrich-bios.ts                    # Biografias PT-BR: TheSportsDB + Wikipedia
 │   ├── enrich-coaches.ts                 # Fotos + stats + troféus de técnicos
 │   ├── seed-coaches.ts                   # Seed dos 48 técnicos (anúncios oficiais)
-│   └── check-enrichment.ts              # Relatório de cobertura de fotos/stats
+│   ├── check-enrichment.ts               # Relatório de cobertura de fotos/stats
+│   └── update-scores.ts                  # Atualização manual de placares via football-data.org
 ├── e2e/                                  # Testes Playwright
 ├── playwright.config.ts
 └── design.md                             # Sistema de design canônico
@@ -186,6 +194,7 @@ Acesse em [http://localhost:3000](http://localhost:3000).
 | `npm run test:e2e` | Roda os testes Playwright |
 | `npm run test:e2e:ui` | Playwright com UI interativa |
 | `npm run typecheck` | Verificação de tipos TypeScript |
+| `npx tsx scripts/update-scores.ts` | Atualiza placares manualmente via football-data.org |
 
 ### Enriquecimento de fotos
 
@@ -288,7 +297,10 @@ O que **não** fazemos: estética gamer, neon, scanlines, #FFD700, escudos, bola
 - [x] Biografias PT-BR: jogadores e técnicos com expand (TheSportsDB + Wikipedia PT-BR)
 - [x] Troféus na página de perfil com expand ("Ver mais / Ver menos")
 - [x] Popup e perfil como espelhos — mesma estrutura e dados
-- [x] CI/CD com GitHub Actions (PR gate + nightly schedule)
+- [x] CI/CD com GitHub Actions (PR gate + nightly schedule + scores cron a cada 5min)
+- [x] Nomes das seleções em PT-BR na aba de jogos (48 times)
+- [x] Placares ao vivo via cron DB-first (`/api/cron/scores`) com revalidação ISR
+- [x] Filtro por data na aba de jogos — chips deslizáveis + lista flat por horário
 - [x] Deploy em produção — [copa360.vercel.app](https://copa360.vercel.app)
 
 ---
