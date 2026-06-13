@@ -1,0 +1,17 @@
+name: Scores Cron
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update-scores:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update match scores
+        run: |
+          curl -sf -X GET "${{ secrets.APP_URL }}/api/cron/scores" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -o /dev/null \
+            -w "HTTP %{http_code}\n"
