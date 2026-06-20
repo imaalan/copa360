@@ -19,14 +19,26 @@ async function getPreviousArrow(page: Page) {
 async function getDateScroller(page: Page) {
   const nextArrow = await getNextArrow(page);
   const handle = await nextArrow.evaluateHandle((button) => {
-    let node: HTMLElement | null = button.parentElement;
+    // The scroller is a sibling of the button — check parent's children first
+    const parent = button.parentElement;
+    if (parent) {
+      for (const child of Array.from(parent.children)) {
+        const el = child as HTMLElement;
+        if (el === button) continue;
+        const style = getComputedStyle(el);
+        if (/auto|scroll/.test(style.overflowX)) {
+          return el;
+        }
+      }
+    }
 
+    // Fallback: traverse ancestors
+    let node: HTMLElement | null = button.parentElement;
     while (node) {
       const style = getComputedStyle(node);
       if (node.scrollWidth > node.clientWidth && /auto|scroll/.test(style.overflowX)) {
         return node;
       }
-
       node = node.parentElement;
     }
 
