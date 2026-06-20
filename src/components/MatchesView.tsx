@@ -203,7 +203,7 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
       <div className="mb-6 relative flex items-center gap-1.5">
         <button
           aria-label="Datas anteriores"
-          onClick={() => { chipsRef.current?.scrollBy({ left: -200, behavior: "smooth" }); }}
+          onClick={() => { chipsRef.current?.scrollBy({ left: -200, behavior: "instant" }); }}
           disabled={!canScrollLeft}
           className="hidden md:flex flex-shrink-0 h-[36px] w-[36px] items-center justify-center rounded-full bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6] transition-colors disabled:opacity-0 disabled:pointer-events-none"
         >
@@ -240,7 +240,7 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
         </div>
         <button
           aria-label="Próximas datas"
-          onClick={() => { chipsRef.current?.scrollBy({ left: 200, behavior: "smooth" }); }}
+          onClick={() => { chipsRef.current?.scrollBy({ left: 200, behavior: "instant" }); }}
           disabled={!canScrollRight}
           className="hidden md:flex flex-shrink-0 h-[36px] w-[36px] items-center justify-center rounded-full bg-white/[0.04] border border-white/[0.08] text-[#6B7280] hover:text-[#F3F4F6] transition-colors disabled:opacity-0 disabled:pointer-events-none"
         >
