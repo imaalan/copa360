@@ -101,6 +101,7 @@ model Match {
   awayTeamId    Int?
   homeScore     Int?     @default(0)
   awayScore     Int?     @default(0)
+  streamingLinks Json?
   venue         String?
   competitionId Int?
   createdAt     DateTime @default(now())

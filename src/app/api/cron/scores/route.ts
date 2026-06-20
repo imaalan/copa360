@@ -3,6 +3,7 @@ export const maxDuration = 30;
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { syncStreamingLinks } from "@/lib/streaming-sync";
 
 const API_BASE = "https://api.football-data.org/v4";
 
@@ -62,6 +63,8 @@ export async function GET(req: Request) {
     );
 
     const updated = results.reduce((sum, r) => sum + r.count, 0);
+
+    await syncStreamingLinks();
 
     revalidatePath("/matches");
 
