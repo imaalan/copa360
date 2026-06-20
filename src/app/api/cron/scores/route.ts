@@ -6,11 +6,6 @@ import { revalidatePath } from "next/cache";
 
 const API_BASE = "https://api.football-data.org/v4";
 
-/**
- * /api/cron/scores — Atualiza placares a cada 5 min (Vercel Cron).
- * DB-first: só chama a API se houver partida nas próximas 2h ou últimas 4h.
- * 1 request por execução quando há jogos; 0 requests fora de janela de jogo.
- */
 export async function GET(req: Request) {
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -19,11 +14,11 @@ export async function GET(req: Request) {
 
   const started = Date.now();
   const now = new Date();
+  // Janela: jogos das ultimas 4h ate as proximas 2h
   const windowStart = new Date(now.getTime() - 4 * 60 * 60 * 1000);
   const windowEnd = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
   try {
-    // Check if any match falls in the active window before calling the API
     const activeMatch = await prisma.match.findFirst({
       where: { utcDate: { gte: windowStart, lte: windowEnd } },
     });
@@ -38,33 +33,39 @@ export async function GET(req: Request) {
     }
 
     const apiKey = process.env.FOOTBALL_DATA_API_KEY ?? "";
-    const res = await fetch(`${API_BASE}/competitions/WC/matches`, {
-      headers: { "X-Auth-Token": apiKey },
-      cache: "no-store",
-    });
+    // Busca apenas jogos da janela ativa -- evita 100+ queries sequenciais
+    const dateFrom = windowStart.toISOString().split("T")[0];
+    const dateTo = windowEnd.toISOString().split("T")[0];
+    const res = await fetch(
+      `${API_BASE}/competitions/WC/matches?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+      { headers: { "X-Auth-Token": apiKey }, cache: "no-store" }
+    );
 
-    if (!res.ok) throw new Error(`football-data.org → ${res.status}`);
+    if (!res.ok) throw new Error(`football-data.org -> ${res.status}`);
 
     const data = await res.json() as Record<string, unknown>;
     const matches = (data.matches ?? []) as Array<Record<string, unknown>>;
 
-    let updated = 0;
-    for (const m of matches) {
-      const fullTime = (m.score as Record<string, unknown>)?.fullTime as Record<string, unknown> | null;
-      const result = await prisma.match.updateMany({
-        where: { externalId: Number(m.id) },
-        data: {
-          status: String(m.status),
-          homeScore: fullTime?.home != null ? Number(fullTime.home) : null,
-          awayScore: fullTime?.away != null ? Number(fullTime.away) : null,
-        },
-      });
-      updated += result.count;
-    }
+    // Updates em paralelo -- elimina gargalo de queries sequenciais
+    const results = await Promise.all(
+      matches.map((m) => {
+        const fullTime = (m.score as Record<string, unknown>)?.fullTime as Record<string, unknown> | null;
+        return prisma.match.updateMany({
+          where: { externalId: Number(m.id) },
+          data: {
+            status: String(m.status),
+            homeScore: fullTime?.home != null ? Number(fullTime.home) : null,
+            awayScore: fullTime?.away != null ? Number(fullTime.away) : null,
+          },
+        });
+      })
+    );
+
+    const updated = results.reduce((sum, r) => sum + r.count, 0);
 
     revalidatePath("/matches");
 
-    return Response.json({ ok: true, updated, durationMs: Date.now() - started });
+    return Response.json({ ok: true, updated, fetched: matches.length, durationMs: Date.now() - started });
   } catch (err) {
     console.error("[cron/scores]", err);
     return Response.json(
