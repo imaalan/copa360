@@ -201,7 +201,7 @@ export default async function StatsPage() {
       </div>
 
       {/* Oldest / Youngest players */}
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <PlayerAgeTable title="Jogadores Mais Velhos" players={oldest} />
         <PlayerAgeTable title="Jogadores Mais Jovens" players={youngest} />
       </div>

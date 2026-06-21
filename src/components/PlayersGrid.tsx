@@ -95,7 +95,7 @@ export default function PlayersGrid({ players, teams }: { players: Player[]; tea
         </div>
 
         {/* Position filter */}
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex-nowrap">
           {POSITION_GROUPS.map((g) => (
             <button
               key={g}
