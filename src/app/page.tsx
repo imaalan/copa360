@@ -176,6 +176,39 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── 7A0 CARD ── */}
+      <section className="px-4 md:px-12 pb-16">
+        <a
+          href="https://7a0.com.br/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-white/[0.03] border border-[#C8A96B]/20 rounded-[24px] px-7 md:px-10 py-8 hover:border-[#C8A96B]/40 hover:bg-white/[0.05] transition-all duration-200 no-underline max-w-[860px]"
+        >
+          <div className="flex-1 min-w-0">
+            <p className="mb-2 text-[9px] font-semibold tracking-[0.42em] uppercase text-[#C8A96B]/55">
+              Brincar de Técnico
+            </p>
+            <h2
+              className="font-extrabold leading-[0.95] tracking-[-0.04em] text-[#F3F4F6] mb-3"
+              style={{ fontSize: "clamp(28px, 3.5vw, 42px)" }}
+            >
+              Role o dado.
+            </h2>
+            <p className="text-[13px] font-light leading-[1.7] text-[#6B7280] max-w-[420px]">
+              Monte sua seleção dos sonhos
+            </p>
+            <p className="mt-2 text-[13px] leading-[1.7] text-[#6B7280]/70 max-w-[420px]">
+              Sai uma seleção e uma Copa. Escale um craque que esteve lá, complete os 11 e simule — seu time faz 7 a 0?
+            </p>
+          </div>
+          <div className="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full bg-[#C8A96B]/10 border border-[#C8A96B]/25 group-hover:bg-[#C8A96B]/18 transition-colors">
+            <span className="text-[12px] font-bold tracking-[0.08em] uppercase text-[#C8A96B]">
+              Jogar agora ↗
+            </span>
+          </div>
+        </a>
+      </section>
+
       {/* ── DIVIDER ── */}
       <div className="mx-4 md:mx-12 mb-[52px] h-px bg-white/[0.06]" />
 

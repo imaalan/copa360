@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
-  { label: "Seleções",     href: "/teams" },
-  { label: "Jogadores",    href: "/players" },
-  { label: "Jogos",        href: "/matches" },
-  { label: "Estatísticas", href: "/stats" },
+  { label: "Seleções",      href: "/teams" },
+  { label: "Jogadores",     href: "/players" },
+  { label: "Jogos",         href: "/matches" },
+  { label: "Estatísticas",  href: "/stats" },
+  { label: "Onde Assistir", href: "/onde-assistir" },
 ];
 
 export default function NavHeader() {
@@ -35,7 +36,7 @@ export default function NavHeader() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:block">
+          <nav className="hidden md:flex items-center gap-9">
             <ul className="flex gap-9 list-none">
               {NAV_LINKS.map(({ label, href }) => (
                 <li key={label}>
@@ -48,6 +49,14 @@ export default function NavHeader() {
                 </li>
               ))}
             </ul>
+            <a
+              href="https://7a0.com.br/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#C8A96B]/12 border border-[#C8A96B]/30 text-[10px] font-bold tracking-[0.1em] uppercase text-[#C8A96B] hover:bg-[#C8A96B]/20 transition-colors no-underline"
+            >
+              Brincar de Técnico ↗
+            </a>
           </nav>
 
           {/* Hamburger button (mobile only) */}
@@ -100,10 +109,18 @@ export default function NavHeader() {
             ))}
           </nav>
 
-          {/* Footer hint */}
-          <p className="pb-10 text-center text-[10px] font-semibold tracking-[0.3em] uppercase text-[#6B7280]/50">
-            FIFA World Cup 2026
-          </p>
+          {/* Pill mobile */}
+          <div className="pb-10 flex justify-center">
+            <a
+              href="https://7a0.com.br/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={close}
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#C8A96B]/12 border border-[#C8A96B]/30 text-[11px] font-bold tracking-[0.1em] uppercase text-[#C8A96B] no-underline"
+            >
+              Brincar de Técnico ↗
+            </a>
+          </div>
         </div>
       )}
 

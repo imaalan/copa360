@@ -2,8 +2,11 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 type MatchTeam = { name: string; tla: string | null; logo: string | null } | null;
+
+type StreamingLink = { platform: string; url: string };
 
 type Match = {
   id: number;
@@ -16,6 +19,7 @@ type Match = {
   awayScore: number | null;
   homeTeam: MatchTeam;
   awayTeam: MatchTeam;
+  streamingLinks?: unknown;
 };
 
 const STAGE_LABEL: Record<string, string> = {
@@ -104,7 +108,10 @@ function formatDateChip(utcDate: Date): string {
 export default function MatchesView({ matches }: { matches: Match[] }) {
   const [stageTab, setStageTab] = useState("all");
   const [groupFilter, setGroupFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState<string>(() => {
+    const today = toBRTDateKey(new Date());
+    return matches.some((m) => toBRTDateKey(m.utcDate) === today) ? today : "all";
+  });
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const chipsRef = useRef<HTMLDivElement>(null);
@@ -169,7 +176,7 @@ export default function MatchesView({ matches }: { matches: Match[] }) {
           {STAGE_TABS.map((t) => (
             <button
               key={t.key}
-              onClick={() => { setStageTab(t.key); setGroupFilter("all"); }}
+              onClick={() => { setStageTab(t.key); setGroupFilter("all"); setDateFilter("all"); }}
               className={`h-[44px] px-4 rounded-[14px] text-[11px] font-semibold tracking-[0.06em] uppercase transition-colors ${
                 stageTab === t.key
                   ? "bg-[#C8A96B] text-[#111315]"
@@ -326,8 +333,12 @@ function MatchList({ matches }: { matches: Match[]; showGroup: boolean }) {
 }
 
 function MatchCard({ match: m }: { match: Match }) {
-  const isFinished = m.status === "FINISHED";
-  const isLive     = m.status === "IN_PLAY" || m.status === "PAUSED";
+  const isFinished  = m.status === "FINISHED";
+  const isLive      = m.status === "IN_PLAY" || m.status === "PAUSED";
+  const isPostponed = m.status === "POSTPONED";
+  const links = Array.isArray(m.streamingLinks) ? (m.streamingLinks as StreamingLink[]) : [];
+  const streamUrl   = links[0]?.url ?? null;
+  const watchLabel  = isFinished ? "▶ Rever jogo" : "▶ Assistir ao vivo";
 
   return (
     <div className="group relative flex items-center gap-2 md:gap-4 bg-white/[0.03] border border-white/[0.07] rounded-[16px] px-3 md:px-5 py-3 md:py-4 hover:border-[#C8A96B]/20 transition-colors">
@@ -368,8 +379,18 @@ function MatchCard({ match: m }: { match: Match }) {
       {/* Away team */}
       <TeamBlock team={m.awayTeam} align="left" />
 
-      {/* Status badge — desktop only */}
-      <div className="ml-auto hidden md:flex flex-shrink-0">
+      {/* Status badge + watch link — desktop only */}
+      <div className="ml-auto hidden md:flex items-center gap-3 flex-shrink-0">
+        {streamUrl && !isPostponed && (
+          <Link
+            href={streamUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-bold tracking-[0.06em] text-[#C8A96B] hover:text-[#C8A96B]/80 transition-colors no-underline"
+          >
+            {watchLabel}
+          </Link>
+        )}
         <StatusBadge status={m.status} />
       </div>
     </div>

@@ -143,3 +143,10 @@ Depois do Gemini: despachar OpenCode para GREEN frontend (NavHeader + MatchCard 
 - 1249 jogadores, 48 seleções, 104 partidas
 - Posições: GK/DEF/MID/FWD (4 categorias — granular pendente)
 - Zero duplicatas, zero externalId nulo
+
+## REQUISITO ADICIONAL (2026-06-20)
+MatchesView.tsx — filtro de data padrão:
+- Ao abrir /matches, dateFilter deve ser inicializado com o dia atual (BRT) em vez de 'all'
+- Clicar nas tabs Todos / Grupos / Mata-mata deve setar dateFilter de volta para 'all'
+- Se não houver jogos no dia atual, manter 'all' como fallback
+
