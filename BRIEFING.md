@@ -200,3 +200,27 @@ MatchesView.tsx — filtro de data padrão:
 ### Estado do banco (2026-06-21)
 - streamingLinks: 3 partidas com dados (seeded manualmente: match 8, 36, 38) — dados fake para E2E local
 - CI DB: streamingLinks passam nos testes (142/143 CAs passando — provável que CI DB = prod DB com cron rodando)
+
+---
+
+## ESTADO DA SESSÃO — 2026-06-21 (continuação tarde)
+
+### Spec 004 — Streaming Links Desktop + Mobile
+
+**YOUTUBE_API_KEY:** `REDACTED` (teste — trocar em produção)
+- Adicionada ao `.env` local (não commitada — .env no .gitignore)
+- **NÃO adicionada ao Vercel ainda** — usuário precisa fazer isso manualmente
+- API testada: válida, retornou 0 streams pois CazéTV não estava ao vivo no momento do teste
+
+**Perguntas do grill AINDA ABERTAS:**
+1. ~~YOUTUBE_API_KEY existe?~~ → SIM, adicionada ao .env
+2. Botão mobile: posição no card (abaixo do placar? rodapé do card?)
+3. Jogos sem link: só ocultar (atual) ou mostrar "sem transmissão"?
+4. Além de CazéTV, links manuais para Globo/SporTV/FIFA+?
+5. Testes CA-05a/CA-05b no CI sem API key: seed no CI ou skip?
+
+**Próximo passo exato:**
+1. Continuar grill com perguntas 2-5 acima (uma por vez)
+2. Criar specs/004-streaming-links-mobile.md
+3. Lembrar usuário de adicionar YOUTUBE_API_KEY no Vercel → Settings → Environment Variables
+4. Brothers protocol: RED → GREEN → push
