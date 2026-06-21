@@ -12,6 +12,7 @@ test.describe("/matches", () => {
   });
 
   test("shows all stage sections by default", async ({ page }) => {
+    await page.getByRole("button", { name: "Todos", exact: true }).click();
     await expect(page.locator("text=Fase de Grupos")).toBeVisible();
     await expect(page.locator("text=Rodada de 32")).toBeVisible();
     await expect(page.locator("h2").filter({ hasText: /^Final$/ }).first()).toBeVisible();
