@@ -207,7 +207,7 @@ MatchesView.tsx — filtro de data padrão:
 
 ### Spec 004 — Streaming Links Desktop + Mobile
 
-**YOUTUBE_API_KEY:** `REDACTED` (teste — trocar em produção)
+**YOUTUBE_API_KEY:** configurada no `.env` local (não commitada — obter no Google Cloud Console)
 - Adicionada ao `.env` local (não commitada — .env no .gitignore)
 - **NÃO adicionada ao Vercel ainda** — usuário precisa fazer isso manualmente
 - API testada: válida, retornou 0 streams pois CazéTV não estava ao vivo no momento do teste
