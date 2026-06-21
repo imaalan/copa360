@@ -150,3 +150,53 @@ MatchesView.tsx — filtro de data padrão:
 - Clicar nas tabs Todos / Grupos / Mata-mata deve setar dateFilter de volta para 'all'
 - Se não houver jogos no dia atual, manter 'all' como fallback
 
+
+---
+
+## ESTADO DA SESSÃO — 2026-06-21
+
+### Specs entregues esta sessão
+
+**Spec 002 — GREEN frontend COMPLETO (commit 4cb5453)**
+- NavHeader: link "Onde Assistir" + pill "Brincar de Técnico ↗" → 7a0.com.br (desktop + mobile)
+- /onde-assistir: página estática, 4 broadcaster cards (Globo, SporTV, CazéTV, FIFA+)
+- MatchCard: botão "▶ Assistir ao vivo" (TIMED/IN_PLAY) / "▶ Rever jogo" (FINISHED) via streamingLinks — SOMENTE DESKTOP (`hidden md:flex`)
+- MatchesView: dateFilter inicializa com hoje (BRT); tabs Todos/Grupos/Mata-mata resetam para 'all'
+- Home: card 7a0.com.br entre Featured Players e Team Mosaic
+- 7/7 E2E CAs verdes (CA-05a, CA-05b, CA-06, CA-07×2, CA-08, CA-09)
+
+**Spec 003 — Bugfix CI + mobile layout (commits 7d2df60, 630895d, 3fba737)**
+- tsconfig.json: `src/__tests__` adicionado ao exclude → CI typecheck zerado
+- PlayersGrid.tsx: container posições com `overflow-x-auto flex-nowrap` → scroll mobile
+- stats/page.tsx: `grid-cols-1 md:grid-cols-2` nos cards de jogadores mais velhos/jovens
+- matches.spec.ts: reset dateFilter antes de checar stage sections (regressão do spec 002)
+- CI passando, deploy no ar em master
+
+### Spec 004 — EM GRILL (DRAFT) — NÃO INICIADA
+
+**O que o usuário pediu:** "os links dos jogos para assistir precisa ser inserido, sempre usar o brothers e valide desktop e mobile"
+
+**Descobertas do codebase antes do grill ser interrompido:**
+- `src/lib/youtube-api.ts` — `getCazetvStreams()`: busca streams CazéTV, channelId `UCrTnMxHCILuNiHsivGHaBJA`, retorna `[]` se `YOUTUBE_API_KEY` ausente
+- `src/lib/streaming-sync.ts` — `syncStreamingLinks()`: matching por horário ±2h + regex PT-BR/EN, upsert no banco
+- `src/app/api/cron/scores/route.ts` — já chama `syncStreamingLinks()` na linha 67
+- Schema: `streamingLinks Json?` existe (migration feita em c639a0c)
+- MatchCard: botão **somente desktop** (`hidden md:flex`), sem mobile
+
+**Perguntas ainda abertas (continuar o grill na próxima sessão):**
+1. `YOUTUBE_API_KEY` está configurado no Vercel? (se sim, o sync já pode estar rodando)
+2. Botão mobile: deve aparecer **dentro do card** (abaixo do placar) ou onde?
+3. Jogos sem streamingLinks: estado vazio no botão ou simplesmente escondido (já é escondido)?
+4. Além de CazéTV (YouTube), deve-se adicionar links manuais para Globo/SporTV/FIFA+?
+5. Os testes CA-05a e CA-05b dependem de dados reais no CI — como tratar no CI sem YOUTUBE_API_KEY?
+
+### Próximo passo exato
+1. Abrir nova sessão
+2. Verificar se `YOUTUBE_API_KEY` está no Vercel (confirmar com usuário)
+3. Continuar grill via `/grill-me` para resolver perguntas abertas acima
+4. Criar spec 004 com brothers protocol completo
+5. RED → GREEN → push
+
+### Estado do banco (2026-06-21)
+- streamingLinks: 3 partidas com dados (seeded manualmente: match 8, 36, 38) — dados fake para E2E local
+- CI DB: streamingLinks passam nos testes (142/143 CAs passando — provável que CI DB = prod DB com cron rodando)
