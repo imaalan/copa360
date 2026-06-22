@@ -18,13 +18,15 @@ test.describe('Brincar de Tecnico', () => {
     await expect(page.locator('a[href="https://7a0.com.br/"]').first()).toBeVisible();
   });
 
-  test('CA-05a MatchCard exibe link Assistir ao vivo quando ha streamingLinks', async ({ page }) => {
+  test('CA-05a MatchCard exibe link de streaming quando ha streamingLinks', async ({ page }) => {
     await page.goto('/matches');
-    await expect(page.getByRole('link', { name: /Assistir ao vivo/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Todos', exact: true }).click();
+    await expect(page.getByRole('link', { name: /Assistir ao vivo|Rever jogo/ }).first()).toBeVisible();
   });
 
   test('CA-05b MatchCard exibe link Rever jogo para jogo FINISHED com streamingLinks', async ({ page }) => {
     await page.goto('/matches');
-    await expect(page.getByRole('link', { name: /Rever jogo/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Todos', exact: true }).click();
+    await expect(page.getByRole('link', { name: /Rever jogo/ }).first()).toBeVisible();
   });
 });

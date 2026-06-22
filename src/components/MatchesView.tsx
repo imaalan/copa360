@@ -341,7 +341,8 @@ function MatchCard({ match: m }: { match: Match }) {
   const watchLabel  = isFinished ? "▶ Rever jogo" : "▶ Assistir ao vivo";
 
   return (
-    <div className="group relative flex items-center gap-2 md:gap-4 bg-white/[0.03] border border-white/[0.07] rounded-[16px] px-3 md:px-5 py-3 md:py-4 hover:border-[#C8A96B]/20 transition-colors">
+    <div className="group relative flex flex-col gap-1 bg-white/[0.03] border border-white/[0.07] rounded-[16px] px-3 md:px-5 py-3 md:py-4 hover:border-[#C8A96B]/20 transition-colors">
+      <div className="flex items-center gap-2 md:gap-4">
       {/* Live pulse */}
       {isLive && (
         <span className="absolute top-2.5 right-2.5 md:hidden flex h-2 w-2">
@@ -379,6 +380,11 @@ function MatchCard({ match: m }: { match: Match }) {
       {/* Away team */}
       <TeamBlock team={m.awayTeam} align="left" />
 
+      {/* Status badge — mobile visible */}
+      <div className="md:hidden">
+        <StatusBadge status={m.status} />
+      </div>
+
       {/* Status badge + watch link — desktop only */}
       <div className="ml-auto hidden md:flex items-center gap-3 flex-shrink-0">
         {streamUrl && !isPostponed && (
@@ -393,6 +399,21 @@ function MatchCard({ match: m }: { match: Match }) {
         )}
         <StatusBadge status={m.status} />
       </div>
+      </div>
+
+      {/* Mobile streaming link */}
+      {streamUrl && !isPostponed && (
+        <div className="md:hidden flex justify-center">
+          <Link
+            href={streamUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-bold tracking-[0.06em] text-[#C8A96B] no-underline"
+          >
+            {watchLabel}
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

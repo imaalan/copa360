@@ -57,7 +57,9 @@ test.describe("/matches", () => {
   });
 
   test("Agendado badge appears on upcoming matches", async ({ page }) => {
-    await expect(page.locator("text=Agendado").first()).toBeVisible();
+    await page.getByRole("button", { name: "Todos", exact: true }).click();
+    // Each TIMED card has 2 badges (mobile hidden + desktop visible) after spec 004
+    await expect(page.locator("text=Agendado").nth(1)).toBeVisible();
   });
 
   test("match times show BRT label", async ({ page }) => {
